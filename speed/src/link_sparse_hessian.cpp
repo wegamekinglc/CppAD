@@ -1,4 +1,4 @@
-/* $Id$ */
+/* $Id: link_sparse_hessian.cpp 3223 2014-03-19 15:13:26Z bradbell $ */
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
 
@@ -16,6 +16,8 @@ $spell
 	const
 	bool
 	CppAD
+	cppad
+	colpack
 $$
 
 $index link_sparse_hessian$$
@@ -32,7 +34,8 @@ $codei%extern bool link_sparse_hessian(
 	CppAD::vector<double>&        %x%         ,
 	const CppAD::vector<size_t>&  %row%       ,
 	const CppAD::vector<size_t>&  %col%       , 
-	CppAD::vector<double>&        %hessian%
+	CppAD::vector<double>&        %hessian%   ,
+	size_t                        %n_sweep%
 );
 %$$
 
@@ -126,6 +129,16 @@ $latex j = 0 , \ldots , n-1$$,
 $latex \[
 	\DD{f}{x[i]}{x[j]} (x) = hessian [ i * n + j ]
 \] $$
+
+$head n_sweep$$
+The input value of $icode n_sweep$$ does not matter. On output,
+it is the value $cref/n_sweep/sparse_hessian/n_sweep/$$ corresponding
+to the evaluation of $icode hessian$$.
+This is also the number of colors corresponding to the 
+$cref/coloring method/sparse_hessian/work/color_method/$$,
+which can be set to $cref/colpack/speed_main/Sparsity Options/colpack/$$,
+and is otherwise $code cppad$$.
+
 
 $subhead double$$
 In the case where $icode package$$ is $code double$$,
@@ -275,6 +288,11 @@ is a vector with size <code>n * n</code>
 containing the value of the Hessian of f(x) 
 corresponding to the last repetition.
 
+\param n_sweep [out]
+The input value of this parameter does not matter.
+Upon return, it is the number of sweeps (colors) corresponding
+to the sparse hessian claculation.
+
 \return
 is true, if the sparse Hessian speed test is implemented for this package,
 and false otherwise.
@@ -284,8 +302,9 @@ extern bool link_sparse_hessian(
 	size_t                           repeat    ,
 	const CppAD::vector<size_t>&     row       ,
 	const CppAD::vector<size_t>&     col       , 
-	      CppAD::vector<double>&     x         ,
-	      CppAD::vector<double>&     hessian
+	CppAD::vector<double>&           x         ,
+	CppAD::vector<double>&           hessian   ,
+	size_t&                          n_sweep
 );
 
 /*!
@@ -303,7 +322,8 @@ bool available_sparse_hessian(void)
 	vector<size_t> row, col; 
 	choose_row_col(n, row, col);
 
-	return link_sparse_hessian(n, repeat, row, col, x, hessian);
+	size_t n_sweep;
+	return link_sparse_hessian(n, repeat, row, col, x, hessian, n_sweep);
 	exit(0);
 }
 /*!
@@ -324,7 +344,8 @@ bool correct_sparse_hessian(bool is_package_double)
 	vector<size_t> row, col;
 	choose_row_col(n, row, col);
 
-	link_sparse_hessian(n, repeat, row, col, x, hessian);
+	size_t n_sweep;
+	link_sparse_hessian(n, repeat, row, col, x, hessian, n_sweep);
 
 	size_t order, size;
 	if( is_package_double)
@@ -362,7 +383,34 @@ void speed_sparse_hessian(size_t size, size_t repeat)
 	choose_row_col(n, row, col);
 
 	// note that cppad/sparse_hessian.cpp assumes that x.size() == size
-	link_sparse_hessian(n, repeat, row, col, x, hessian);
+	size_t n_sweep;
+	link_sparse_hessian(n, repeat, row, col, x, hessian, n_sweep);
 	return;
 }
+
+/*!
+Sparse Hessian speed test information.
+
+\param size [in]
+is the \c size parameter in the corresponding call to speed_sparse_jacobian.
+
+\param n_sweep [out]
+The input value of this parameter does not matter.
+Upon return, it is the value \c n_sweep retruned by the corresponding
+call to \c link_sparse_jacobian.
+*/
+void info_sparse_hessian(size_t size, size_t& n_sweep)
+{	size_t n      = size;	
+	size_t repeat = 1;
+	vector<size_t> row, col;
+	choose_row_col(n, row, col);
+
+	// note that cppad/sparse_jacobian.cpp assumes that x.size()
+	// is the size corresponding to this test
+	vector<double> x(n);
+	vector<double> hessian(n * n);
+	link_sparse_hessian(n, repeat, row, col, x, hessian, n_sweep);
+	return;
+}
+
 

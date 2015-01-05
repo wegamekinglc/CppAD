@@ -1,4 +1,4 @@
-/* $Id$ */
+/* $Id: sparse_hessian.cpp 3552 2015-01-03 12:41:46Z bradbell $ */
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
 
@@ -104,8 +104,9 @@ bool link_sparse_hessian(
 	size_t                           repeat   , 
 	const CppAD::vector<size_t>&     row      ,
 	const CppAD::vector<size_t>&     col      ,
-	      CppAD::vector<double>&     x        ,
-	      CppAD::vector<double>&     hessian  )
+	CppAD::vector<double>&           x        ,
+	CppAD::vector<double>&           hessian  ,
+	size_t&                          n_sweep  )
 {
 	if( global_atomic )
 		return false;
@@ -175,10 +176,12 @@ bool link_sparse_hessian(
 			work.color_method = "colpack";
 # endif
 		// calculate this Hessian at this x
-		if( global_boolsparsity)
-			f.SparseHessian(x, w, bool_sparsity, row, col, hes, work);
-		else
-			f.SparseHessian(x, w, set_sparsity, row, col, hes, work);
+		if( global_boolsparsity) n_sweep = f.SparseHessian(
+			x, w, bool_sparsity, row, col, hes, work
+		);
+		else n_sweep = f.SparseHessian(
+				x, w, set_sparsity, row, col, hes, work
+		);
 		for(k = 0; k < K; k++)
 		{	hessian[ row[k] * n + col[k] ] = hes[k];
 			hessian[ col[k] * n + row[k] ] = hes[k];
