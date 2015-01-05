@@ -2,6 +2,8 @@
 # ifndef CPPAD_COLOR_SYMMETRIC_INCLUDED
 # define CPPAD_COLOR_SYMMETRIC_INCLUDED
 
+# include <cppad/configure.hpp>
+
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
@@ -18,8 +20,8 @@ Coloring algorithm for a symmetric sparse matrix.
 */
 // --------------------------------------------------------------------------
 /*!
-Determine which rows of a symmetric sparse matrix can be computed together
-(using CppAD algorithm).
+CppAD algorithm for determining which rows of a symmetric sparse matrix can be 
+computed together.
 
 \tparam VectorSize
 is a simple vector class with elements of type size_t.
@@ -33,8 +35,8 @@ p is a VectorSet object:
 Constructs a new vector of sets object.
 \n
 <code>p.resize(ns, ne)</code>
-resizes p to ns sets with elements between zero ne.
-All of the ns sets are initially empty.
+resizes p to ns sets with elements between zero and ne.
+All of the sets are initially empty.
 \n
 <code>p.add_element(s, e)</code>
 add element e to set with index s.
@@ -66,17 +68,29 @@ in the row specified by the previous call to <code>pattern.begin</code>.
 If there are no more such columns, the value
 <code>pattern.end()</code> is returned.
 
-\param row [in]
+\param row [in/out]
 is a vector specifying which row indices to compute.
 
-\param col [in]
+\param col [in/out]
 is a vector, with the same size as row,
 that specifies which column indices to compute.
-For each  valid index k, the index pair
+\n
+\n
+Input:
+For each  valid index \c k, the index pair
 <code>(row[k], col[k])</code> must be present in the sparsity pattern.
 It may be that some entries in the sparsity pattern do not need to be computed;
 i.e, do not appear in the set of
 <code>(row[k], col[k])</code> entries.
+\n
+\n
+Output:
+On output, some of row and column indices may have been swapped
+\code
+	std::swap( row[k], col[k] )
+\endcode
+So the the the color for row[k] can be used to compute entry
+(row[k], col[k]).
 
 \param color [out]
 is a vector with size m.
@@ -85,10 +99,8 @@ Upon return, it is a coloring for the rows of the sparse matrix.
 \n
 \n
 Fix any (i, j) in the sparsity pattern.
-Furthermore suppose that there is an i1 with
-i1 != i, 
-color[i1] == color[i] and 
-(i1, j) is in the sparsity pattern.
+Suppose that there is a row index i1 with 
+i1 != i, color[i1] == color[i] and (i1, j) is in the sparsity pattern.
 If follows that for all j1 with
 j1 != j and color[j1] == color[j],
 (j1, i ) is not in the sparsity pattern.
@@ -215,99 +227,12 @@ void color_symmetric_cppad(
 	return;
 }
 
-# if CPPAD_HAS_COLPACK
 // --------------------------------------------------------------------------
 /*!
-Determine which rows of a symmetric sparse matrix can be computed together; 
-i.e., do not have non-zero overlapping values, or can be computed by the
-reflected entry.
+Colpack algorithm for determining which rows of a symmetric sparse matrix 
+can be computed together.
 
-\tparam VectorSize
-is a simple vector class with elements of type \c size_t.
-
-\tparam VectorSet
-is an unspecified type with the exception that it must support the
-operations under \c pattern and the following operations where
-\c p is a \c VectorSet object:
-\n
-<code>VectorSet p</code>
-Constructs a new vector of sets object.
-\n
-<code>p.resize(ns, ne)</code>
-resizes \p to \c ns sets with elements between zero \c ne.
-All of the \c ns sets are initially empty.
-\n
-<code>p.add_element(s, e)</code>
-add element \c e to set with index \c s.
-
-\param pattern [in]
-Is a representation of the sparsity pattern for the matrix.
-Note that \c color_general does not change the values in \c pattern,
-but it is not \c const because its iterator facility modifies some of its
-internal data.
-\n
-<code>m = pattern.n_set()</code>
-\n
-sets \c m to the number of rows in the sparse matrix.
-All of the row indices are less than this value. 
-\n
-<code>n = pattern.end()</code>
-\n
-sets \c n to the number of columns in the sparse matrix.
-All of the column indices are less than this value. 
-\n
-<code>pattern.begin(i)</code>
-instructs the iterator facility to start iterating over
-columns in the i-th row of the sparsity pattern.
-\n
-<code>j = pattern.next_element()</code>
-Sets \c j to the next possibly non-zero column 
-in the row specified by the previous call to <code>pattern.begin</code>.
-If there are no more such columns, the value
-<code>pattern.end()</code> is returned.
-
-\param row [in/out]
-is a vector specifying which row indices to compute.
-
-\param col [in/out]
-is a vector, with the same size as \c row,
-that specifies which column indices to compute.
-\n
-\par Input
-For each  valid index \c k, the index pair
-<code>(row[k], col[k])</code> must be present in the sparsity pattern.
-It may be that some entries in the sparsity pattern do not need to be computed;
-i.e, do not appear in the set of
-<code>(row[k], col[k])</code> entries.
-\n
-\par Output
-On output, some of row and column indices may have been swapped
-\code
-	std::swap( row[k], col[k] )
-\endcode
-So the the the color for row[k] can be used to compute entry
-(row[k], col[k]).
-
-\param color [out]
-is a vector with size \c m.
-The input value of its elements does not matter.
-Upon return, it is a coloring for the rows of the sparse matrix.
-\n
-\n
-If for come \c i, <code>color[i] == m</code>, then 
-the i-th row does not appear in the vector \c row.
-Otherwise, <code>color[i] < m</code>.
-\n
-\n
-Suppose two different rows, <code>i != r</code> have the same color and
-column index \c j is such that both of the pairs 
-<code>(i, j)</code> and <code>(r, j)</code> appear in the sparsity pattern.
-It follows that neither of these pairs appear in the set of
-<code>(row[k], col[k])</code> entries.
-\n
-\n
-This routine tries to minimize, with respect to the choice of colors,
-the maximum, with respct to \c k, of <code>color[ row[k] ]</code>.
+\copydetails color_symmetric_cppad
 */
 template <class VectorSet>
 void color_symmetric_colpack(
@@ -315,7 +240,12 @@ void color_symmetric_colpack(
 	CppAD::vector<size_t>&  row       ,
 	CppAD::vector<size_t>&  col       ,
 	CppAD::vector<size_t>&  color     )
-{	size_t i, j, k;	
+{
+# if ! CPPAD_HAS_COLPACK
+	CPPAD_ASSERT_UNKNOWN(false);
+	return;
+# else
+	size_t i, j, k;	
 	size_t m = pattern.n_set();
 	CPPAD_ASSERT_UNKNOWN( m == pattern.end() );
 	CPPAD_ASSERT_UNKNOWN( row.size() == col.size() );
@@ -375,7 +305,7 @@ void color_symmetric_colpack(
 		}
 	}
 	return;
-}
 # endif // CPPAD_HAS_COLPACK
+}
 
 # endif
