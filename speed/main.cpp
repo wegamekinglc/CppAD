@@ -270,7 +270,7 @@ size arguments used for the corresponding tests.
 The values $icode rate_1$$, ..., $icode rate_n$$ are the number of times
 per second that the corresponding size problem executed.
 
-$subhead Sparse$$
+$subhead n_sweep$$
 The $cref/sparse_jacobian/link_sparse_jacobian/$$ 
 and $cref/sparse_hessian/link_sparse_hessian/$$ tests has an extra output
 line with the following form
