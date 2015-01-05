@@ -1,4 +1,4 @@
-/* $Id$ */
+/* $Id: sparse_hessian.cpp 3136 2014-03-02 11:54:07Z bradbell $ */
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
 
@@ -30,8 +30,9 @@ bool link_sparse_hessian(
         size_t                           repeat     ,
         const CppAD::vector<size_t>&      row       ,
         const CppAD::vector<size_t>&      col       ,
-              CppAD::vector<double>&      x         ,
-              CppAD::vector<double>&      hessian
+        CppAD::vector<double>&            x         ,
+        CppAD::vector<double>&            hessian   ,
+        size_t&                           n_sweep
 )
 {
 	return false;
