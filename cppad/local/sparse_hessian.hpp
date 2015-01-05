@@ -3,7 +3,7 @@
 # define CPPAD_SPARSE_HESSIAN_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -421,7 +421,7 @@ size_t ADFun<Base>::SparseHessianCompute(
 		// execute coloring algorithm
 		color.resize(n);
 		if( work.color_method == "cppad" )
-			color_general_cppad(sparsity, row, col, color);
+			color_symmetric_cppad(sparsity, row, col, color);
 		else if( work.color_method == "colpack" )
 		{
 # if CPPAD_HAS_COLPACK
