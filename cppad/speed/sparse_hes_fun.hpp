@@ -116,12 +116,11 @@ and its size must be $latex K$$; i.e., the same as for $icode col$$.
 It specifies the second 
 index of $latex x$$ for the non-zero Hessian terms.
 All the elements of $icode col$$ must be between zero and $icode%n%-1%$$.
-$pre
-
-$$
-If $icode%k1% != %k2%$$ then either
-$icode%row%[%k1%] != %row%[%k2%]%$$ or
-$icode%col%[%k1%] != %col%[%k2%]%$$.
+There are no duplicated entries requested, to be specific,
+if $icode%k1% != %k2%$$ then 
+$codei%
+	( %row%[%k1%] , %col%[%k1%] ) != ( %row%[%k2%] , %col%[%k2%] ) 
+%$$
 
 $head p$$
 The argument $icode p$$ has prototype
@@ -147,7 +146,7 @@ $subhead Hessian$$
 If $icode p$$ is two, $icode fp$$ has size $icode K$$ and
 for $latex k = 0 , \ldots , K-1$$,
 $latex \[
-	\DD{f}{row[k]}{col[k]} = fp [k]
+	\DD{f}{ x[ \R{row}[k] ] }{ x[ \R{col}[k] ]} = fp [k]
 \] $$
 
 $children%
@@ -217,6 +216,21 @@ namespace CppAD {
 			}
 		}
 
+		// determine which entries must be multiplied by a factor of two
+		CppAD::vector<Float> factor(K);
+		for(k = 0; k < K; k++)
+		{	factor[k] = Float(1); 
+			for(size_t k1 = 0; k1 < K; k1++)
+			{	bool reflected = true;
+				reflected &= k != k1;
+				reflected &= row[k] != col[k];
+				reflected &= row[k] == col[k1];
+				reflected &= col[k] == row[k1];	
+				if( reflected )
+					factor[k] = Float(2);
+			}
+		}
+
 		Float t;
 		for(k = 0; k < K; k++)
 		{	i    = row[k];
@@ -235,7 +249,7 @@ namespace CppAD {
 				}
 				else
 				{	// dt_dxi = xj * t
-					fp[k] += ( Float(1) + x[i] * x[j] ) * t;
+					fp[k] += factor[k] * ( Float(1) + x[i] * x[j] ) * t;
 					if( diagonal[i] != K )
 					{	size_t ki = diagonal[i];
 						fp[ki] += x[j] * x[j] * t;

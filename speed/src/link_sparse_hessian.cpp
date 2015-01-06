@@ -99,34 +99,24 @@ Its size must be the same as $icode row$$; i.e., $latex K$$.
 It contains the column indices for the corresponding function 
 $latex f(x)$$.
 All the elements of $icode col$$ are between zero and $latex n-1$$.
-$pre
-
-$$
-There are no duplicate row and column entires; i.e., if $icode%j% != %k%$$,
+There are no duplicated entries requested, to be specific,
+if $icode%k1% != %k2%$$ then 
 $codei%
-	%row%[%j%] != %row%[%k%] || %col%[%j%] != %col%[%k%]
+	( %row%[%k1%] , %col%[%k1%] ) != ( %row%[%k2%] , %col%[%k2%] ) 
 %$$
-Only the lower triangle of the Hessian is included in the indices; i.e.,
-$codei%row%[%k%] >= %col%[%k%]%$$.
-Furthermore, for all the non-zero entries in the lower triangle
-are included; i.e., if $latex i \geq j$$ and
-$latex \DD{f}{x[i]}{x[j]} \neq 0$$,
-there is an index $icode k$$ such that
-$icode%i% = %row%[%k%]%$$ and
-$icode%j% = %col%[%k%]%$$.
 
 $head hessian$$
 The argument $icode hessian$$ has prototype
 $codei%
 	CppAD::vector<double>&  hessian
 %$$
-and its size is $latex n \times n$$.
+and its size is $icode K$$.
 The input value of its elements does not matter. 
 The output value of its elements is the Hessian of the function $latex f(x)$$.
 To be more specific, for
 $latex k = 0 , \ldots , K-1$$,
 $latex \[
-	\DD{f}{x[row[k]]}{x[col[k]]} (x) = hessian [k] 
+	\DD{f}{ x[ \R{row}[k] ] }{ x[ \R{col}[k] ]} = \R{hessian} [k]
 \] $$
 
 $head n_sweep$$
@@ -280,10 +270,11 @@ the argument at which the Hessian was evaluated during the last repetition.
 is the row indices correpsonding to non-zero Hessian entries.
 
 \param col [in]
-is the column indices corresponding to non-zero Hessian entries.
+is the column indices corresponding to non-zero Hessian entries;
+col.size() == row.size().
 
 \param hessian [out]
-is a vector with size <code>n * n</code> 
+is a vector, with hessian.size() == row.size(),
 containing the value of the Hessian of f(x) 
 corresponding to the last repetition.
 
