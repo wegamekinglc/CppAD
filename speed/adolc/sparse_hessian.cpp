@@ -136,7 +136,7 @@ bool link_sparse_hessian(
 		rind   = CPPAD_NULL;
 		cind   = CPPAD_NULL;
 		values = CPPAD_NULL;
-		n_sweep = sparse_hess(tag, int(n), 
+		sparse_hess(tag, int(n),
 			same_pattern, x, &nnz, &rind, &cind, &values, options
 		);
 		size_t K = row.size();
@@ -181,7 +181,7 @@ bool link_sparse_hessian(
 			CppAD::uniform_01(n, x);
 
 			// calculate the hessian at this x
-			n_sweep = sparse_hess(tag, int(n), 
+			sparse_hess(tag, int(n),
 				same_pattern, x, &nnz, &rind, &cind, &values, options
 			);
 			same_pattern = 1;
@@ -204,6 +204,9 @@ bool link_sparse_hessian(
 	// return argument 
 	for(j = 0; j < n; j++)
 		x_return[j] = x[j];
+
+	// do not know how to return number of sweeps used
+	n_sweep = 0;
 
 	// tear down
 	thread_alloc::delete_array(a_x);

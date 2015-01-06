@@ -206,49 +206,29 @@ namespace {
 		size_t          n   ,
 		vector<size_t>& row , 
 		vector<size_t>& col )
-	{	size_t r, c, k, K = 5 * n;
+	{	size_t i, j, k, ell;
+		size_t max_per_row = 5;
 
-		// get the random indices
-		vector<double>  random(2 * K);
-		CppAD::uniform_01(2 * K, random);
-
-		// sort the temporary row and colunn choices
-		vector<Key>   keys(K + n);
-		vector<size_t> ind(K + n);
-		for(k = 0; k < K; k++)
-		{	r = size_t( n * random[k] );
-			r = std::min(n-1, r);
-			//
-			c = size_t( n * random[k + K] );
-			c = std::min(n-1, c);
-			//
-			// force to lower triangle
-			if( c > r )
-				std::swap(r, c);
-			//
-			keys[k] = Key(r, c);
-		}
-		// include the diagonal
-		for(k = 0; k < n; k++)
-			keys[k + K] = Key(n / 2, k);  
-		CppAD::index_sort(keys, ind);
-
-		// remove duplicates while setting the return value for row and col
+		// generate the row and column indices
 		row.resize(0);
 		col.resize(0);
-		size_t r_previous = keys[ ind[0] ].row_;
-		size_t c_previous = keys[ ind[0] ].col_;
-		row.push_back(r_previous);
-		col.push_back(c_previous);
-		for(k = 1; k < K; k++)
-		{	r = keys[ ind[k] ].row_;
-			c = keys[ ind[k] ].row_;
-			if( r != r_previous || c != c_previous)
-			{	row.push_back(r);
-				col.push_back(c);
+		for(i = 0; i < n; i++)
+		{	// generate max_per_row random column indices between 0 and i
+			vector<double> random(max_per_row);
+			CppAD::uniform_01(max_per_row, random);
+
+			// set the indices for this row 
+			size_t k_start = col.size();
+			for(ell = 0; ell < max_per_row; ell++)
+			{	j = std::min(i, size_t(random[ell] * i) );
+				bool ok = true;
+				for(k = k_start; k < col.size(); k++)
+					ok &= j != col[k];
+				if( ok )
+				{	row.push_back(i);
+					col.push_back(j);
+				}
 			}
-			r_previous = r;
-			c_previous = c;
 		}
 	}
 }

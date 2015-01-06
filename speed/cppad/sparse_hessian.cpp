@@ -210,12 +210,13 @@ bool link_sparse_hessian(
 		{	// choose a value for x
 			CppAD::uniform_01(n, x);
 
-			// calculate sparsity at this x
-			if( global_boolsparsity )
-				f.SparseHessian(x, w, bool_sparsity, row, col, hessian, work);
-			else
-				f.SparseHessian(x, w, set_sparsity, row, col, hessian, work);
-
+			// calculate hessian at this x
+			if( global_boolsparsity ) n_sweep = f.SparseHessian(
+				x, w, bool_sparsity, row, col, hessian, work
+			);
+			else n_sweep = f.SparseHessian(
+				x, w, set_sparsity, row, col, hessian, work
+			);
 		}
 	}
 	return true;
