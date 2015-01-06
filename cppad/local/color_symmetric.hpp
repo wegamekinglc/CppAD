@@ -35,11 +35,11 @@ p is a VectorSet object:
 Constructs a new vector of sets object.
 \n
 <code>p.resize(ns, ne)</code>
-resizes p to ns sets with elements between zero and ne.
+resizes \c p to ns sets with elements between zero and \c ne.
 All of the sets are initially empty.
 \n
 <code>p.add_element(s, e)</code>
-add element e to set with index s.
+add element \c e to set with index \c s.
 
 \param pattern [in]
 Is a representation of the sparsity pattern for the matrix.
@@ -96,6 +96,8 @@ So the the the color for row[k] can be used to compute entry
 is a vector with size m.
 The input value of its elements does not matter.
 Upon return, it is a coloring for the rows of the sparse matrix.
+Note that if color[i] == m, then ther is no index k for which
+row[k] == i (for the return value of row).
 \n
 \n
 Fix any (i, j) in the sparsity pattern.
@@ -107,8 +109,7 @@ j1 != j and color[j1] == color[j],
 \n
 \n
 This routine tries to minimize, with respect to the choice of colors,
-the maximum, with respct to k, of <code>color[ row[k] ]</code>,
-not counting the indices where row[k] == m.
+the maximum, with respect to k, of <code>color[ row[k] ]</code>.
 */
 template <class VectorSet>
 void color_symmetric_cppad(
@@ -222,7 +223,10 @@ void color_symmetric_cppad(
 			if( row2order[j1] > o1 )
 			{	itr2 = pair_needed[j1].find(i1);
 				if( itr2 != pair_needed[j1].end() )
-					pair_needed[j1].erase(itr2);
+				{	pair_needed[j1].erase(itr2);
+					if( pair_needed[j1].empty() )
+						color[j1] = m;
+				}
 			}
 			itr1++;
 		}

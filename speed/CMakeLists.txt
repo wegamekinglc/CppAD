@@ -1,6 +1,6 @@
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the 
@@ -18,7 +18,7 @@ SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
 # Specify build type for this directory and all its subdirectories. 
 # Possible values are DEBUG, RELEASE, RelWithDebInfo and MinSizeRel
-SET(CMAKE_BUILD_TYPE RELEASE)
+SET(CMAKE_BUILD_TYPE DEBUG)
 
 # colpack_prefix
 SET(sources ../../cppad/local/cppad_colpack.cpp)

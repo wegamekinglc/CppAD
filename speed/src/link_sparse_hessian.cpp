@@ -1,6 +1,6 @@
 /* $Id: link_sparse_hessian.cpp 3223 2014-03-19 15:13:26Z bradbell $ */
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -124,10 +124,9 @@ and its size is $latex n \times n$$.
 The input value of its elements does not matter. 
 The output value of its elements is the Hessian of the function $latex f(x)$$.
 To be more specific, for
-$latex i = 0 , \ldots , n-1$$,
-$latex j = 0 , \ldots , n-1$$,
+$latex k = 0 , \ldots , K-1$$,
 $latex \[
-	\DD{f}{x[i]}{x[j]} (x) = hessian [ i * n + j ]
+	\DD{f}{x[row[k]]}{x[col[k]]} (x) = hessian [k] 
 \] $$
 
 $head n_sweep$$
@@ -241,7 +240,7 @@ namespace {
 		}
 		// include the diagonal
 		for(k = 0; k < n; k++)
-			keys[k + K] = Key(k, k);  
+			keys[k + K] = Key(n / 2, k);  
 		CppAD::index_sort(keys, ind);
 
 		// remove duplicates while setting the return value for row and col
@@ -318,9 +317,10 @@ bool available_sparse_hessian(void)
 	size_t n      = 2;
 	size_t repeat = 1;
 	vector<double> x(n);
-	vector<double> hessian(n * n);
 	vector<size_t> row, col; 
 	choose_row_col(n, row, col);
+	size_t K = row.size();
+	vector<double> hessian(K);
 
 	size_t n_sweep;
 	return link_sparse_hessian(n, repeat, row, col, x, hessian, n_sweep);
@@ -340,9 +340,10 @@ bool correct_sparse_hessian(bool is_package_double)
 	size_t n      = 10;
 	size_t repeat = 1;
 	vector<double> x(n);
-	vector<double> hessian(n * n);
 	vector<size_t> row, col;
 	choose_row_col(n, row, col);
+	size_t K = row.size();
+	vector<double> hessian(K);
 
 	size_t n_sweep;
 	link_sparse_hessian(n, repeat, row, col, x, hessian, n_sweep);
@@ -354,7 +355,7 @@ bool correct_sparse_hessian(bool is_package_double)
 	}
 	else
 	{	order = 2;     // check hessian value
-		size  = n * n;
+		size  = K;
 	}
 	CppAD::vector<double> check(size);
 	CppAD::sparse_hes_fun<double>(n, x, row, col, order, check);
@@ -378,9 +379,10 @@ is the number of times to repeate the speed test.
 void speed_sparse_hessian(size_t size, size_t repeat)
 {	size_t n = size;	
 	vector<double> x(n);
-	vector<double> hessian(n * n);
 	vector<size_t> row, col;
 	choose_row_col(n, row, col);
+	size_t K = row.size();
+	vector<double> hessian(K);
 
 	// note that cppad/sparse_hessian.cpp assumes that x.size() == size
 	size_t n_sweep;
@@ -408,9 +410,9 @@ void info_sparse_hessian(size_t size, size_t& n_sweep)
 	// note that cppad/sparse_jacobian.cpp assumes that x.size()
 	// is the size corresponding to this test
 	vector<double> x(n);
-	vector<double> hessian(n * n);
+	size_t K = row.size();
+	vector<double> hessian(K);
 	link_sparse_hessian(n, repeat, row, col, x, hessian, n_sweep);
 	return;
 }
-
 
