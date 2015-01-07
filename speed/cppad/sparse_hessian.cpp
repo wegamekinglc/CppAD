@@ -166,7 +166,7 @@ bool link_sparse_hessian(
 		CppAD::sparse_hessian_work work;
 # ifdef CPPAD_COLPACK_SPEED
 		if( global_colpack )
-			work.color_method = "colpack";
+			work.color_method = "colpack.star";
 # endif
 		// calculate this Hessian at this x
 		if( global_boolsparsity) n_sweep = f.SparseHessian(
@@ -204,7 +204,7 @@ bool link_sparse_hessian(
 		CppAD::sparse_hessian_work work;
 # ifdef CPPAD_COLPACK_SPEED
 		if( global_colpack )
-			work.color_method = "colpack";
+			work.color_method = "colpack.star";
 # endif
 		while(repeat--)
 		{	// choose a value for x
