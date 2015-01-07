@@ -191,7 +191,7 @@ bool link_sparse_hessian(
 		{	i = size_t(rind[ell]);
 			j = size_t(cind[ell]);
 			for(k = 0; k < K; k++)
-			{	if( row[k] == i && col[k] == j )
+			{	if( (row[k]==i && col[k]==j) || (row[k]==j && col[k]==i) )
 					hessian[k] = values[ell];
 			}
 		}
