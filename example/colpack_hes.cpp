@@ -122,14 +122,14 @@ bool colpack_hes(void)
 	d_vector hes(K);
 
 	// contrast and check results using both cppad and colpack
-	for(size_t i_method = 0; i_method < 2; i_method++)
+	for(size_t i_method = 0; i_method < 3; i_method++)
 	{	// empty work structure
 		CppAD::sparse_hessian_work work;
-		ok &= work.color_method == "cppad";
+		ok &= work.color_method == "cppad.symmetric";
 		if( i_method == 1 )
-		{	// use ColPack
-			work.color_method = "colpack";
-		}
+			work.color_method = "cppad.general";
+		if( i_method == 2 )
+			work.color_method = "colpack.star";
 
 		// compute Hessian
 		d_vector w(m);
@@ -141,7 +141,10 @@ bool colpack_hes(void)
 		{	ell = row[k] * n + col[k];
 			ok &= NearEqual(check[ell], hes[k], eps, eps);
 		}
-		ok &= n_sweep == 2;
+		if( work.color_method != "cppad.general" )
+			ok &= n_sweep == 2;
+		else
+			ok &= n_sweep == 5;
 	}
 
 	return ok;

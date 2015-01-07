@@ -1,6 +1,6 @@
 $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -29,6 +29,16 @@ assist you in learning about changes between various versions of CppAD.
 
 $head color_hes Branch$$
 $list number$$
+Specify the type of 
+$cref/coloring/sparse_hessian/work/color_method/$$
+for the sparse hessian calculations. 
+To be specific, instead of $code "cppad"$$ and $code "colpack"$$,
+the choices are $code "cppad.symmetric"$$, $code "cppad.general"$$,
+and $code "colpack.star"$$.
+This is not compatible with the change on 
+$cref/01-02/whats_new_15/01-02/$$, which was so recent 
+that this should not be a problem.
+$lnext
 The $cref/n_sweep/link_sparse_hessian/n_sweep/$$ values were
 not begin returned properly by
 $cref cppad_sparse_hessian.cpp$$ and
