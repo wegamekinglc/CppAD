@@ -3,7 +3,7 @@
 # define CPPAD_AD_FUN_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -397,11 +397,9 @@ public:
 		return dep_parameter_[i]; 
 	}
 
-# ifndef NDEBUG
-	/// in not NDEBUG case, number of comparison operations that change
+	/// how many comparision operations have a different result
 	size_t CompareChange(void) const
 	{	return compare_change_; }
-# endif
 
 	/// calculate entire Jacobian
 	template <typename VectorBase>

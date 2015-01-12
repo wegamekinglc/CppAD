@@ -1,6 +1,6 @@
 /* $Id$ */
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -18,7 +18,6 @@ Old CompareChange example and test, now just used for validation testing
 
 bool CompareChange(void)
 {	bool ok = true;
-# ifndef NDEBUG
 
 	using namespace CppAD;
 
@@ -286,6 +285,5 @@ bool CompareChange(void)
 	// done with this function
 	delete f;
 
-# endif
 	return ok;
 }

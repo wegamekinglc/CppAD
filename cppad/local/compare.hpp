@@ -3,7 +3,7 @@
 # define CPPAD_COMPARE_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -184,16 +184,6 @@ void ADTape<Base>::RecordCompare(
 }
 
 // -------------------------------- < -------------------------
-# ifdef NDEBUG
-
-template <class Base>
-CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
-bool operator < (const AD<Base> &left , const AD<Base> &right)
-{	bool result =  (left.value_ < right.value_); 
-	return result;
-}
-
-# else
 template <class Base>
 CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 bool operator < (const AD<Base> &left , const AD<Base> &right)
@@ -210,22 +200,11 @@ bool operator < (const AD<Base> &left , const AD<Base> &right)
 
 	return result;
 }
-# endif
 
 // convert other cases into the case above
 CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(<)
 
 // -------------------------------- <= -------------------------
-# ifdef NDEBUG
-
-template <class Base>
-CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
-bool operator <= (const AD<Base> &left , const AD<Base> &right)
-{ 	bool result =  (left.value_ <= right.value_); 
-	return result;
-}
-
-# else
 template <class Base>
 CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 bool operator <= (const AD<Base> &left , const AD<Base> &right)
@@ -242,23 +221,12 @@ bool operator <= (const AD<Base> &left , const AD<Base> &right)
 
 	return result;
 }
-# endif
 
 // convert other cases into the case above
 CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(<=)
 
 
 // -------------------------------- > -------------------------
-# ifdef NDEBUG
-
-template <class Base>
-CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
-bool operator > (const AD<Base> &left , const AD<Base> &right)
-{	bool result =  (left.value_ > right.value_); 
-	return result;
-}
-
-# else
 template <class Base>
 CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 bool operator > (const AD<Base> &left , const AD<Base> &right)
@@ -276,22 +244,11 @@ bool operator > (const AD<Base> &left , const AD<Base> &right)
 
 	return result;
 }
-# endif
 
 // convert other cases into the case above
 CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(>)
 
 // -------------------------------- >= -------------------------
-# ifdef NDEBUG
-
-template <class Base>
-CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
-bool operator >= (const AD<Base> &left , const AD<Base> &right)
-{ 	bool result =  (left.value_ >= right.value_); 
-	return result;
-}
-
-# else
 template <class Base>
 CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 bool operator >= (const AD<Base> &left , const AD<Base> &right)
@@ -308,23 +265,12 @@ bool operator >= (const AD<Base> &left , const AD<Base> &right)
 
 	return result;
 }
-# endif
 
 // convert other cases into the case above
 CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(>=)
 
 
 // -------------------------------- == -------------------------
-# ifdef NDEBUG
-
-template <class Base>
-CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
-bool operator == (const AD<Base> &left , const AD<Base> &right)
-{	bool result =  (left.value_ == right.value_); 
-	return result;
-}
-
-# else 
 template <class Base>
 CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 bool operator == (const AD<Base> &left , const AD<Base> &right)
@@ -341,22 +287,11 @@ bool operator == (const AD<Base> &left , const AD<Base> &right)
 
 	return result;
 }
-# endif
 
 // convert other cases into the case above
 CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(==)
 
 // -------------------------------- != -------------------------
-# ifdef NDEBUG
-
-template <class Base>
-CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
-bool operator != (const AD<Base> &left , const AD<Base> &right)
-{	bool result =  (left.value_ != right.value_);
-	return result;
-}
-
-# else
 template <class Base>
 CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 bool operator != (const AD<Base> &left , const AD<Base> &right)
@@ -373,7 +308,6 @@ bool operator != (const AD<Base> &left , const AD<Base> &right)
 
 	return result;
 }
-# endif
 
 // convert other cases into the case above
 CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(!=)

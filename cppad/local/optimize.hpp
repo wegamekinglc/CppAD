@@ -3,7 +3,7 @@
 # define CPPAD_OPTIMIZE_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -87,11 +87,6 @@ $codei%
 %$$ 
 See the discussion about
 $cref/sequence constructors/FunConstruct/Sequence Constructor/$$.
-
-$head Comparison Operators$$
-Any comparison operators that are in the tape are removed by this operation.
-Hence the return value of $cref CompareChange$$ will always be zero
-for an optimized tape (even if $code NDEBUG$$ is not defined).
 
 $head Atomic Functions$$
 There are some subtitle issue with optimized $cref atomic$$ functions
@@ -2089,7 +2084,7 @@ void optimize_run(
 		// operation sequence
 		bool keep;
 		switch( op )
-		{	case ComOp:
+		{	// case ComOp: (see wish_list/Optimize/CompareChange entry.
 			case PriOp:
 			keep = false;
 			break;
@@ -2402,6 +2397,28 @@ void optimize_run(
 			// Operations with no arguments and no results
 			case EndOp:
 			CPPAD_ASSERT_NARG_NRES(op, 0, 0);
+			rec->PutOp(op);
+			break;
+			// ---------------------------------------------------
+			// Operations with 4 arguments and no results
+			case ComOp:
+			CPPAD_ASSERT_NARG_NRES(op, 4, 0);
+			new_arg[0] = arg[0];
+			new_arg[1] = arg[1];
+			if( arg[1] & 2 )
+				new_arg[2] = tape[arg[2]].new_var;
+			else
+				new_arg[2] = rec->PutPar( play->GetPar(arg[2]) );
+			if( arg[1] & 4 )
+				new_arg[3] = tape[arg[3]].new_var;
+			else
+				new_arg[3] = rec->PutPar( play->GetPar(arg[3]) );
+			rec->PutArg(
+				new_arg[0] ,
+				new_arg[1] ,
+				new_arg[2] ,
+				new_arg[3]
+			);
 			rec->PutOp(op);
 			break;
 			// ---------------------------------------------------
