@@ -1,6 +1,6 @@
 /* $Id$ */
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -34,21 +34,24 @@ namespace {
 	void fun(const Float& x, Float& y, size_t& n_var, size_t& n_opt)
 	{	using CppAD::exp;
 
-	 	// Create a variable that is optimized out because 
-	 	// it is only used in the comparision operation.
+	 	// Create a variable that is is only used in the comparision operation
+		// (was optimized out until 2015-01-12).
 		Float a = 1. / x;
 		n_var += 1;
-		n_opt += 0;
+		n_opt += 1;
 
 		// Create a variable that is used by the result
 		Float b = x * 5.;
 		n_var += 1;
 		n_opt += 1;
 
+		// only one variable created for this comparison operation
+		// but the value depends on which branch is taken.
 		Float c;
 		if( a < x )  
-			c = b / 3.; // only one variable created by this choice
-		else	c = b / 2.;
+			c = 2.0 * b;
+		else
+			c = 3.0 * b;
 		n_var += 1;
 		n_opt += 1;
 
@@ -73,41 +76,46 @@ bool optimize(void)
 
 	// domain space vector
 	size_t n  = 1;
-	CPPAD_TESTVECTOR(AD<double>) X(n);
-	X[0]      = .5; 
+	CPPAD_TESTVECTOR(AD<double>) ax(n);
+	ax[0]      = .5; 
 
 	// declare independent variables and start tape recording
-	CppAD::Independent(X);
+	CppAD::Independent(ax);
 	size_t n_var = 1 + n; // one phantom variable at the beginning
 	size_t n_opt = 1 + n; // and one for each independent variable
 
 	// range space vector 
 	size_t m = 1;
-	CPPAD_TESTVECTOR(AD<double>) Y(m);
-	fun(X[0], Y[0], n_var, n_opt);
+	CPPAD_TESTVECTOR(AD<double>) ay(m);
+	fun(ax[0], ay[0], n_var, n_opt);
 
-	// create f: X -> Y and stop tape recording
-	CppAD::ADFun<double> F(X, Y);
-	ok &= (F.size_var() == n_var);
+	// create f: x -> y and stop tape recording
+	CppAD::ADFun<double> f(ax, ay);
+	ok &= (f.size_var() == n_var);
 
 	// Check zero order forward mode on the original operation sequence
 	CPPAD_TESTVECTOR(double) x(n), y(m);
-	x[0] = Value(X[0]);
-	size_t i = 0; // temporary variable (we do not use value)
-	double check;
-	fun(x[0], check, i, i);
-	y   = F.Forward(0, x);
-	ok &= (y[0] == check);
+	x[0] = Value(ax[0]);
+	y   = f.Forward(0, x);
+	ok &= f.CompareChange() == 0;
+	ok &= (y[0] == Value(ay[0]));
 
 	// Optimize the operation sequence
-	F.optimize();
-	ok &= (F.size_var() == n_opt);
+	f.optimize();
+	ok &= (f.size_var() == n_opt);
 
 	// Check result for a zero order calculation.
 	// This has already been checked if NDEBUG is not defined.
-	fun(x[0], check, i, i);
-	ok &= (y[0] == check);
-	y   = F.Forward(0, x);
+	y   = f.Forward(0, x);
+	ok &= f.CompareChange() == 0;
+	ok &= (y[0] == Value(ay[0]));
+
+	// Check when the result of the comparision would be differnent
+	x[0] = 2.0;
+	y   = f.Forward(0, x);
+	ok &= f.CompareChange() == 1;
+	ok &= (y[0] != Value(ay[0]));
+
 	return ok;
 }
 

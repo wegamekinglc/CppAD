@@ -1699,7 +1699,6 @@ void optimize_run(
 			break;  // --------------------------------------------
 
 			// Operations where there is nothing to do
-			case ComOp:
 			case EndOp:
 			case ParOp:
 			case PriOp:
@@ -1709,6 +1708,14 @@ void optimize_run(
 			case BeginOp:
 			case InvOp:
 			tape[i_var].connect_type = yes_connected;
+			break;
+
+			// Another operator that never gets removed
+			case ComOp:
+			if( arg[1] & 2 )
+				tape[arg[2]].connect_type = yes_connected;
+			if( arg[1] & 4 )
+				tape[arg[3]].connect_type = yes_connected;
 			break;
 
 			// Load using a parameter index
@@ -2084,7 +2091,10 @@ void optimize_run(
 		// operation sequence
 		bool keep;
 		switch( op )
-		{	// case ComOp: (see wish_list/Optimize/CompareChange entry.
+		{	case ComOp: // see wish_list/Optimize/CompareChange entry.
+			keep = true;
+			break;
+
 			case PriOp:
 			keep = false;
 			break;
