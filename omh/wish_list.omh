@@ -178,12 +178,12 @@ $subhead CompareChange$$
 The $code ComOp$$ operators are no longer removed by
 the $cref optimize$$ procedure (so that $cref CompareChange$$
 can be used after optimization).
-This caused a 5% slow down in the 
-$cref speed_cppad$$ tests (using the
-$cref/optimize/speed_main/option_list/optimize/$$ and
-$cref/onetape/speed_main/option_list/onetape/$$ options).
+This caused a significant slow down in the 
+$cref cppad_det_lu.cpp$$ speed test.
+For the other $cref speed_cppad$$ tests, this had little
+or no effect.
 Perhaps $code optimize$$ should have an option whereby
-these operators can be removed.
+the user can choose to have these operators removed.
 
 $subhead Expression Hashing$$
 During expression sequence $cref/optimization/optimize/$$,
