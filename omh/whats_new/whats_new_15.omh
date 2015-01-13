@@ -45,6 +45,9 @@ $codei%
 is called (it used to always return zero after $cref optimize$$).
 See the wish list
 $cref/optimize compare_change/WishList/Optimization/CompareChange/$$ entry.
+$lnext
+The $cref optimize.cpp$$ example was changed to include a demonstration
+of how $cref CompareChange$$ can be used with an optimized tape.
 $lend
 
 $head 01-09$$
