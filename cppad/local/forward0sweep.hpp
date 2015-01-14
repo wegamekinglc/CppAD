@@ -388,6 +388,20 @@ size_t forward0sweep(
 			break;
 			// -------------------------------------------------
 
+			case EqpvOp:
+			forward_eqpv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
+			break;
+			// -------------------------------------------------
+
+			case EqvvOp:
+			forward_eqvv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
+			break;
+			// -------------------------------------------------
+
 # if CPPAD_COMPILER_HAS_ERF
 			case ErfOp:
 			CPPAD_ASSERT_UNKNOWN( CPPAD_COMPILER_HAS_ERF );
@@ -492,6 +506,20 @@ size_t forward0sweep(
 			case MulpvOp:
 			CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < num_par );
 			forward_mulpv_op_0(i_var, arg, parameter, J, taylor);
+			break;
+			// -------------------------------------------------
+
+			case NepvOp:
+			forward_nepv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
+			break;
+			// -------------------------------------------------
+
+			case NevvOp:
+			forward_nevv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
 			break;
 			// -------------------------------------------------
 

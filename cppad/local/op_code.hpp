@@ -90,6 +90,8 @@ enum OpCode {
 	DivvpOp,  //      variable   / parameter
 	DivvvOp,  //      variable   / variable
 	EndOp,    //  used to mark the end of the tape
+	EqpvOp,   //  parameter  == variable
+	EqvvOp,   //  variable   == variable
 	ErfOp,    //  erf(variable)
 	ExpOp,    //  exp(variable)
 	InvOp,    //                             independent variable
@@ -104,6 +106,8 @@ enum OpCode {
 	LtvvOp,   //  variable  < variable
 	MulpvOp,  //      parameter  * variable
 	MulvvOp,  //      variable   * variable
+	NepvOp,   //  parameter  != variable
+	NevvOp,   //  variable   != variable
 	ParOp,    //      parameter
 	PowpvOp,  //  pow(parameter,   variable)
 	PowvpOp,  //  pow(variable,    parameter)
@@ -181,6 +185,8 @@ inline size_t NumArg( OpCode op)
 		2, // DivvpOp
 		2, // DivvvOp
 		0, // EndOp
+		2, // EqpvOp
+		2, // EqvvOp
 		3, // ErfOp
 		1, // ExpOp
 		0, // InvOp
@@ -195,6 +201,8 @@ inline size_t NumArg( OpCode op)
 		2, // LtvvOp
 		2, // MulpvOp
 		2, // MulvvOp
+		2, // NepvOp
+		2, // NevvOp
 		1, // ParOp
 		2, // PowpvOp
 		2, // PowvpOp
@@ -278,6 +286,8 @@ inline size_t NumRes(OpCode op)
 		1, // DivvpOp
 		1, // DivvvOp
 		0, // EndOp
+		0, // EqpvOp
+		0, // EqvvOp
 		5, // ErfOp
 		1, // ExpOp
 		1, // InvOp
@@ -292,6 +302,8 @@ inline size_t NumRes(OpCode op)
 		0, // LtvvOp
 		1, // MulpvOp
 		1, // MulvvOp
+		0, // NepvOp
+		0, // NevvOp
 		1, // ParOp
 		3, // PowpvOp
 		3, // PowvpOp
@@ -358,6 +370,8 @@ inline const char* OpName(OpCode op)
 		"Divvp" ,
 		"Divvv" ,
 		"End"   ,
+		"Eqpv"  ,
+		"Eqvv"  ,
 		"Erf"   ,
 		"Exp"   ,
 		"Inv"   ,
@@ -372,6 +386,8 @@ inline const char* OpName(OpCode op)
 		"Ltvv"  ,
 		"Mulpv" ,
 		"Mulvv" ,
+		"Nepv"  ,
+		"Nevv"  ,
 		"Par"   ,
 		"Powpv" ,
 		"Powvp" ,
@@ -631,6 +647,8 @@ void printOp(
 		case DivvvOp:
 		case LeqvvOp:
 		case LtvvOp:
+		case EqvvOp:
+		case NevvOp:
 		case MulvvOp:
 		case PowvvOp:
 		case SubvvOp:
@@ -642,6 +660,8 @@ void printOp(
 		case AddpvOp:
 		case LeqpvOp:
 		case LtpvOp:
+		case EqpvOp:
+		case NepvOp:
 		case SubpvOp:
 		case MulpvOp:
 		case PowpvOp:
@@ -892,6 +912,8 @@ inline void assert_arg_before_result(
 		// 2 arguments, no results
 		case LeqpvOp:
 		case LtpvOp:
+		case EqpvOp:
+		case NepvOp:
 		CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) <= result );
 		break;
 		// 
@@ -902,6 +924,8 @@ inline void assert_arg_before_result(
 		// 
 		case LeqvvOp:
 		case LtvvOp:
+		case EqvvOp:
+		case NevvOp:
 		CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) <= result );
 		CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) <= result );
 		break;

@@ -469,9 +469,16 @@ void ReverseSweep(
 			break;
 			// --------------------------------------------------
 
+			case EqpvOp:
+			case EqvvOp:
+			case LtpvOp:
+			case LtvpOp:
+			case LtvvOp:
 			case LeqpvOp:
 			case LeqvpOp:
 			case LeqvvOp:
+			case NepvOp:
+			case NevvOp:
 			break;
 			// -------------------------------------------------
 
@@ -479,12 +486,6 @@ void ReverseSweep(
 			reverse_log_op(
 				d, i_var, arg[0], J, Taylor, K, Partial
 			);
-			break;
-			// --------------------------------------------------
-
-			case LtpvOp:
-			case LtvpOp:
-			case LtvvOp:
 			break;
 			// --------------------------------------------------
 

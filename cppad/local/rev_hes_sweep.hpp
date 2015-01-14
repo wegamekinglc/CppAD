@@ -409,9 +409,16 @@ void RevHesSweep(
 			break;
 			// -------------------------------------------------
 
+			case EqpvOp:
+			case EqvvOp:
+			case LtpvOp:
+			case LtvpOp:
+			case LtvvOp:
 			case LeqpvOp:
 			case LeqvpOp:
 			case LeqvvOp:
+			case NepvOp:
+			case NevvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			break;
 			// -------------------------------------------------
@@ -421,13 +428,6 @@ void RevHesSweep(
 			reverse_sparse_hessian_nonlinear_unary_op(
 			i_var, arg[0], RevJac, for_jac_sparse, rev_hes_sparse
 			);
-			break;
-			// -------------------------------------------------
-
-			case LtpvOp:
-			case LtvpOp:
-			case LtvvOp:
-			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			break;
 			// -------------------------------------------------
 

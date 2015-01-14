@@ -383,9 +383,16 @@ void ForJacSweep(
 			break;
 			// -------------------------------------------------
 
+			case EqpvOp:
+			case EqvvOp:
+			case LtpvOp:
+			case LtvpOp:
+			case LtvvOp:
 			case LeqpvOp:
 			case LeqvpOp:
 			case LeqvvOp:
+			case NepvOp:
+			case NevvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			break;
 			// -------------------------------------------------
@@ -395,13 +402,6 @@ void ForJacSweep(
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[0], var_sparsity
 			);
-			break;
-			// -------------------------------------------------
-
-			case LtpvOp:
-			case LtvpOp:
-			case LtvvOp:
-			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			break;
 			// -------------------------------------------------
 

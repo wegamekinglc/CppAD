@@ -390,20 +390,41 @@ CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(>=)
 template <class Base>
 CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 bool operator == (const AD<Base> &left , const AD<Base> &right)
-{	bool result =  (left.value_ == right.value_);
+{ 	bool result    =  (left.value_ == right.value_);
+	bool var_left  = Variable(left);
+	bool var_right = Variable(right);
 
 	ADTape<Base> *tape = CPPAD_NULL;
-	if( Variable(left) )
-		tape = left.tape_this();
-	else if ( Variable(right) )
-		tape = right.tape_this();
-
-	if( tape != CPPAD_NULL )
-		tape->RecordCompare(CompareEq, result, left, right);
+	if( var_left )
+	{	tape = left.tape_this();
+		if( var_right )
+		{	if( result )
+				tape->Rec_.PutOp(EqvvOp);
+			else
+				tape->Rec_.PutOp(NevvOp);
+			tape->Rec_.PutArg(left.taddr_, right.taddr_);
+		}
+		else
+		{	addr_t arg1 = tape->Rec_.PutPar(right.value_);
+			if( result )
+				tape->Rec_.PutOp(EqpvOp);
+			else
+				tape->Rec_.PutOp(NepvOp);
+			tape->Rec_.PutArg(arg1, left.taddr_);
+		}
+	}
+	else if ( var_right )
+	{	tape = right.tape_this();
+		addr_t arg0 = tape->Rec_.PutPar(left.value_);
+		if( result )
+			tape->Rec_.PutOp(EqpvOp);
+		else
+			tape->Rec_.PutOp(NepvOp);
+		tape->Rec_.PutArg(arg0, right.taddr_);
+	}
 
 	return result;
 }
-
 // convert other cases into the case above
 CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(==)
 
@@ -411,20 +432,41 @@ CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(==)
 template <class Base>
 CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 bool operator != (const AD<Base> &left , const AD<Base> &right)
-{	bool result =  (left.value_ != right.value_);
+{ 	bool result    =  (left.value_ != right.value_);
+	bool var_left  = Variable(left);
+	bool var_right = Variable(right);
 
 	ADTape<Base> *tape = CPPAD_NULL;
-	if( Variable(left) )
-		tape = left.tape_this();
-	else if ( Variable(right) )
-		tape = right.tape_this();
-
-	if( tape != CPPAD_NULL )
-		tape->RecordCompare(CompareNe, result, left, right);
+	if( var_left )
+	{	tape = left.tape_this();
+		if( var_right )
+		{	if( result )
+				tape->Rec_.PutOp(NevvOp);
+			else
+				tape->Rec_.PutOp(EqvvOp);
+			tape->Rec_.PutArg(left.taddr_, right.taddr_);
+		}
+		else
+		{	addr_t arg1 = tape->Rec_.PutPar(right.value_);
+			if( result )
+				tape->Rec_.PutOp(NepvOp);
+			else
+				tape->Rec_.PutOp(EqpvOp);
+			tape->Rec_.PutArg(arg1, left.taddr_);
+		}
+	}
+	else if ( var_right )
+	{	tape = right.tape_this();
+		addr_t arg0 = tape->Rec_.PutPar(left.value_);
+		if( result )
+			tape->Rec_.PutOp(NepvOp);
+		else
+			tape->Rec_.PutOp(EqpvOp);
+		tape->Rec_.PutArg(arg0, right.taddr_);
+	}
 
 	return result;
 }
-
 // convert other cases into the case above
 CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(!=)
 

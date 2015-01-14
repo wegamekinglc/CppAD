@@ -388,9 +388,16 @@ size_t forward2sweep(
 			break;
 			// ---------------------------------------------------
 
+			case EqpvOp:
+			case EqvvOp:
+			case LtpvOp:
+			case LtvpOp:
+			case LtvvOp:
 			case LeqpvOp:
 			case LeqvpOp:
 			case LeqvvOp:
+			case NepvOp:
+			case NevvOp:
 			CPPAD_ASSERT_UNKNOWN(q > 0 );
 			break;
 			// -------------------------------------------------
@@ -399,13 +406,6 @@ size_t forward2sweep(
 			forward_log_op_dir(q, r, i_var, arg[0], J, taylor);
 			break;
 			// ---------------------------------------------------
-
-			case LtpvOp:
-			case LtvpOp:
-			case LtvvOp:
-			CPPAD_ASSERT_UNKNOWN(q > 0 );
-			break;
-			// -------------------------------------------------
 
 			case MulvvOp:
 			forward_mulvv_op_dir(q, r, i_var, arg, parameter, J, taylor);

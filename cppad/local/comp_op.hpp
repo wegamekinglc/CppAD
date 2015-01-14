@@ -167,7 +167,7 @@ inline void forward_comp_op_0(
 	}
 	return;
 }
-// -----------------------------------------------------------------------
+// -------------------------------- <= -----------------------------------
 template <class Base>
 inline void forward_leqpv_op_0(
 	size_t&       count       ,
@@ -222,7 +222,7 @@ inline void forward_leqvv_op_0(
 
 	count += GreaterThanZero(x[0] - y[0]);
 }
-// -----------------------------------------------------------------------
+// ------------------------------- < -------------------------------------
 template <class Base>
 inline void forward_ltpv_op_0(
 	size_t&       count       ,
@@ -276,6 +276,80 @@ inline void forward_ltvv_op_0(
 	Base* y = taylor + arg[1] * cap_order;
 
 	count += GreaterThanOrZero(x[0] - y[0]);
+}
+// ------------------------------ == -------------------------------------
+template <class Base>
+inline void forward_eqpv_op_0(
+	size_t&       count       ,
+	const addr_t* arg         ,
+	const Base*   parameter   ,
+	size_t        cap_order   ,
+	Base*         taylor      )
+{
+	// check assumptions
+	CPPAD_ASSERT_UNKNOWN( NumArg(EqpvOp) == 2 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(EqpvOp) == 0 );
+
+	// Taylor coefficients corresponding to arguments and result
+	Base  x = parameter[ arg[0] ];
+	Base* y = taylor + arg[1] * cap_order;
+
+	count += (x != y[0]);
+}
+template <class Base>
+inline void forward_eqvv_op_0(
+	size_t&       count       ,
+	const addr_t* arg         ,
+	const Base*   parameter   ,
+	size_t        cap_order   ,
+	Base*         taylor      )
+{
+	// check assumptions
+	CPPAD_ASSERT_UNKNOWN( NumArg(EqvvOp) == 2 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(EqvvOp) == 0 );
+
+	// Taylor coefficients corresponding to arguments and result
+	Base* x = taylor + arg[0] * cap_order;
+	Base* y = taylor + arg[1] * cap_order;
+
+	count += (x[0] != y[0]);
+}
+// -------------------------------- != -----------------------------------
+template <class Base>
+inline void forward_nepv_op_0(
+	size_t&       count       ,
+	const addr_t* arg         ,
+	const Base*   parameter   ,
+	size_t        cap_order   ,
+	Base*         taylor      )
+{
+	// check assumptions
+	CPPAD_ASSERT_UNKNOWN( NumArg(NepvOp) == 2 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(NepvOp) == 0 );
+
+	// Taylor coefficients corresponding to arguments and result
+	Base  x = parameter[ arg[0] ];
+	Base* y = taylor + arg[1] * cap_order;
+
+	count += (x == y[0]);
+}
+template <class Base>
+inline void forward_nevv_op_0(
+	size_t&       count       ,
+	const addr_t* arg         ,
+	const Base*   parameter   ,
+	size_t        cap_order   ,
+	Base*         taylor      )
+{
+	// check assumptions
+	CPPAD_ASSERT_UNKNOWN( NumArg(NevvOp) == 2 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(NevvOp) == 0 );
+
+	// Taylor coefficients corresponding to arguments and result
+	Base* x = taylor + arg[0] * cap_order;
+	Base* y = taylor + arg[1] * cap_order;
+
+	count += (x[0] == y[0]);
 }
 
 

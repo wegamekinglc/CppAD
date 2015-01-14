@@ -357,15 +357,6 @@ size_t forward1sweep(
 			break;
 			// -------------------------------------------------
 
-# if CPPAD_COMPILER_HAS_ERF
-			case ErfOp:
-			CPPAD_ASSERT_UNKNOWN( CPPAD_COMPILER_HAS_ERF );
-			// 2DO: implement zero order version of this function
-			forward_erf_op(p, q, i_var, arg, parameter, J, taylor);
-			break;
-# endif
-			// -------------------------------------------------
-
 			case CExpOp:
 			forward_cond_op(
 				p, q, i_var, arg, num_par, parameter, J, taylor
@@ -444,6 +435,29 @@ size_t forward1sweep(
 			CPPAD_ASSERT_NARG_NRES(op, 0, 0);
 			more_operators = false;
 			break;
+			// -------------------------------------------------
+
+			case EqpvOp:
+			if( p == 0 ) forward_eqpv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
+			break;
+			// -------------------------------------------------
+
+			case EqvvOp:
+			if( p == 0 ) forward_eqvv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
+			break;
+			// -------------------------------------------------
+
+# if CPPAD_COMPILER_HAS_ERF
+			case ErfOp:
+			CPPAD_ASSERT_UNKNOWN( CPPAD_COMPILER_HAS_ERF );
+			// 2DO: implement zero order version of this function
+			forward_erf_op(p, q, i_var, arg, parameter, J, taylor);
+			break;
+# endif
 			// -------------------------------------------------
 
 			case ExpOp:
@@ -591,6 +605,20 @@ size_t forward1sweep(
 			case MulpvOp:
 			CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < num_par );
 			forward_mulpv_op(p, q, i_var, arg, parameter, J, taylor);
+			break;
+			// -------------------------------------------------
+
+			case NepvOp:
+			if( p == 0 ) forward_nepv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
+			break;
+			// -------------------------------------------------
+
+			case NevvOp:
+			if( p == 0 ) forward_nevv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
 			break;
 			// -------------------------------------------------
 
