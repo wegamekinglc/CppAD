@@ -362,28 +362,8 @@ void RevJacSweep(
 			break;
 			// -------------------------------------------------
 
-			case GtpvOp:
-			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
-			break;
-			// -------------------------------------------------
-
-			case GtvvOp:
-			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
-			break;
-			// -------------------------------------------------
-
 			case InvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 0, 1);
-			break;
-			// -------------------------------------------------
-
-			case LeqpvOp:
-			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
-			break;
-			// -------------------------------------------------
-
-			case LeqvvOp:
-			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			break;
 			// -------------------------------------------------
 
@@ -413,11 +393,25 @@ void RevJacSweep(
 			break;
 			// -------------------------------------------------
 
+			case LeqpvOp:
+			case LeqvpOp:
+			case LeqvvOp:
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
+			break;
+			// -------------------------------------------------
+
 			case LogOp:
 			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[0], var_sparsity
 			);
+			break;
+			// -------------------------------------------------
+
+			case LtpvOp:
+			case LtvpOp:
+			case LtvvOp:
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			break;
 			// -------------------------------------------------
 

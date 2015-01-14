@@ -217,22 +217,28 @@ bool operator <= (const AD<Base> &left , const AD<Base> &right)
 	{	tape = left.tape_this();
 		if( var_right )
 		{	if( result )
-				tape->Rec_.PutOp(LeqvvOp);
+			{	tape->Rec_.PutOp(LeqvvOp);
+				tape->Rec_.PutArg(left.taddr_, right.taddr_);
+			}
 			else
-				tape->Rec_.PutOp(GtvvOp);
-			tape->Rec_.PutArg(left.taddr_, right.taddr_);
+			{	tape->Rec_.PutOp(LtvvOp);
+				tape->Rec_.PutArg(right.taddr_, left.taddr_);
+			}
 		}
 		else
 			tape->RecordCompare(CompareLe, result, left, right);
 	}
 	else if ( var_right )
 	{	tape = right.tape_this();
-		if( result )
-			tape->Rec_.PutOp(LeqpvOp);
-		else
-			tape->Rec_.PutOp(GtpvOp);
 		addr_t arg0 = tape->Rec_.PutPar(left.value_);
-		tape->Rec_.PutArg(arg0, right.taddr_);
+		if( result )
+		{	tape->Rec_.PutOp(LeqpvOp);
+			tape->Rec_.PutArg(arg0, right.taddr_);
+		}
+		else
+		{	tape->Rec_.PutOp(LtvpOp);
+			tape->Rec_.PutArg(right.taddr_, arg0);
+		}
 	}
 
 	return result;
@@ -254,22 +260,28 @@ bool operator > (const AD<Base> &left , const AD<Base> &right)
 	{	tape = left.tape_this();
 		if( var_right )
 		{	if( result )
-				tape->Rec_.PutOp(GtvvOp);
+			{	tape->Rec_.PutOp(LtvvOp);
+				tape->Rec_.PutArg(right.taddr_, left.taddr_);
+			}
 			else
-				tape->Rec_.PutOp(LeqvvOp);
-			tape->Rec_.PutArg(left.taddr_, right.taddr_);
+			{	tape->Rec_.PutOp(LeqvvOp);
+				tape->Rec_.PutArg(left.taddr_, right.taddr_);
+			}
 		}
 		else
 			tape->RecordCompare(CompareGt, result, left, right);
 	}
 	else if ( var_right )
 	{	tape = right.tape_this();
-		if( result )
-			tape->Rec_.PutOp(GtpvOp);
-		else
-			tape->Rec_.PutOp(LeqpvOp);
 		addr_t arg0 = tape->Rec_.PutPar(left.value_);
-		tape->Rec_.PutArg(arg0, right.taddr_);
+		if( result )
+		{	tape->Rec_.PutOp(LtvpOp);
+			tape->Rec_.PutArg(right.taddr_, arg0);
+		}
+		else
+		{	tape->Rec_.PutOp(LeqpvOp);
+			tape->Rec_.PutArg(arg0, right.taddr_);
+		}
 	}
 
 	return result;

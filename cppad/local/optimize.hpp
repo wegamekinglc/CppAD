@@ -1719,12 +1719,17 @@ void optimize_run(
 			break;
 
 			case LeqpvOp:
-			case GtpvOp:
+			case LtpvOp:
 			tape[arg[1]].connect_type = yes_connected;
 			break;
 
+			case LeqvpOp:
+			case LtvpOp:
+			tape[arg[0]].connect_type = yes_connected;
+			break;
+
 			case LeqvvOp:
-			case GtvvOp:
+			case LtvvOp:
 			tape[arg[0]].connect_type = yes_connected;
 			tape[arg[1]].connect_type = yes_connected;
 			break;
@@ -2103,10 +2108,12 @@ void optimize_run(
 		bool keep;
 		switch( op )
 		{	case ComOp:   // see wish_list/Optimize/CompareChange entry.
-			case GtpvOp:
-			case GtvvOp:
 			case LeqpvOp:
+			case LeqvpOp:
 			case LeqvvOp:
+			case LtpvOp:
+			case LtvpOp:
+			case LtvvOp:
 			keep = true;
 			break;
 
@@ -2427,16 +2434,25 @@ void optimize_run(
 			// ---------------------------------------------------
 			// Operations with two arguments and no results
 			case LeqpvOp:
-			case GtpvOp:
+			case LtpvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			new_arg[0] = rec->PutPar( play->GetPar(arg[0]) );
 			new_arg[1] = tape[arg[1]].new_var;
 			rec->PutArg(new_arg[0], new_arg[1]);
 			rec->PutOp(op);
 			break;
-
+			//
+			case LeqvpOp:
+			case LtvpOp:
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
+			new_arg[0] = tape[arg[0]].new_var;
+			new_arg[1] = rec->PutPar( play->GetPar(arg[1]) );
+			rec->PutArg(new_arg[0], new_arg[1]);
+			rec->PutOp(op);
+			break;
+			//
 			case LeqvvOp:
-			case GtvvOp:
+			case LtvvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			new_arg[0] = tape[arg[0]].new_var;
 			new_arg[1] = tape[arg[1]].new_var;

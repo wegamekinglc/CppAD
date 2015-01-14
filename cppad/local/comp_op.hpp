@@ -167,7 +167,7 @@ inline void forward_comp_op_0(
 	}
 	return;
 }
-
+// -----------------------------------------------------------------------
 template <class Base>
 inline void forward_leqpv_op_0(
 	size_t&       count       ,
@@ -186,7 +186,24 @@ inline void forward_leqpv_op_0(
 
 	count += GreaterThanZero(x - y[0]);
 }
+template <class Base>
+inline void forward_leqvp_op_0(
+	size_t&       count       ,
+	const addr_t* arg         ,
+	const Base*   parameter   ,
+	size_t        cap_order   ,
+	Base*         taylor      )
+{
+	// check assumptions
+	CPPAD_ASSERT_UNKNOWN( NumArg(LeqvpOp) == 2 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(LeqvpOp) == 0 );
 
+	// Taylor coefficients corresponding to arguments and result
+	Base* x = taylor + arg[0] * cap_order;
+	Base  y = parameter[ arg[1] ];
+
+	count += GreaterThanZero(x[0] - y);
+}
 template <class Base>
 inline void forward_leqvv_op_0(
 	size_t&       count       ,
@@ -205,9 +222,9 @@ inline void forward_leqvv_op_0(
 
 	count += GreaterThanZero(x[0] - y[0]);
 }
-
+// -----------------------------------------------------------------------
 template <class Base>
-inline void forward_gtpv_op_0(
+inline void forward_ltpv_op_0(
 	size_t&       count       ,
 	const addr_t* arg         ,
 	const Base*   parameter   ,
@@ -215,18 +232,17 @@ inline void forward_gtpv_op_0(
 	Base*         taylor      )
 {
 	// check assumptions
-	CPPAD_ASSERT_UNKNOWN( NumArg(GtpvOp) == 2 );
-	CPPAD_ASSERT_UNKNOWN( NumRes(GtpvOp) == 0 );
+	CPPAD_ASSERT_UNKNOWN( NumArg(LtpvOp) == 2 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(LtpvOp) == 0 );
 
 	// Taylor coefficients corresponding to arguments and result
 	Base  x = parameter[ arg[0] ];
 	Base* y = taylor + arg[1] * cap_order;
 
-	count += GreaterThanOrZero(y[0] - x);
+	count += GreaterThanOrZero(x - y[0]);
 }
-
 template <class Base>
-inline void forward_gtvv_op_0(
+inline void forward_ltvp_op_0(
 	size_t&       count       ,
 	const addr_t* arg         ,
 	const Base*   parameter   ,
@@ -234,15 +250,34 @@ inline void forward_gtvv_op_0(
 	Base*         taylor      )
 {
 	// check assumptions
-	CPPAD_ASSERT_UNKNOWN( NumArg(GtvvOp) == 2 );
-	CPPAD_ASSERT_UNKNOWN( NumRes(GtvvOp) == 0 );
+	CPPAD_ASSERT_UNKNOWN( NumArg(LtvpOp) == 2 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(LtvpOp) == 0 );
+
+	// Taylor coefficients corresponding to arguments and result
+	Base* x = taylor + arg[0] * cap_order;
+	Base  y = parameter[ arg[1] ];
+
+	count += GreaterThanOrZero(x[0] - y);
+}
+template <class Base>
+inline void forward_ltvv_op_0(
+	size_t&       count       ,
+	const addr_t* arg         ,
+	const Base*   parameter   ,
+	size_t        cap_order   ,
+	Base*         taylor      )
+{
+	// check assumptions
+	CPPAD_ASSERT_UNKNOWN( NumArg(LtvvOp) == 2 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(LtvvOp) == 0 );
 
 	// Taylor coefficients corresponding to arguments and result
 	Base* x = taylor + arg[0] * cap_order;
 	Base* y = taylor + arg[1] * cap_order;
 
-	count += GreaterThanOrZero(y[0] - x[0]);
+	count += GreaterThanOrZero(x[0] - y[0]);
 }
+
 
 } // END_CPPAD_NAMESPACE
 # endif

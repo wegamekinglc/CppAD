@@ -449,38 +449,10 @@ size_t forward1sweep(
 			case ExpOp:
 			forward_exp_op(p, q, i_var, arg[0], J, taylor);
 			break;
-			// -------------------------------------------------
-
-			case GtpvOp:
-			if( p == 0 ) forward_gtpv_op_0(
-				compareCount, arg, parameter, J, taylor
-			);
-			break;
-			// -------------------------------------------------
-
-			case GtvvOp:
-			if( p == 0 ) forward_gtvv_op_0(
-				compareCount, arg, parameter, J, taylor
-			);
-			break;
 			// ---------------------------------------------------
 
 			case InvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 0, 1);
-			break;
-			// -------------------------------------------------
-
-			case LeqpvOp:
-			if( p == 0 ) forward_leqpv_op_0(
-				compareCount, arg, parameter, J, taylor
-			);
-			break;
-			// -------------------------------------------------
-
-			case LeqvvOp:
-			if( p == 0 ) forward_leqvv_op_0(
-				compareCount, arg, parameter, J, taylor
-			);
 			break;
 			// -------------------------------------------------
 
@@ -566,8 +538,48 @@ size_t forward1sweep(
 			break;
 			// -------------------------------------------------
 
+			case LeqpvOp:
+			if( p == 0 ) forward_leqpv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
+			break;
+
+			case LeqvpOp:
+			if( p == 0 ) forward_leqvp_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
+			break;
+			// -------------------------------------------------
+
+			case LeqvvOp:
+			if( p == 0 ) forward_leqvv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
+			break;
+			// -------------------------------------------------
+
 			case LogOp:
 			forward_log_op(p, q, i_var, arg[0], J, taylor);
+			break;
+			// -------------------------------------------------
+
+			case LtpvOp:
+			if( p == 0 ) forward_ltpv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
+			break;
+
+			case LtvpOp:
+			if( p == 0 ) forward_ltvp_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
+			break;
+			// -------------------------------------------------
+
+			case LtvvOp:
+			if( p == 0 ) forward_ltvv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
 			break;
 			// -------------------------------------------------
 

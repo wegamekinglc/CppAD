@@ -451,23 +451,7 @@ void ReverseSweep(
 			break;
 			// --------------------------------------------------
 
-			case GtpvOp:
-			break;
-			// --------------------------------------------------
-
-			case GtvvOp:
-			break;
-			// --------------------------------------------------
-
 			case InvOp:
-			break;
-			// --------------------------------------------------
-
-			case LeqpvOp:
-			break;
-			// --------------------------------------------------
-
-			case LeqvvOp:
 			break;
 			// --------------------------------------------------
 
@@ -483,12 +467,24 @@ void ReverseSweep(
 		op, d, i_var, arg, J, Taylor, K, Partial, var_by_load_op.data()
 			);
 			break;
+			// --------------------------------------------------
+
+			case LeqpvOp:
+			case LeqvpOp:
+			case LeqvvOp:
+			break;
 			// -------------------------------------------------
 
 			case LogOp:
 			reverse_log_op(
 				d, i_var, arg[0], J, Taylor, K, Partial
 			);
+			break;
+			// --------------------------------------------------
+
+			case LtpvOp:
+			case LtvpOp:
+			case LtvvOp:
 			break;
 			// --------------------------------------------------
 

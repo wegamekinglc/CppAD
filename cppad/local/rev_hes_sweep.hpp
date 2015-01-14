@@ -373,29 +373,9 @@ void RevHesSweep(
 			break;
 			// -------------------------------------------------
 
-			case GtpvOp:
-			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
-			break;
-			// -------------------------------------------------
-
-			case GtvvOp:
-			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
-			break;
-			// -------------------------------------------------
-
 			case InvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 0, 1)
 			// Z is already defined
-			break;
-			// -------------------------------------------------
-
-			case LeqpvOp:
-			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
-			break;
-			// -------------------------------------------------
-
-			case LeqvvOp:
-			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			break;
 			// -------------------------------------------------
 
@@ -429,11 +409,25 @@ void RevHesSweep(
 			break;
 			// -------------------------------------------------
 
+			case LeqpvOp:
+			case LeqvpOp:
+			case LeqvvOp:
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
+			break;
+			// -------------------------------------------------
+
 			case LogOp:
 			CPPAD_ASSERT_NARG_NRES(op, 1, 1)
 			reverse_sparse_hessian_nonlinear_unary_op(
 			i_var, arg[0], RevJac, for_jac_sparse, rev_hes_sparse
 			);
+			break;
+			// -------------------------------------------------
+
+			case LtpvOp:
+			case LtvpOp:
+			case LtvvOp:
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			break;
 			// -------------------------------------------------
 

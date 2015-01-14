@@ -402,36 +402,8 @@ size_t forward0sweep(
 			break;
 			// -------------------------------------------------
 
-			case GtpvOp:
-			forward_gtpv_op_0(
-				compareCount, arg, parameter, J, taylor
-			);
-			break;
-			// -------------------------------------------------
-
-			case GtvvOp:
-			forward_gtvv_op_0(
-				compareCount, arg, parameter, J, taylor
-			);
-			break;
-			// ---------------------------------------------------
-
 			case InvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 0, 1);
-			break;
-			// -------------------------------------------------
-
-			case LeqpvOp:
-			forward_leqpv_op_0(
-				compareCount, arg, parameter, J, taylor
-			);
-			break;
-			// -------------------------------------------------
-
-			case LeqvvOp:
-			forward_leqvv_op_0(
-				compareCount, arg, parameter, J, taylor
-			);
 			break;
 			// ---------------------------------------------------
 
@@ -465,8 +437,50 @@ size_t forward0sweep(
 			break;
 			// -------------------------------------------------
 
+			case LeqpvOp:
+			forward_leqpv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
+			break;
+			// -------------------------------------------------
+
+			case LeqvpOp:
+			forward_leqvp_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
+			break;
+			// -------------------------------------------------
+
+			case LeqvvOp:
+			forward_leqvv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
+			break;
+			// -------------------------------------------------
+
 			case LogOp:
 			forward_log_op_0(i_var, arg[0], J, taylor);
+			break;
+			// -------------------------------------------------
+
+			case LtpvOp:
+			forward_ltpv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
+			break;
+			// -------------------------------------------------
+
+			case LtvpOp:
+			forward_ltvp_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
+			break;
+			// -------------------------------------------------
+
+			case LtvvOp:
+			forward_ltvv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
 			break;
 			// -------------------------------------------------
 
