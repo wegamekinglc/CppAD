@@ -169,6 +169,25 @@ inline void forward_comp_op_0(
 }
 
 template <class Base>
+inline void forward_leqpv_op_0(
+	size_t&       count       ,
+	const addr_t* arg         ,
+	const Base*   parameter   ,
+	size_t        cap_order   ,
+	Base*         taylor      )
+{
+	// check assumptions
+	CPPAD_ASSERT_UNKNOWN( NumArg(LeqpvOp) == 2 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(LeqpvOp) == 0 );
+
+	// Taylor coefficients corresponding to arguments and result
+	Base  x = parameter[ arg[0] ];
+	Base* y = taylor + arg[1] * cap_order;
+
+	count += GreaterThanZero(x - y[0]);
+}
+
+template <class Base>
 inline void forward_leqvv_op_0(
 	size_t&       count       ,
 	const addr_t* arg         ,
@@ -185,6 +204,25 @@ inline void forward_leqvv_op_0(
 	Base* y = taylor + arg[1] * cap_order;
 
 	count += GreaterThanZero(x[0] - y[0]);
+}
+
+template <class Base>
+inline void forward_gtpv_op_0(
+	size_t&       count       ,
+	const addr_t* arg         ,
+	const Base*   parameter   ,
+	size_t        cap_order   ,
+	Base*         taylor      )
+{
+	// check assumptions
+	CPPAD_ASSERT_UNKNOWN( NumArg(GtpvOp) == 2 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(GtpvOp) == 0 );
+
+	// Taylor coefficients corresponding to arguments and result
+	Base  x = parameter[ arg[0] ];
+	Base* y = taylor + arg[1] * cap_order;
+
+	count += GreaterThanOrZero(y[0] - x);
 }
 
 template <class Base>

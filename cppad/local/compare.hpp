@@ -227,7 +227,12 @@ bool operator <= (const AD<Base> &left , const AD<Base> &right)
 	}
 	else if ( var_right )
 	{	tape = right.tape_this();
-		tape->RecordCompare(CompareLe, result, left, right);
+		if( result )
+			tape->Rec_.PutOp(LeqpvOp);
+		else
+			tape->Rec_.PutOp(GtpvOp);
+		addr_t arg0 = tape->Rec_.PutPar(left.value_);
+		tape->Rec_.PutArg(arg0, right.taddr_);
 	}
 
 	return result;
@@ -259,7 +264,12 @@ bool operator > (const AD<Base> &left , const AD<Base> &right)
 	}
 	else if ( var_right )
 	{	tape = right.tape_this();
-		tape->RecordCompare(CompareGt, result, left, right);
+		if( result )
+			tape->Rec_.PutOp(GtpvOp);
+		else
+			tape->Rec_.PutOp(LeqpvOp);
+		addr_t arg0 = tape->Rec_.PutPar(left.value_);
+		tape->Rec_.PutArg(arg0, right.taddr_);
 	}
 
 	return result;

@@ -402,6 +402,13 @@ size_t forward0sweep(
 			break;
 			// -------------------------------------------------
 
+			case GtpvOp:
+			forward_gtpv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
+			break;
+			// -------------------------------------------------
+
 			case GtvvOp:
 			forward_gtvv_op_0(
 				compareCount, arg, parameter, J, taylor
@@ -411,6 +418,13 @@ size_t forward0sweep(
 
 			case InvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 0, 1);
+			break;
+			// -------------------------------------------------
+
+			case LeqpvOp:
+			forward_leqpv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
 			break;
 			// -------------------------------------------------
 

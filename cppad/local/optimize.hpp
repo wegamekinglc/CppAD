@@ -1710,12 +1710,17 @@ void optimize_run(
 			tape[i_var].connect_type = yes_connected;
 			break;
 
-			// Compare operator never get removed
+			// Compare operators never get removed -----------------
 			case ComOp:
 			if( arg[1] & 2 )
 				tape[arg[2]].connect_type = yes_connected;
 			if( arg[1] & 4 )
 				tape[arg[3]].connect_type = yes_connected;
+			break;
+
+			case LeqpvOp:
+			case GtpvOp:
+			tape[arg[1]].connect_type = yes_connected;
 			break;
 
 			case LeqvvOp:
@@ -1724,7 +1729,7 @@ void optimize_run(
 			tape[arg[1]].connect_type = yes_connected;
 			break;
 
-			// Load using a parameter index
+			// Load using a parameter index ----------------------
 			case LdpOp:
 			if( tape[i_var].connect_type != not_connected )
 			{
@@ -2098,8 +2103,10 @@ void optimize_run(
 		bool keep;
 		switch( op )
 		{	case ComOp:   // see wish_list/Optimize/CompareChange entry.
-			case LeqvvOp:
+			case GtpvOp:
 			case GtvvOp:
+			case LeqpvOp:
+			case LeqvvOp:
 			keep = true;
 			break;
 
@@ -2418,12 +2425,23 @@ void optimize_run(
 			rec->PutOp(op);
 			break;
 			// ---------------------------------------------------
-			// Operatoions with two arguments and no results
+			// Operations with two arguments and no results
+			case LeqpvOp:
+			case GtpvOp:
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
+			new_arg[0] = rec->PutPar( play->GetPar(arg[0]) );
+			new_arg[1] = tape[arg[1]].new_var;
+			rec->PutArg(new_arg[0], new_arg[1]);
+			rec->PutOp(op);
+			break;
+
 			case LeqvvOp:
 			case GtvvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			new_arg[0] = tape[arg[0]].new_var;
 			new_arg[1] = tape[arg[1]].new_var;
+			rec->PutArg(new_arg[0], new_arg[1]);
+			rec->PutOp(op);
 			break;
 
 			// ---------------------------------------------------

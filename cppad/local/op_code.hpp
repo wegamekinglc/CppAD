@@ -92,10 +92,12 @@ enum OpCode {
 	EndOp,    //  used to mark the end of the tape
 	ErfOp,    //  erf(variable)
 	ExpOp,    //  exp(variable)
+	GtpvOp,   //  parameter > variable
 	GtvvOp,   //  variable > variable
 	InvOp,    //                             independent variable
 	LdpOp,    //    z[parameter]
 	LdvOp,    //    z[variable]
+	LeqpvOp,  //  parameter <= variable
 	LeqvvOp,  //  variable <= variable
 	LogOp,    //  log(variable)
 	MulpvOp,  //      parameter  * variable
@@ -179,10 +181,12 @@ inline size_t NumArg( OpCode op)
 		0, // EndOp
 		3, // ErfOp
 		1, // ExpOp
+		2, // GtpvOp
 		2, // GtvvOp
 		0, // InvOp
 		3, // LdpOp
 		3, // LdvOp
+		2, // LeqpvOp
 		2, // LeqvvOp
 		1, // LogOp
 		2, // MulpvOp
@@ -272,10 +276,12 @@ inline size_t NumRes(OpCode op)
 		0, // EndOp
 		5, // ErfOp
 		1, // ExpOp
+		0, // GtpvOp
 		0, // GtvvOp
 		1, // InvOp
 		1, // LdpOp
 		1, // LdvOp
+		0, // LeqpvOp
 		0, // LeqvvOp
 		1, // LogOp
 		1, // MulpvOp
@@ -348,10 +354,12 @@ inline const char* OpName(OpCode op)
 		"End"   ,
 		"Erf"   ,
 		"Exp"   ,
+		"Gtpv"  ,
 		"Gtvv"  ,
 		"Inv"   ,
 		"Ldp"   ,
 		"Ldv"   ,
+		"Leqpv" ,
 		"Leqvv" ,
 		"Log"   ,
 		"Mulpv" ,
@@ -624,6 +632,8 @@ void printOp(
 		break;
 
 		case AddpvOp:
+		case GtpvOp:
+		case LeqpvOp:
 		case SubpvOp:
 		case MulpvOp:
 		case PowpvOp:
@@ -869,6 +879,12 @@ inline void assert_arg_before_result(
 		CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) + 4 < result );
 		break;
 		// ------------------------------------------------------------------
+		// 2 arguments (second variable), no results
+		case GtpvOp:
+		case LeqpvOp:
+		CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) <= result );
+		break;
+
 		// 2 arguments (both variables), no results
 		case GtvvOp:
 		case LeqvvOp:

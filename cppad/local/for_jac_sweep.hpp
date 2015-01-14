@@ -351,6 +351,11 @@ void ForJacSweep(
 			break;
 			// -------------------------------------------------
 
+			case GtpvOp:
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
+			break;
+			// -------------------------------------------------
+
 			case GtvvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			break;
@@ -359,6 +364,11 @@ void ForJacSweep(
 			case InvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 0, 1);
 			// sparsity pattern is already defined
+			break;
+			// -------------------------------------------------
+
+			case LeqpvOp:
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			break;
 			// -------------------------------------------------
 

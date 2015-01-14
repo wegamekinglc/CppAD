@@ -362,6 +362,11 @@ void RevJacSweep(
 			break;
 			// -------------------------------------------------
 
+			case GtpvOp:
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
+			break;
+			// -------------------------------------------------
+
 			case GtvvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			break;
@@ -369,6 +374,11 @@ void RevJacSweep(
 
 			case InvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 0, 1);
+			break;
+			// -------------------------------------------------
+
+			case LeqpvOp:
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			break;
 			// -------------------------------------------------
 

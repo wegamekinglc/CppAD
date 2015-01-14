@@ -366,6 +366,11 @@ size_t forward2sweep(
 			break;
 			// ---------------------------------------------------
 
+			case GtpvOp:
+			CPPAD_ASSERT_UNKNOWN(q > 0 );
+			break;
+			// ---------------------------------------------------
+
 			case GtvvOp:
 			CPPAD_ASSERT_UNKNOWN(q > 0 );
 			break;
@@ -373,6 +378,11 @@ size_t forward2sweep(
 
 			case InvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 0, 1);
+			break;
+			// ---------------------------------------------------
+
+			case LeqpvOp:
+			CPPAD_ASSERT_UNKNOWN(q > 0 );
 			break;
 			// ---------------------------------------------------
 

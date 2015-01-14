@@ -373,6 +373,11 @@ void RevHesSweep(
 			break;
 			// -------------------------------------------------
 
+			case GtpvOp:
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
+			break;
+			// -------------------------------------------------
+
 			case GtvvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			break;
@@ -381,6 +386,11 @@ void RevHesSweep(
 			case InvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 0, 1)
 			// Z is already defined
+			break;
+			// -------------------------------------------------
+
+			case LeqpvOp:
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			break;
 			// -------------------------------------------------
 
