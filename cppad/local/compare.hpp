@@ -182,25 +182,54 @@ void ADTape<Base>::RecordCompare(
 	Rec_.PutOp(ComOp);
 	Rec_.PutArg(ind0, ind1, ind2, ind3);
 }
-
-// -------------------------------- < -------------------------
+// -------------------------------- < --------------------------
 template <class Base>
 CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 bool operator < (const AD<Base> &left , const AD<Base> &right)
-{	bool result =  (left.value_ < right.value_);
+{ 	bool result    =  (left.value_ < right.value_);
+	bool var_left  = Variable(left);
+	bool var_right = Variable(right);
 
 	ADTape<Base> *tape = CPPAD_NULL;
-	if( Variable(left) )
-		tape = left.tape_this();
-	else if ( Variable(right) )
-		tape = right.tape_this();
-
-	if( tape != CPPAD_NULL )
-		tape->RecordCompare(CompareLt, result, left, right);
+	if( var_left )
+	{	tape = left.tape_this();
+		if( var_right )
+		{	if( result )
+			{	tape->Rec_.PutOp(LtvvOp);
+				tape->Rec_.PutArg(left.taddr_, right.taddr_);
+			}
+			else
+			{	tape->Rec_.PutOp(LeqvvOp);
+				tape->Rec_.PutArg(right.taddr_, left.taddr_);
+			}
+		}
+		else
+		{	addr_t arg1 = tape->Rec_.PutPar(right.value_);
+			if( result )
+			{	tape->Rec_.PutOp(LtvpOp);
+				tape->Rec_.PutArg(left.taddr_, arg1);
+			}
+			else
+			{	tape->Rec_.PutOp(LeqpvOp);
+				tape->Rec_.PutArg(arg1, left.taddr_);
+			}
+		}
+	}
+	else if ( var_right )
+	{	tape = right.tape_this();
+		addr_t arg0 = tape->Rec_.PutPar(left.value_);
+		if( result )
+		{	tape->Rec_.PutOp(LtpvOp);
+			tape->Rec_.PutArg(arg0, right.taddr_);
+		}
+		else
+		{	tape->Rec_.PutOp(LeqvpOp);
+			tape->Rec_.PutArg(right.taddr_, arg0);
+		}
+	}
 
 	return result;
 }
-
 // convert other cases into the case above
 CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(<)
 
@@ -226,7 +255,16 @@ bool operator <= (const AD<Base> &left , const AD<Base> &right)
 			}
 		}
 		else
-			tape->RecordCompare(CompareLe, result, left, right);
+		{	addr_t arg1 = tape->Rec_.PutPar(right.value_);
+			if( result )
+			{	tape->Rec_.PutOp(LeqvpOp);
+				tape->Rec_.PutArg(left.taddr_, arg1);
+			}
+			else
+			{	tape->Rec_.PutOp(LtpvOp);
+				tape->Rec_.PutArg(arg1, left.taddr_);
+			}
+		}
 	}
 	else if ( var_right )
 	{	tape = right.tape_this();
@@ -243,11 +281,10 @@ bool operator <= (const AD<Base> &left , const AD<Base> &right)
 
 	return result;
 }
-
 // convert other cases into the case above
 CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(<=)
 
-// -------------------------------- > -------------------------
+// -------------------------------- > --------------------------
 template <class Base>
 CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 bool operator > (const AD<Base> &left , const AD<Base> &right)
@@ -269,7 +306,16 @@ bool operator > (const AD<Base> &left , const AD<Base> &right)
 			}
 		}
 		else
-			tape->RecordCompare(CompareGt, result, left, right);
+		{	addr_t arg1 = tape->Rec_.PutPar(right.value_);
+			if( result )
+			{	tape->Rec_.PutOp(LtpvOp);
+				tape->Rec_.PutArg(arg1, left.taddr_);
+			}
+			else
+			{	tape->Rec_.PutOp(LeqvpOp);
+				tape->Rec_.PutArg(left.taddr_, arg1);
+			}
+		}
 	}
 	else if ( var_right )
 	{	tape = right.tape_this();
@@ -286,7 +332,6 @@ bool operator > (const AD<Base> &left , const AD<Base> &right)
 
 	return result;
 }
-
 // convert other cases into the case above
 CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(>)
 
@@ -294,23 +339,52 @@ CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(>)
 template <class Base>
 CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 bool operator >= (const AD<Base> &left , const AD<Base> &right)
-{ 	bool result =  (left.value_ >= right.value_);
+{ 	bool result    =  (left.value_ >= right.value_);
+	bool var_left  = Variable(left);
+	bool var_right = Variable(right);
 
 	ADTape<Base> *tape = CPPAD_NULL;
-	if( Variable(left) )
-		tape = left.tape_this();
-	else if ( Variable(right) )
-		tape = right.tape_this();
-
-	if( tape != CPPAD_NULL )
-		tape->RecordCompare(CompareGe, result, left, right);
+	if( var_left )
+	{	tape = left.tape_this();
+		if( var_right )
+		{	if( result )
+			{	tape->Rec_.PutOp(LeqvvOp);
+				tape->Rec_.PutArg(right.taddr_, left.taddr_);
+			}
+			else
+			{	tape->Rec_.PutOp(LtvvOp);
+				tape->Rec_.PutArg(left.taddr_, right.taddr_);
+			}
+		}
+		else
+		{	addr_t arg1 = tape->Rec_.PutPar(right.value_);
+			if( result )
+			{	tape->Rec_.PutOp(LeqpvOp);
+				tape->Rec_.PutArg(arg1, left.taddr_);
+			}
+			else
+			{	tape->Rec_.PutOp(LtvpOp);
+				tape->Rec_.PutArg(left.taddr_, arg1);
+			}
+		}
+	}
+	else if ( var_right )
+	{	tape = right.tape_this();
+		addr_t arg0 = tape->Rec_.PutPar(left.value_);
+		if( result )
+		{	tape->Rec_.PutOp(LeqvpOp);
+			tape->Rec_.PutArg(right.taddr_, arg0);
+		}
+		else
+		{	tape->Rec_.PutOp(LtpvOp);
+			tape->Rec_.PutArg(arg0, right.taddr_);
+		}
+	}
 
 	return result;
 }
-
 // convert other cases into the case above
 CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(>=)
-
 
 // -------------------------------- == -------------------------
 template <class Base>
