@@ -1711,13 +1711,6 @@ void optimize_run(
 			break;
 
 			// Compare operators never get removed -----------------
-			case ComOp:
-			if( arg[1] & 2 )
-				tape[arg[2]].connect_type = yes_connected;
-			if( arg[1] & 4 )
-				tape[arg[3]].connect_type = yes_connected;
-			break;
-
 			case LeqpvOp:
 			case LtpvOp:
 			case EqpvOp:
@@ -2111,7 +2104,7 @@ void optimize_run(
 		// operation sequence
 		bool keep;
 		switch( op )
-		{	case ComOp:   // see wish_list/Optimize/CompareChange entry.
+		{	// see wish_list/Optimize/CompareChange entry.
 			case EqpvOp:
 			case EqvvOp:
 			case LeqpvOp:
@@ -2472,28 +2465,6 @@ void optimize_run(
 			rec->PutOp(op);
 			break;
 
-			// ---------------------------------------------------
-			// Operations with 4 arguments and no results
-			case ComOp:
-			CPPAD_ASSERT_NARG_NRES(op, 4, 0);
-			new_arg[0] = arg[0];
-			new_arg[1] = arg[1];
-			if( arg[1] & 2 )
-				new_arg[2] = tape[arg[2]].new_var;
-			else
-				new_arg[2] = rec->PutPar( play->GetPar(arg[2]) );
-			if( arg[1] & 4 )
-				new_arg[3] = tape[arg[3]].new_var;
-			else
-				new_arg[3] = rec->PutPar( play->GetPar(arg[3]) );
-			rec->PutArg(
-				new_arg[0] ,
-				new_arg[1] ,
-				new_arg[2] ,
-				new_arg[3]
-			);
-			rec->PutOp(op);
-			break;
 			// ---------------------------------------------------
 			// Operations with no arguments and one result
 			case InvOp:

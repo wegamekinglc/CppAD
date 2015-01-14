@@ -273,12 +273,6 @@ void ForJacSweep(
 				i_var, arg, num_par, var_sparsity
 			);
 			break;
-			// ---------------------------------------------------
-
-			case ComOp:
-			CPPAD_ASSERT_NARG_NRES(op, 4, 0);
-			CPPAD_ASSERT_UNKNOWN( arg[1] > 1 );
-			break;
 			// --------------------------------------------------
 
 			case CosOp:

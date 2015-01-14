@@ -386,10 +386,6 @@ void ReverseSweep(
 			break;
 			// --------------------------------------------------
 
-			case ComOp:
-			break;
-			// --------------------------------------------------
-
 			case CosOp:
 			CPPAD_ASSERT_UNKNOWN( i_var < numvar );
 			reverse_cos_op(

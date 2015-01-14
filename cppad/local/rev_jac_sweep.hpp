@@ -292,12 +292,6 @@ void RevJacSweep(
 			break;
 			// ---------------------------------------------------
 
-			case ComOp:
-			CPPAD_ASSERT_NARG_NRES(op, 4, 0);
-			CPPAD_ASSERT_UNKNOWN( arg[1] > 1 );
-			break;
-			// --------------------------------------------------
-
 			case CosOp:
 			// sin(x), cos(x)
 			CPPAD_ASSERT_NARG_NRES(op, 1, 2);

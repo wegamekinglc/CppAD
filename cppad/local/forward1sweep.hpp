@@ -167,11 +167,9 @@ the i-th variable.
 \return
 If p is not zero, the return value is zero.
 If p is zero,
-the return value is equal to the number of ComOp operations
+the return value is equal to the number of comparison operations
 that have a different result from when the information in 
 a play was recorded.
-(Note that if NDEBUG is true, there are no ComOp operations
-in play and hence this return value is always zero.)
 */
 
 template <class Base>
@@ -211,7 +209,7 @@ size_t forward1sweep(
 	// operation argument indices
 	const addr_t*   arg = CPPAD_NULL;
 
-	// initialize the comparision operator (ComOp) counter
+	// initialize the comparision operator counter
 	size_t compareCount = 0;
 
 	// If this includes a zero calculation, initialize this information
@@ -360,13 +358,6 @@ size_t forward1sweep(
 			case CExpOp:
 			forward_cond_op(
 				p, q, i_var, arg, num_par, parameter, J, taylor
-			);
-			break;
-			// ---------------------------------------------------
-
-			case ComOp:
-			if( p == 0 ) forward_comp_op_0(
-			compareCount, arg, num_par, parameter, J, taylor
 			);
 			break;
 			// ---------------------------------------------------

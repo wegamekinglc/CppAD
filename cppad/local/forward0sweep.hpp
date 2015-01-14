@@ -125,11 +125,9 @@ the load operator results in a parameter (not a variable).
 Note that the is no variable with index zero on the tape.
 
 \return
-The return value is equal to the number of ComOp operations
+The return value is equal to the number of comparision operations
 that have a different result from when the information in 
 play was recorded.
-(Note that if NDEBUG is true, there are no ComOp operations
-in play and hence this return value is always zero.)
 */
 
 template <class Base>
@@ -166,7 +164,7 @@ size_t forward0sweep(
 	// operation argument indices
 	const addr_t*   arg = CPPAD_NULL;
 
-	// initialize the comparision operator (ComOp) counter
+	// initialize the comparision operator counter
 	size_t compareCount = 0;
 
 	// If this includes a zero calculation, initialize this information
@@ -313,13 +311,6 @@ size_t forward0sweep(
 			// (could create an optimzied verison for this case)
 			forward_cond_op_0(
 				i_var, arg, num_par, parameter, J, taylor
-			);
-			break;
-			// ---------------------------------------------------
-
-			case ComOp:
-			forward_comp_op_0(
-			compareCount, arg, num_par, parameter, J, taylor
 			);
 			break;
 			// ---------------------------------------------------

@@ -64,7 +64,6 @@ enum OpCode {
 	// arg[3]     = index correspoding to right 
 	// arg[4]     = index correspoding to trueCase 
 	// arg[5]     = index correspoding to falseCase 
-	ComOp,    // Compare(cop, result, left, right)
 	CosOp,    //  cos(variable)
 	CoshOp,   // cosh(variable)
 	CSkipOp,  // Conditional skip
@@ -175,7 +174,6 @@ inline size_t NumArg( OpCode op)
 		1, // AtanOp
 		1, // BeginOp  offset first real argument to have index 1
 		6, // CExpOp
-		4, // ComOp
 		1, // CosOp
 		1, // CoshOp
 		0, // CSkipOp  (actually has a variable number of arguments, not zero)
@@ -276,7 +274,6 @@ inline size_t NumRes(OpCode op)
 		2, // AtanOp
 		1, // BeginOp  offsets first variable to have index one (not zero)
 		1, // CExpOp
-		0, // ComOp
 		2, // CosOp
 		2, // CoshOp
 		0, // CSkipOp
@@ -360,7 +357,6 @@ inline const char* OpName(OpCode op)
 		"Atan"  ,
 		"Begin" ,
 		"CExp"  ,
-		"Com"   ,
 		"Cos"   ,
 		"Cosh"  ,
 		"CSkip" ,
@@ -534,7 +530,7 @@ void printOp(
 	if( NumRes(op) > 0 && op != BeginOp )
 		printOpField(os,  "v=",      i_var, 5);
 	else	printOpField(os,  "v=",      "",    5);
-	if( op == CExpOp || op == CSkipOp || op == ComOp )
+	if( op == CExpOp || op == CSkipOp )
 	{	printOpField(os, "", OpName(op), 5); 
 		printOpField(os, "", CompareOpName[ ind[0] ], 3);
 	}
@@ -773,20 +769,6 @@ void printOp(
 		else	printOpField(os, " pf=", play->GetPar(ind[5]), ncol);
 		break;
 
-		case ComOp:
-		CPPAD_ASSERT_UNKNOWN(ind[1] != 0);
-		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 4 );
-		if( ind[1] & 1 )
-			printOpField(os, "res=", 1, ncol);
-		else	printOpField(os, "res=", 0, ncol);
-		if( ind[1] & 2 )
-			printOpField(os, " vl=", ind[2], ncol);
-		else	printOpField(os, " pl=", play->GetPar(ind[2]), ncol);
-		if( ind[1] & 4 )
-			printOpField(os, " vr=", ind[3], ncol);
-		else	printOpField(os, " pr=", play->GetPar(ind[3]), ncol);
-		break;
-
 		default:
 		CPPAD_ASSERT_UNKNOWN(0);
 	}
@@ -995,17 +977,6 @@ inline void assert_arg_before_result(
 		case StvvOp:
 		CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) <= result );
 		CPPAD_ASSERT_UNKNOWN( size_t(arg[2]) <= result );
-		break;
-		// ------------------------------------------------------------------
-
-		// 4 arguments, no result
-		case ComOp:
-		if( arg[1] & 2 )
-		{	CPPAD_ASSERT_UNKNOWN( size_t(arg[2]) <= result );
-		}
-		if( arg[1] & 4 )
-		{	CPPAD_ASSERT_UNKNOWN( size_t(arg[3]) <= result );
-		}
 		break;
 		// ------------------------------------------------------------------
 

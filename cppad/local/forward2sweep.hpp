@@ -170,7 +170,7 @@ size_t forward2sweep(
 	// operation argument indices
 	const addr_t*   arg = CPPAD_NULL;
 
-	// initialize the comparision operator (ComOp) counter
+	// the comparision operator comparison counter
 	const size_t compareCount = 0;
 
 	// work space used by UserOp.
@@ -291,11 +291,6 @@ size_t forward2sweep(
 			forward_cond_op_dir(
 				q, r, i_var, arg, num_par, parameter, J, taylor
 			);
-			break;
-			// ---------------------------------------------------
-
-			case ComOp:
-			CPPAD_ASSERT_UNKNOWN(q > 0 );
 			break;
 			// ---------------------------------------------------
 
