@@ -1710,12 +1710,18 @@ void optimize_run(
 			tape[i_var].connect_type = yes_connected;
 			break;
 
-			// Another operator that never gets removed
+			// Compare operator never get removed
 			case ComOp:
 			if( arg[1] & 2 )
 				tape[arg[2]].connect_type = yes_connected;
 			if( arg[1] & 4 )
 				tape[arg[3]].connect_type = yes_connected;
+			break;
+
+			case LeqvvOp:
+			case GtvvOp:
+			tape[arg[0]].connect_type = yes_connected;
+			tape[arg[1]].connect_type = yes_connected;
 			break;
 
 			// Load using a parameter index
@@ -2091,7 +2097,9 @@ void optimize_run(
 		// operation sequence
 		bool keep;
 		switch( op )
-		{	case ComOp: // see wish_list/Optimize/CompareChange entry.
+		{	case ComOp:   // see wish_list/Optimize/CompareChange entry.
+			case LeqvvOp:
+			case GtvvOp:
 			keep = true;
 			break;
 
@@ -2409,6 +2417,15 @@ void optimize_run(
 			CPPAD_ASSERT_NARG_NRES(op, 0, 0);
 			rec->PutOp(op);
 			break;
+			// ---------------------------------------------------
+			// Operatoions with two arguments and no results
+			case LeqvvOp:
+			case GtvvOp:
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
+			new_arg[0] = tape[arg[0]].new_var;
+			new_arg[1] = tape[arg[1]].new_var;
+			break;
+
 			// ---------------------------------------------------
 			// Operations with 4 arguments and no results
 			case ComOp:

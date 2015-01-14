@@ -3,7 +3,7 @@
 # define CPPAD_FORWARD1SWEEP_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -451,8 +451,22 @@ size_t forward1sweep(
 			break;
 			// -------------------------------------------------
 
+			case GtvvOp:
+			if( p == 0 ) forward_gtvv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
+			break;
+			// ---------------------------------------------------
+
 			case InvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 0, 1);
+			break;
+			// -------------------------------------------------
+
+			case LeqvvOp:
+			if( p == 0 ) forward_leqvv_op_0(
+				compareCount, arg, parameter, J, taylor
+			);
 			break;
 			// -------------------------------------------------
 

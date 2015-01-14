@@ -2,7 +2,7 @@
 # ifndef CPPAD_FOR_JAC_SWEEP_INCLUDED
 # define CPPAD_FOR_JAC_SWEEP_INCLUDED
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -351,9 +351,19 @@ void ForJacSweep(
 			break;
 			// -------------------------------------------------
 
+			case GtvvOp:
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
+			break;
+			// -------------------------------------------------
+
 			case InvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 0, 1);
 			// sparsity pattern is already defined
+			break;
+			// -------------------------------------------------
+
+			case LeqvvOp:
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			break;
 			// -------------------------------------------------
 

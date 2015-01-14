@@ -3,7 +3,7 @@
 # define CPPAD_OP_CODE_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -92,9 +92,11 @@ enum OpCode {
 	EndOp,    //  used to mark the end of the tape
 	ErfOp,    //  erf(variable)
 	ExpOp,    //  exp(variable)
+	GtvvOp,   //  variable > variable
 	InvOp,    //                             independent variable
 	LdpOp,    //    z[parameter]
 	LdvOp,    //    z[variable]
+	LeqvvOp,  //  variable <= variable
 	LogOp,    //  log(variable)
 	MulpvOp,  //      parameter  * variable
 	MulvvOp,  //      variable   * variable
@@ -177,9 +179,11 @@ inline size_t NumArg( OpCode op)
 		0, // EndOp
 		3, // ErfOp
 		1, // ExpOp
+		2, // GtvvOp
 		0, // InvOp
 		3, // LdpOp
 		3, // LdvOp
+		2, // LeqvvOp
 		1, // LogOp
 		2, // MulpvOp
 		2, // MulvvOp
@@ -268,9 +272,11 @@ inline size_t NumRes(OpCode op)
 		0, // EndOp
 		5, // ErfOp
 		1, // ExpOp
+		0, // GtvvOp
 		1, // InvOp
 		1, // LdpOp
 		1, // LdvOp
+		0, // LeqvvOp
 		1, // LogOp
 		1, // MulpvOp
 		1, // MulvvOp
@@ -342,9 +348,11 @@ inline const char* OpName(OpCode op)
 		"End"   ,
 		"Erf"   ,
 		"Exp"   ,
+		"Gtvv"  ,
 		"Inv"   ,
 		"Ldp"   ,
 		"Ldv"   ,
+		"Leqvv" ,
 		"Log"   ,
 		"Mulpv" ,
 		"Mulvv" ,
@@ -605,6 +613,8 @@ void printOp(
 
 		case AddvvOp:
 		case DivvvOp:
+		case GtvvOp:
+		case LeqvvOp:
 		case MulvvOp:
 		case PowvvOp:
 		case SubvvOp:
@@ -859,6 +869,12 @@ inline void assert_arg_before_result(
 		CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) + 4 < result );
 		break;
 		// ------------------------------------------------------------------
+		// 2 arguments (both variables), no results
+		case GtvvOp:
+		case LeqvvOp:
+		CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) <= result );
+		CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) <= result );
+		break;
 
 		// 2 arguments (both variables), 1 results
 		case AddvvOp:

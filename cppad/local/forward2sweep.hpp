@@ -364,10 +364,20 @@ size_t forward2sweep(
 			case ExpOp:
 			forward_exp_op_dir(q, r, i_var, arg[0], J, taylor);
 			break;
+			// ---------------------------------------------------
+
+			case GtvvOp:
+			CPPAD_ASSERT_UNKNOWN(q > 0 );
+			break;
 			// -------------------------------------------------
 
 			case InvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 0, 1);
+			break;
+			// ---------------------------------------------------
+
+			case LeqvvOp:
+			CPPAD_ASSERT_UNKNOWN(q > 0 );
 			break;
 			// -------------------------------------------------
 

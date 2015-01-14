@@ -3,7 +3,7 @@
 # define CPPAD_REVERSE_SWEEP_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -450,6 +450,19 @@ void ReverseSweep(
 			);
 			break;
 			// --------------------------------------------------
+
+			case GtvvOp:
+			break;
+			// --------------------------------------------------
+
+			case InvOp:
+			break;
+			// --------------------------------------------------
+
+			case LeqvvOp:
+			break;
+			// --------------------------------------------------
+
 			case LdpOp:
 			reverse_load_op(
 		op, d, i_var, arg, J, Taylor, K, Partial, var_by_load_op.data()
@@ -463,10 +476,6 @@ void ReverseSweep(
 			);
 			break;
 			// -------------------------------------------------
-
-			case InvOp:
-			break;
-			// --------------------------------------------------
 
 			case LogOp:
 			reverse_log_op(

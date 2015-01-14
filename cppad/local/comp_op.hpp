@@ -3,7 +3,7 @@
 # define CPPAD_COMP_OP_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -167,5 +167,44 @@ inline void forward_comp_op_0(
 	}
 	return;
 }
+
+template <class Base>
+inline void forward_leqvv_op_0(
+	size_t&       count       ,
+	const addr_t* arg         ,
+	const Base*   parameter   ,
+	size_t        cap_order   ,
+	Base*         taylor      )
+{
+	// check assumptions
+	CPPAD_ASSERT_UNKNOWN( NumArg(LeqvvOp) == 2 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(LeqvvOp) == 0 );
+
+	// Taylor coefficients corresponding to arguments and result
+	Base* x = taylor + arg[0] * cap_order;
+	Base* y = taylor + arg[1] * cap_order;
+
+	count += GreaterThanZero(x[0] - y[0]);
+}
+
+template <class Base>
+inline void forward_gtvv_op_0(
+	size_t&       count       ,
+	const addr_t* arg         ,
+	const Base*   parameter   ,
+	size_t        cap_order   ,
+	Base*         taylor      )
+{
+	// check assumptions
+	CPPAD_ASSERT_UNKNOWN( NumArg(GtvvOp) == 2 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(GtvvOp) == 0 );
+
+	// Taylor coefficients corresponding to arguments and result
+	Base* x = taylor + arg[0] * cap_order;
+	Base* y = taylor + arg[1] * cap_order;
+
+	count += GreaterThanOrZero(y[0] - x[0]);
+}
+
 } // END_CPPAD_NAMESPACE
 # endif

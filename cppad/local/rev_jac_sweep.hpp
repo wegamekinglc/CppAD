@@ -3,7 +3,7 @@
 # define CPPAD_REV_JAC_SWEEP_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -362,8 +362,18 @@ void RevJacSweep(
 			break;
 			// -------------------------------------------------
 
+			case GtvvOp:
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
+			break;
+			// -------------------------------------------------
+
 			case InvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 0, 1);
+			break;
+			// -------------------------------------------------
+
+			case LeqvvOp:
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			break;
 			// -------------------------------------------------
 

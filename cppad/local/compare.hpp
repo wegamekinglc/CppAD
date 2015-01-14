@@ -6,7 +6,7 @@
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -46,7 +46,7 @@ $icode%b% = %x% %Op% %y%$$
 $head Purpose$$
 Compares two operands where one of the operands is an
 $codei%AD<%Base%>%$$ object.
-The comparison has the same interpretation as for 
+The comparison has the same interpretation as for
 the $icode Base$$ type.
 
 
@@ -61,7 +61,7 @@ $code >=$$  $cnext is $icode x$$ greater than or equal $icode y$$  $rnext
 $code ==$$  $cnext is $icode x$$ equal to $icode y$$               $rnext
 $code !=$$  $cnext is $icode x$$ not equal to $icode y$$
 $tend
- 
+
 $head x$$
 The operand $icode x$$ has prototype
 $codei%
@@ -91,7 +91,7 @@ $cref/operation sequence/glossary/Operation/Sequence/$$.
 $pre
 
 $$
-For example, suppose 
+For example, suppose
 $icode x$$ and $icode y$$ are $codei%AD<%Base%>%$$ objects,
 the tape corresponding to $codei%AD<%Base%>%$$ is recording,
 $icode b$$ is true,
@@ -99,22 +99,22 @@ and the subsequent code is
 $codei%
 	if( %b% )
 		%y% = cos(%x%);
-	else	%y% = sin(%x%); 
+	else	%y% = sin(%x%);
 %$$
 only the assignment $icode%y% = cos(%x%)%$$ is recorded on the tape
-(if $icode x$$ is a $cref/parameter/glossary/Parameter/$$, 
+(if $icode x$$ is a $cref/parameter/glossary/Parameter/$$,
 nothing is recorded).
 The $cref CompareChange$$ function can yield
 some information about changes in comparison operation results.
 You can use $cref CondExp$$ to obtain comparison operations
-that depends on the 
-$cref/independent variable/glossary/Tape/Independent Variable/$$ 
+that depends on the
+$cref/independent variable/glossary/Tape/Independent Variable/$$
 values with out re-taping the AD sequence of operations.
 
 $head Assumptions$$
 If one of the $icode Op$$ operators listed above
 is used with an $codei%AD<%Base%>%$$ object,
-it is assumed that the same operator is supported by the base type 
+it is assumed that the same operator is supported by the base type
 $icode Base$$.
 
 $head Example$$
@@ -171,7 +171,7 @@ void ADTape<Base>::RecordCompare(
 	if( result )
 		ind1+= 1;
 
-	// ind[0] = cop 
+	// ind[0] = cop
 	ind0 = size_t (cop);
 
 	CPPAD_ASSERT_UNKNOWN( ind1 > 1 );
@@ -187,7 +187,7 @@ void ADTape<Base>::RecordCompare(
 template <class Base>
 CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 bool operator < (const AD<Base> &left , const AD<Base> &right)
-{	bool result =  (left.value_ < right.value_); 
+{	bool result =  (left.value_ < right.value_);
 
 	ADTape<Base> *tape = CPPAD_NULL;
 	if( Variable(left) )
@@ -208,16 +208,27 @@ CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(<)
 template <class Base>
 CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 bool operator <= (const AD<Base> &left , const AD<Base> &right)
-{ 	bool result =  (left.value_ <= right.value_); 
+{ 	bool result    =  (left.value_ <= right.value_);
+	bool var_left  = Variable(left);
+	bool var_right = Variable(right);
 
 	ADTape<Base> *tape = CPPAD_NULL;
-	if( Variable(left) )
-		tape = left.tape_this();
-	else if ( Variable(right) )
-		tape = right.tape_this();
-
-	if( tape != CPPAD_NULL )
+	if( var_left )
+	{	tape = left.tape_this();
+		if( var_right )
+		{	if( result )
+				tape->Rec_.PutOp(LeqvvOp);
+			else
+				tape->Rec_.PutOp(GtvvOp);
+			tape->Rec_.PutArg(left.taddr_, right.taddr_);
+		}
+		else
+			tape->RecordCompare(CompareLe, result, left, right);
+	}
+	else if ( var_right )
+	{	tape = right.tape_this();
 		tape->RecordCompare(CompareLe, result, left, right);
+	}
 
 	return result;
 }
@@ -225,22 +236,31 @@ bool operator <= (const AD<Base> &left , const AD<Base> &right)
 // convert other cases into the case above
 CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(<=)
 
-
 // -------------------------------- > -------------------------
 template <class Base>
 CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 bool operator > (const AD<Base> &left , const AD<Base> &right)
-{	bool result =  (left.value_ > right.value_); 
+{ 	bool result    =  (left.value_ > right.value_);
+	bool var_left  = Variable(left);
+	bool var_right = Variable(right);
 
 	ADTape<Base> *tape = CPPAD_NULL;
-	if( Variable(left) )
-		tape = left.tape_this();
-	else if ( Variable(right) )
-		tape = right.tape_this();
-
-	if( tape != CPPAD_NULL )
+	if( var_left )
+	{	tape = left.tape_this();
+		if( var_right )
+		{	if( result )
+				tape->Rec_.PutOp(GtvvOp);
+			else
+				tape->Rec_.PutOp(LeqvvOp);
+			tape->Rec_.PutArg(left.taddr_, right.taddr_);
+		}
+		else
+			tape->RecordCompare(CompareGt, result, left, right);
+	}
+	else if ( var_right )
+	{	tape = right.tape_this();
 		tape->RecordCompare(CompareGt, result, left, right);
-
+	}
 
 	return result;
 }
@@ -252,7 +272,7 @@ CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(>)
 template <class Base>
 CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 bool operator >= (const AD<Base> &left , const AD<Base> &right)
-{ 	bool result =  (left.value_ >= right.value_); 
+{ 	bool result =  (left.value_ >= right.value_);
 
 	ADTape<Base> *tape = CPPAD_NULL;
 	if( Variable(left) )
@@ -274,7 +294,7 @@ CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(>=)
 template <class Base>
 CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 bool operator == (const AD<Base> &left , const AD<Base> &right)
-{	bool result =  (left.value_ == right.value_); 
+{	bool result =  (left.value_ == right.value_);
 
 	ADTape<Base> *tape = CPPAD_NULL;
 	if( Variable(left) )
