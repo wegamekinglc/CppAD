@@ -21,6 +21,26 @@ Zero order forward mode check how many comparisons changed.
 */
 
 // -------------------------------- <= -----------------------------------
+/*!
+Zero order forward mode comparison check that left <= right
+
+\param count
+It the condition is not true, ths counter is incremented by one.
+
+\param arg
+parameter[ arg[0] ] is the left operand and
+taylor[ arg[1] * cap_order + 0 ] is the zero order Taylor coefficient
+for the right operand.
+
+\param parameter
+vector of parameter values.
+
+\param cap_order
+number of Taylor coefficients allocated for each variable
+
+\param taylor
+vector of taylor coefficients.
+*/
 template <class Base>
 inline void forward_leqpv_op_0(
 	size_t&       count       ,
@@ -39,6 +59,25 @@ inline void forward_leqpv_op_0(
 
 	count += GreaterThanZero(x - y[0]);
 }
+/*!
+Zero order forward mode comparison check that left <= right
+
+\param count
+It the condition is not true, ths counter is incremented by one.
+
+\param arg
+taylor[ arg[0] * cap_order + 0 ] is the zero order Taylor coefficient
+for the left operand and  parameter[ arg[1] ] is the right operand
+
+\param parameter
+vector of parameter values.
+
+\param cap_order
+number of Taylor coefficients allocated for each variable
+
+\param taylor
+vector of taylor coefficients.
+*/
 template <class Base>
 inline void forward_leqvp_op_0(
 	size_t&       count       ,
@@ -57,6 +96,27 @@ inline void forward_leqvp_op_0(
 
 	count += GreaterThanZero(x[0] - y);
 }
+/*!
+Zero order forward mode comparison check that left <= right
+
+\param count
+It the condition is not true, ths counter is incremented by one.
+
+\param arg
+taylor[ arg[0] * cap_order + 0 ] is the zero order Taylor coefficient
+for the left operand and  
+taylor[ arg[1] * cap_order + 0 ] is the zero order Taylor coefficient
+for the right operand.
+
+\param parameter
+vector of parameter values.
+
+\param cap_order
+number of Taylor coefficients allocated for each variable
+
+\param taylor
+vector of taylor coefficients.
+*/
 template <class Base>
 inline void forward_leqvv_op_0(
 	size_t&       count       ,
@@ -76,6 +136,11 @@ inline void forward_leqvv_op_0(
 	count += GreaterThanZero(x[0] - y[0]);
 }
 // ------------------------------- < -------------------------------------
+/*!
+Zero order forward mode comparison check that left < right
+
+\copydetails forward_leqpv_op_0
+*/
 template <class Base>
 inline void forward_ltpv_op_0(
 	size_t&       count       ,
@@ -94,6 +159,11 @@ inline void forward_ltpv_op_0(
 
 	count += GreaterThanOrZero(x - y[0]);
 }
+/*!
+Zero order forward mode comparison check that left < right
+
+\copydetails forward_leqvp_op_0
+*/
 template <class Base>
 inline void forward_ltvp_op_0(
 	size_t&       count       ,
@@ -112,6 +182,11 @@ inline void forward_ltvp_op_0(
 
 	count += GreaterThanOrZero(x[0] - y);
 }
+/*!
+Zero order forward mode comparison check that left < right
+
+\copydetails forward_leqvv_op_0
+*/
 template <class Base>
 inline void forward_ltvv_op_0(
 	size_t&       count       ,
@@ -131,6 +206,11 @@ inline void forward_ltvv_op_0(
 	count += GreaterThanOrZero(x[0] - y[0]);
 }
 // ------------------------------ == -------------------------------------
+/*!
+Zero order forward mode comparison check that left == right
+
+\copydetails forward_leqpv_op_0
+*/
 template <class Base>
 inline void forward_eqpv_op_0(
 	size_t&       count       ,
@@ -149,6 +229,11 @@ inline void forward_eqpv_op_0(
 
 	count += (x != y[0]);
 }
+/*!
+Zero order forward mode comparison check that left == right
+
+\copydetails forward_leqvv_op_0
+*/
 template <class Base>
 inline void forward_eqvv_op_0(
 	size_t&       count       ,
@@ -168,6 +253,11 @@ inline void forward_eqvv_op_0(
 	count += (x[0] != y[0]);
 }
 // -------------------------------- != -----------------------------------
+/*!
+Zero order forward mode comparison check that left != right
+
+\copydetails forward_leqpv_op_0
+*/
 template <class Base>
 inline void forward_nepv_op_0(
 	size_t&       count       ,
@@ -186,6 +276,11 @@ inline void forward_nepv_op_0(
 
 	count += (x == y[0]);
 }
+/*!
+Zero order forward mode comparison check that left != right
+
+\copydetails forward_leqvv_op_0
+*/
 template <class Base>
 inline void forward_nevv_op_0(
 	size_t&       count       ,

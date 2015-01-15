@@ -348,29 +348,29 @@ bool operator == (const AD<Base> &left , const AD<Base> &right)
 	if( var_left )
 	{	tape = left.tape_this();
 		if( var_right )
-		{	if( result )
+		{	tape->Rec_.PutArg(left.taddr_, right.taddr_);
+			if( result )
 				tape->Rec_.PutOp(EqvvOp);
 			else
 				tape->Rec_.PutOp(NevvOp);
-			tape->Rec_.PutArg(left.taddr_, right.taddr_);
 		}
 		else
 		{	addr_t arg1 = tape->Rec_.PutPar(right.value_);
+			tape->Rec_.PutArg(arg1, left.taddr_);
 			if( result )
 				tape->Rec_.PutOp(EqpvOp);
 			else
 				tape->Rec_.PutOp(NepvOp);
-			tape->Rec_.PutArg(arg1, left.taddr_);
 		}
 	}
 	else if ( var_right )
 	{	tape = right.tape_this();
 		addr_t arg0 = tape->Rec_.PutPar(left.value_);
+		tape->Rec_.PutArg(arg0, right.taddr_);
 		if( result )
 			tape->Rec_.PutOp(EqpvOp);
 		else
 			tape->Rec_.PutOp(NepvOp);
-		tape->Rec_.PutArg(arg0, right.taddr_);
 	}
 
 	return result;
@@ -390,29 +390,29 @@ bool operator != (const AD<Base> &left , const AD<Base> &right)
 	if( var_left )
 	{	tape = left.tape_this();
 		if( var_right )
-		{	if( result )
+		{	tape->Rec_.PutArg(left.taddr_, right.taddr_);
+			if( result )
 				tape->Rec_.PutOp(NevvOp);
 			else
 				tape->Rec_.PutOp(EqvvOp);
-			tape->Rec_.PutArg(left.taddr_, right.taddr_);
 		}
 		else
 		{	addr_t arg1 = tape->Rec_.PutPar(right.value_);
+			tape->Rec_.PutArg(arg1, left.taddr_);
 			if( result )
 				tape->Rec_.PutOp(NepvOp);
 			else
 				tape->Rec_.PutOp(EqpvOp);
-			tape->Rec_.PutArg(arg1, left.taddr_);
 		}
 	}
 	else if ( var_right )
 	{	tape = right.tape_this();
 		addr_t arg0 = tape->Rec_.PutPar(left.value_);
+		tape->Rec_.PutArg(arg0, right.taddr_);
 		if( result )
 			tape->Rec_.PutOp(NepvOp);
 		else
 			tape->Rec_.PutOp(EqpvOp);
-		tape->Rec_.PutArg(arg0, right.taddr_);
 	}
 
 	return result;
