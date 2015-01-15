@@ -164,8 +164,8 @@ For <code>i = n+1 , ... , numvar-1</code>, and
 is the k-th order Taylor coefficient corresponding to
 the i-th variable. 
 
-\return
-If p is not zero, the return value is zero.
+\param compare_change
+If p is not zero, this value is not changed.
 If p is zero,
 the return value is equal to the number of comparison operations
 that have a different result from when the information in 
@@ -173,7 +173,7 @@ a play was recorded.
 */
 
 template <class Base>
-size_t forward1sweep(
+void forward1sweep(
 	std::ostream&         s_out,
 	const bool            print,
 	const size_t          p,
@@ -184,7 +184,8 @@ size_t forward1sweep(
 	const size_t          J,
 	Base*                 taylor,
 	bool*                 cskip_op,
-	pod_vector<addr_t>&   var_by_load_op
+	pod_vector<addr_t>&   var_by_load_op,
+	size_t&               compare_change
 )
 {
 	// number of directions
@@ -210,7 +211,8 @@ size_t forward1sweep(
 	const addr_t*   arg = CPPAD_NULL;
 
 	// initialize the comparision operator counter
-	size_t compareCount = 0;
+	if( p == 0 )
+		compare_change = 0;
 
 	// If this includes a zero calculation, initialize this information
 	pod_vector<bool>   isvar_by_ind;
@@ -430,14 +432,14 @@ size_t forward1sweep(
 
 			case EqpvOp:
 			if( p == 0 ) forward_eqpv_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
 
 			case EqvvOp:
 			if( p == 0 ) forward_eqvv_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
@@ -545,20 +547,20 @@ size_t forward1sweep(
 
 			case LepvOp:
 			if( p == 0 ) forward_lepv_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 
 			case LevpOp:
 			if( p == 0 ) forward_levp_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
 
 			case LevvOp:
 			if( p == 0 ) forward_levv_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
@@ -570,20 +572,20 @@ size_t forward1sweep(
 
 			case LtpvOp:
 			if( p == 0 ) forward_ltpv_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 
 			case LtvpOp:
 			if( p == 0 ) forward_ltvp_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
 
 			case LtvvOp:
 			if( p == 0 ) forward_ltvv_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
@@ -601,14 +603,14 @@ size_t forward1sweep(
 
 			case NepvOp:
 			if( p == 0 ) forward_nepv_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
 
 			case NevvOp:
 			if( p == 0 ) forward_nevv_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
@@ -944,7 +946,7 @@ size_t forward1sweep(
 	CPPAD_ASSERT_UNKNOWN( user_state == user_start );
 	CPPAD_ASSERT_UNKNOWN( i_var + 1 == play->num_var_rec() );
 
-	return compareCount;
+	return;
 }
 
 // preprocessor symbols that are local to this file

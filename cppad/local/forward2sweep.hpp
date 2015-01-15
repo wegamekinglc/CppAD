@@ -134,12 +134,10 @@ load instruction.
 In the case where the index is zero,
 the instruction corresponds to a parameter (not variable).
 
-\return
-The return value is zero.
 */
 
 template <class Base>
-size_t forward2sweep(
+void forward2sweep(
 	const size_t                q,
 	const size_t                r,
 	const size_t                n,
@@ -169,9 +167,6 @@ size_t forward2sweep(
 
 	// operation argument indices
 	const addr_t*   arg = CPPAD_NULL;
-
-	// the comparision operator comparison counter
-	const size_t compareCount = 0;
 
 	// work space used by UserOp.
 	vector<bool> user_vx;        // empty vecotor
@@ -744,7 +739,7 @@ size_t forward2sweep(
 	CPPAD_ASSERT_UNKNOWN( user_state == user_start );
 	CPPAD_ASSERT_UNKNOWN( i_var + 1 == play->num_var_rec() );
 
-	return compareCount;
+	return;
 }
 
 // preprocessor symbols that are local to this file

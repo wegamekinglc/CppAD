@@ -124,14 +124,14 @@ In the case where the index is zero,
 the load operator results in a parameter (not a variable).
 Note that the is no variable with index zero on the tape.
 
-\return
+\param compare_change
 The return value is equal to the number of comparision operations
 that have a different result from when the information in 
 play was recorded.
 */
 
 template <class Base>
-size_t forward0sweep(
+void forward0sweep(
 	std::ostream&         s_out,
 	bool                  print,
 	size_t                n,
@@ -140,7 +140,8 @@ size_t forward0sweep(
 	size_t                J,
 	Base*                 taylor,
 	bool*                 cskip_op,
-	pod_vector<addr_t>&   var_by_load_op
+	pod_vector<addr_t>&   var_by_load_op,
+	size_t&               compare_change
 )
 {	CPPAD_ASSERT_UNKNOWN( J >= 1 );
 	CPPAD_ASSERT_UNKNOWN( play->num_var_rec() == numvar );
@@ -165,7 +166,8 @@ size_t forward0sweep(
 	const addr_t*   arg = CPPAD_NULL;
 
 	// initialize the comparision operator counter
-	size_t compareCount = 0;
+	if( p == 0 )
+		compare_change = 0;
 
 	// If this includes a zero calculation, initialize this information
 	pod_vector<bool>   isvar_by_ind;
@@ -381,14 +383,14 @@ size_t forward0sweep(
 
 			case EqpvOp:
 			forward_eqpv_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
 
 			case EqvvOp:
 			forward_eqvv_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
@@ -444,21 +446,21 @@ size_t forward0sweep(
 
 			case LepvOp:
 			forward_lepv_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
 
 			case LevpOp:
 			forward_levp_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
 
 			case LevvOp:
 			forward_levv_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
@@ -470,21 +472,21 @@ size_t forward0sweep(
 
 			case LtpvOp:
 			forward_ltpv_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
 
 			case LtvpOp:
 			forward_ltvp_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
 
 			case LtvvOp:
 			forward_ltvv_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
@@ -502,14 +504,14 @@ size_t forward0sweep(
 
 			case NepvOp:
 			forward_nepv_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
 
 			case NevvOp:
 			forward_nevv_op_0(
-				compareCount, arg, parameter, J, taylor
+				compare_change, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
@@ -827,7 +829,7 @@ size_t forward0sweep(
 	CPPAD_ASSERT_UNKNOWN( user_state == user_start );
 	CPPAD_ASSERT_UNKNOWN( i_var + 1 == play->num_var_rec() );
 
-	return compareCount;
+	return;
 }
 
 } // END_CPPAD_NAMESPACE

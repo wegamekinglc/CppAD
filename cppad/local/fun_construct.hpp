@@ -3,7 +3,7 @@
 # define CPPAD_FUN_CONSTRUCT_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -450,9 +450,9 @@ ADFun<Base>::ADFun(const VectorAD &x, const VectorAD &y)
 	// use independent variable values to fill in values for others
 	CPPAD_ASSERT_UNKNOWN( cskip_op_.size() == play_.num_op_rec() );
 	CPPAD_ASSERT_UNKNOWN( load_op_.size()  == play_.num_load_op_rec() );
-	compare_change_ = forward0sweep(std::cout, false,
+	forward0sweep(std::cout, false,
 		n, num_var_tape_, &play_, cap_order_taylor_, taylor_.data(),
-		cskip_op_.data(), load_op_
+		cskip_op_.data(), load_op_, compare_change_
 	);
 	CPPAD_ASSERT_UNKNOWN( compare_change_ == 0 );
 
