@@ -62,7 +62,7 @@ do
 		echo_eval git checkout $branch
 		#
 		echo "bin/run_cmake.sh > $branch.log"
-		bin/run_cmake.sh > ../../../$branch.log
+		bin/run_cmake.sh > $branch.log
 		#
 		cd $dir
 		#
