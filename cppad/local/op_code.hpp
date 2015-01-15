@@ -96,9 +96,9 @@ enum OpCode {
 	InvOp,    //                             independent variable
 	LdpOp,    //    z[parameter]
 	LdvOp,    //    z[variable]
-	LeqpvOp,  //  parameter <= variable
-	LeqvpOp,  //  variable  <= parameter
-	LeqvvOp,  //  variable  <= variable
+	LepvOp,   //  parameter <= variable
+	LevpOp,   //  variable  <= parameter
+	LevvOp,   //  variable  <= variable
 	LogOp,    //  log(variable)
 	LtpvOp,   //  parameter < variable
 	LtvpOp,   //  variable  < parameter
@@ -190,9 +190,9 @@ inline size_t NumArg( OpCode op)
 		0, // InvOp
 		3, // LdpOp
 		3, // LdvOp
-		2, // LeqpvOp
-		2, // LeqvpOp
-		2, // LeqvvOp
+		2, // LepvOp
+		2, // LevpOp
+		2, // LevvOp
 		1, // LogOp
 		2, // LtpvOp
 		2, // LtvpOp
@@ -290,9 +290,9 @@ inline size_t NumRes(OpCode op)
 		1, // InvOp
 		1, // LdpOp
 		1, // LdvOp
-		0, // LeqpvOp
-		0, // LeqvpOp
-		0, // LeqvvOp
+		0, // LepvOp
+		0, // LevpOp
+		0, // LevvOp
 		1, // LogOp
 		0, // LtpvOp
 		0, // LtvpOp
@@ -373,9 +373,9 @@ inline const char* OpName(OpCode op)
 		"Inv"   ,
 		"Ldp"   ,
 		"Ldv"   ,
-		"Leqpv" ,
-		"Leqvp" ,
-		"Leqvv" ,
+		"Lepv"  ,
+		"Levp"  ,
+		"Levv"  ,
 		"Log"   ,
 		"Ltpv"  ,
 		"Ltvp"  ,
@@ -641,7 +641,7 @@ void printOp(
 
 		case AddvvOp:
 		case DivvvOp:
-		case LeqvvOp:
+		case LevvOp:
 		case LtvvOp:
 		case EqvvOp:
 		case NevvOp:
@@ -654,7 +654,7 @@ void printOp(
 		break;
 
 		case AddpvOp:
-		case LeqpvOp:
+		case LepvOp:
 		case LtpvOp:
 		case EqpvOp:
 		case NepvOp:
@@ -668,7 +668,7 @@ void printOp(
 		break;
 
 		case DivvpOp:
-		case LeqvpOp:
+		case LevpOp:
 		case LtvpOp:
 		case PowvpOp:
 		case SubvpOp:
@@ -892,19 +892,19 @@ inline void assert_arg_before_result(
 		break;
 		// ------------------------------------------------------------------
 		// 2 arguments, no results
-		case LeqpvOp:
+		case LepvOp:
 		case LtpvOp:
 		case EqpvOp:
 		case NepvOp:
 		CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) <= result );
 		break;
 		// 
-		case LeqvpOp:
+		case LevpOp:
 		case LtvpOp:
 		CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) <= result );
 		break;
 		// 
-		case LeqvvOp:
+		case LevvOp:
 		case LtvvOp:
 		case EqvvOp:
 		case NevvOp:

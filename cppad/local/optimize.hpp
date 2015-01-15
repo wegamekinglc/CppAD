@@ -1711,19 +1711,19 @@ void optimize_run(
 			break;
 
 			// Compare operators never get removed -----------------
-			case LeqpvOp:
+			case LepvOp:
 			case LtpvOp:
 			case EqpvOp:
 			case NepvOp:
 			tape[arg[1]].connect_type = yes_connected;
 			break;
 
-			case LeqvpOp:
+			case LevpOp:
 			case LtvpOp:
 			tape[arg[0]].connect_type = yes_connected;
 			break;
 
-			case LeqvvOp:
+			case LevvOp:
 			case LtvvOp:
 			case EqvvOp:
 			case NevvOp:
@@ -2107,9 +2107,9 @@ void optimize_run(
 		{	// see wish_list/Optimize/CompareChange entry.
 			case EqpvOp:
 			case EqvvOp:
-			case LeqpvOp:
-			case LeqvpOp:
-			case LeqvvOp:
+			case LepvOp:
+			case LevpOp:
+			case LevvOp:
 			case LtpvOp:
 			case LtvpOp:
 			case LtvvOp:
@@ -2434,7 +2434,7 @@ void optimize_run(
 			break;
 			// ---------------------------------------------------
 			// Operations with two arguments and no results
-			case LeqpvOp:
+			case LepvOp:
 			case LtpvOp:
 			case EqpvOp:
 			case NepvOp:
@@ -2445,7 +2445,7 @@ void optimize_run(
 			rec->PutOp(op);
 			break;
 			//
-			case LeqvpOp:
+			case LevpOp:
 			case LtvpOp:
 			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			new_arg[0] = tape[arg[0]].new_var;
@@ -2454,7 +2454,7 @@ void optimize_run(
 			rec->PutOp(op);
 			break;
 			//
-			case LeqvvOp:
+			case LevvOp:
 			case LtvvOp:
 			case EqvvOp:
 			case NevvOp:

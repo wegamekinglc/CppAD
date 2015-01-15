@@ -470,9 +470,9 @@ void ReverseSweep(
 			case LtpvOp:
 			case LtvpOp:
 			case LtvvOp:
-			case LeqpvOp:
-			case LeqvpOp:
-			case LeqvvOp:
+			case LepvOp:
+			case LevpOp:
+			case LevvOp:
 			case NepvOp:
 			case NevvOp:
 			break;

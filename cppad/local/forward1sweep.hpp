@@ -543,21 +543,21 @@ size_t forward1sweep(
 			break;
 			// -------------------------------------------------
 
-			case LeqpvOp:
-			if( p == 0 ) forward_leqpv_op_0(
+			case LepvOp:
+			if( p == 0 ) forward_lepv_op_0(
 				compareCount, arg, parameter, J, taylor
 			);
 			break;
 
-			case LeqvpOp:
-			if( p == 0 ) forward_leqvp_op_0(
+			case LevpOp:
+			if( p == 0 ) forward_levp_op_0(
 				compareCount, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
 
-			case LeqvvOp:
-			if( p == 0 ) forward_leqvv_op_0(
+			case LevvOp:
+			if( p == 0 ) forward_levv_op_0(
 				compareCount, arg, parameter, J, taylor
 			);
 			break;

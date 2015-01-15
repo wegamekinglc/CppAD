@@ -442,22 +442,22 @@ size_t forward0sweep(
 			break;
 			// -------------------------------------------------
 
-			case LeqpvOp:
-			forward_leqpv_op_0(
+			case LepvOp:
+			forward_lepv_op_0(
 				compareCount, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
 
-			case LeqvpOp:
-			forward_leqvp_op_0(
+			case LevpOp:
+			forward_levp_op_0(
 				compareCount, arg, parameter, J, taylor
 			);
 			break;
 			// -------------------------------------------------
 
-			case LeqvvOp:
-			forward_leqvv_op_0(
+			case LevvOp:
+			forward_levv_op_0(
 				compareCount, arg, parameter, J, taylor
 			);
 			break;

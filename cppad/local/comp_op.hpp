@@ -42,7 +42,7 @@ number of Taylor coefficients allocated for each variable
 vector of taylor coefficients.
 */
 template <class Base>
-inline void forward_leqpv_op_0(
+inline void forward_lepv_op_0(
 	size_t&       count       ,
 	const addr_t* arg         ,
 	const Base*   parameter   ,
@@ -50,8 +50,8 @@ inline void forward_leqpv_op_0(
 	Base*         taylor      )
 {
 	// check assumptions
-	CPPAD_ASSERT_UNKNOWN( NumArg(LeqpvOp) == 2 );
-	CPPAD_ASSERT_UNKNOWN( NumRes(LeqpvOp) == 0 );
+	CPPAD_ASSERT_UNKNOWN( NumArg(LepvOp) == 2 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(LepvOp) == 0 );
 
 	// Taylor coefficients corresponding to arguments and result
 	Base  x = parameter[ arg[0] ];
@@ -79,7 +79,7 @@ number of Taylor coefficients allocated for each variable
 vector of taylor coefficients.
 */
 template <class Base>
-inline void forward_leqvp_op_0(
+inline void forward_levp_op_0(
 	size_t&       count       ,
 	const addr_t* arg         ,
 	const Base*   parameter   ,
@@ -87,8 +87,8 @@ inline void forward_leqvp_op_0(
 	Base*         taylor      )
 {
 	// check assumptions
-	CPPAD_ASSERT_UNKNOWN( NumArg(LeqvpOp) == 2 );
-	CPPAD_ASSERT_UNKNOWN( NumRes(LeqvpOp) == 0 );
+	CPPAD_ASSERT_UNKNOWN( NumArg(LevpOp) == 2 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(LevpOp) == 0 );
 
 	// Taylor coefficients corresponding to arguments and result
 	Base* x = taylor + arg[0] * cap_order;
@@ -118,7 +118,7 @@ number of Taylor coefficients allocated for each variable
 vector of taylor coefficients.
 */
 template <class Base>
-inline void forward_leqvv_op_0(
+inline void forward_levv_op_0(
 	size_t&       count       ,
 	const addr_t* arg         ,
 	const Base*   parameter   ,
@@ -126,8 +126,8 @@ inline void forward_leqvv_op_0(
 	Base*         taylor      )
 {
 	// check assumptions
-	CPPAD_ASSERT_UNKNOWN( NumArg(LeqvvOp) == 2 );
-	CPPAD_ASSERT_UNKNOWN( NumRes(LeqvvOp) == 0 );
+	CPPAD_ASSERT_UNKNOWN( NumArg(LevvOp) == 2 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(LevvOp) == 0 );
 
 	// Taylor coefficients corresponding to arguments and result
 	Base* x = taylor + arg[0] * cap_order;
@@ -139,7 +139,7 @@ inline void forward_leqvv_op_0(
 /*!
 Zero order forward mode comparison check that left < right
 
-\copydetails forward_leqpv_op_0
+\copydetails forward_lepv_op_0
 */
 template <class Base>
 inline void forward_ltpv_op_0(
@@ -162,7 +162,7 @@ inline void forward_ltpv_op_0(
 /*!
 Zero order forward mode comparison check that left < right
 
-\copydetails forward_leqvp_op_0
+\copydetails forward_levp_op_0
 */
 template <class Base>
 inline void forward_ltvp_op_0(
@@ -185,7 +185,7 @@ inline void forward_ltvp_op_0(
 /*!
 Zero order forward mode comparison check that left < right
 
-\copydetails forward_leqvv_op_0
+\copydetails forward_levv_op_0
 */
 template <class Base>
 inline void forward_ltvv_op_0(
@@ -209,7 +209,7 @@ inline void forward_ltvv_op_0(
 /*!
 Zero order forward mode comparison check that left == right
 
-\copydetails forward_leqpv_op_0
+\copydetails forward_lepv_op_0
 */
 template <class Base>
 inline void forward_eqpv_op_0(
@@ -232,7 +232,7 @@ inline void forward_eqpv_op_0(
 /*!
 Zero order forward mode comparison check that left == right
 
-\copydetails forward_leqvv_op_0
+\copydetails forward_levv_op_0
 */
 template <class Base>
 inline void forward_eqvv_op_0(
@@ -256,7 +256,7 @@ inline void forward_eqvv_op_0(
 /*!
 Zero order forward mode comparison check that left != right
 
-\copydetails forward_leqpv_op_0
+\copydetails forward_lepv_op_0
 */
 template <class Base>
 inline void forward_nepv_op_0(
@@ -279,7 +279,7 @@ inline void forward_nepv_op_0(
 /*!
 Zero order forward mode comparison check that left != right
 
-\copydetails forward_leqvv_op_0
+\copydetails forward_levv_op_0
 */
 template <class Base>
 inline void forward_nevv_op_0(

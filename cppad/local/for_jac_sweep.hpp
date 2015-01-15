@@ -382,9 +382,9 @@ void ForJacSweep(
 			case LtpvOp:
 			case LtvpOp:
 			case LtvvOp:
-			case LeqpvOp:
-			case LeqvpOp:
-			case LeqvvOp:
+			case LepvOp:
+			case LevpOp:
+			case LevvOp:
 			case NepvOp:
 			case NevvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
