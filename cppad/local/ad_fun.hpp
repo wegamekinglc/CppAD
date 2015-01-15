@@ -79,7 +79,8 @@ private:
 	/// Check for nan's and report message to user (default value is true).
 	bool check_for_nan_;
 
-	/// debug checking number of comparision operations that changed
+	/// number of comparision operations that had a different result 
+	/// for the previous zero order forward (than when function was recorded)
 	size_t compare_change_;
 
 	/// number of orders stored in taylor_
@@ -397,7 +398,8 @@ public:
 		return dep_parameter_[i]; 
 	}
 
-	/// how many comparision operations have a different result
+	/// number of comparision operations that had a different result 
+	/// for the previous zero order forward (than when function was recorded)
 	size_t CompareChange(void) const
 	{	return compare_change_; }
 
