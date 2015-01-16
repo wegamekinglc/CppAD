@@ -168,8 +168,16 @@ the i-th variable.
 If p is not zero, this value is not changed.
 If p is zero,
 the return value is equal to the number of comparison operations
-that have a different result from when the information in 
+that have a different result from when the information in
 a play was recorded.
+
+\param compare_first
+If p is not zero, this value is not changed.
+If p and compare_change are zero, this value is also zero.
+If p is zero and compare_change is non-zdero , this value
+the operator index (see forward_next) for the first
+comparision operation that has a different result from when the information in
+play was recorded.
 */
 
 template <class Base>
@@ -185,7 +193,8 @@ void forward1sweep(
 	Base*                 taylor,
 	bool*                 cskip_op,
 	pod_vector<addr_t>&   var_by_load_op,
-	size_t&               compare_change
+	size_t&               compare_change,
+	size_t&               compare_first
 )
 {
 	// number of directions
@@ -212,7 +221,9 @@ void forward1sweep(
 
 	// initialize the comparision operator counter
 	if( p == 0 )
-		compare_change = 0;
+	{	compare_change = 0;
+		compare_first  = 0;
+	}
 
 	// If this includes a zero calculation, initialize this information
 	pod_vector<bool>   isvar_by_ind;
@@ -431,16 +442,24 @@ void forward1sweep(
 			// -------------------------------------------------
 
 			case EqpvOp:
-			if( p == 0 ) forward_eqpv_op_0(
-				compare_change, arg, parameter, J, taylor
-			);
+			if( p == 0 )
+			{	forward_eqpv_op_0(
+					compare_change, arg, parameter, J, taylor
+				);
+				if( (compare_change == 1 ) & (compare_first == 0) )
+					compare_first = i_op;
+			}
 			break;
 			// -------------------------------------------------
 
 			case EqvvOp:
-			if( p == 0 ) forward_eqvv_op_0(
-				compare_change, arg, parameter, J, taylor
-			);
+			if( p == 0 )
+			{	forward_eqvv_op_0(
+					compare_change, arg, parameter, J, taylor
+				);
+				if( (compare_change == 1 ) & (compare_first == 0) )
+					compare_first = i_op;
+			}
 			break;
 			// -------------------------------------------------
 
@@ -546,22 +565,34 @@ void forward1sweep(
 			// -------------------------------------------------
 
 			case LepvOp:
-			if( p == 0 ) forward_lepv_op_0(
-				compare_change, arg, parameter, J, taylor
-			);
+			if( p == 0 )
+			{	forward_lepv_op_0(
+					compare_change, arg, parameter, J, taylor
+				);
+				if( (compare_change == 1 ) & (compare_first == 0) )
+					compare_first = i_op;
+			}
 			break;
 
 			case LevpOp:
-			if( p == 0 ) forward_levp_op_0(
-				compare_change, arg, parameter, J, taylor
-			);
+			if( p == 0 )
+			{	forward_levp_op_0(
+					compare_change, arg, parameter, J, taylor
+				);
+				if( (compare_change == 1 ) & (compare_first == 0) )
+					compare_first = i_op;
+			}
 			break;
 			// -------------------------------------------------
 
 			case LevvOp:
-			if( p == 0 ) forward_levv_op_0(
-				compare_change, arg, parameter, J, taylor
-			);
+			if( p == 0 )
+			{	forward_levv_op_0(
+					compare_change, arg, parameter, J, taylor
+				);
+				if( (compare_change == 1 ) & (compare_first == 0) )
+					compare_first = i_op;
+			}
 			break;
 			// -------------------------------------------------
 
@@ -571,22 +602,34 @@ void forward1sweep(
 			// -------------------------------------------------
 
 			case LtpvOp:
-			if( p == 0 ) forward_ltpv_op_0(
-				compare_change, arg, parameter, J, taylor
-			);
+			if( p == 0 )
+			{	forward_ltpv_op_0(
+					compare_change, arg, parameter, J, taylor
+				);
+				if( (compare_change == 1 ) & (compare_first == 0) )
+					compare_first = i_op;
+			}
 			break;
 
 			case LtvpOp:
-			if( p == 0 ) forward_ltvp_op_0(
-				compare_change, arg, parameter, J, taylor
-			);
+			if( p == 0 )
+			{	forward_ltvp_op_0(
+					compare_change, arg, parameter, J, taylor
+				);
+				if( (compare_change == 1 ) & (compare_first == 0) )
+					compare_first = i_op;
+			}
 			break;
 			// -------------------------------------------------
 
 			case LtvvOp:
-			if( p == 0 ) forward_ltvv_op_0(
-				compare_change, arg, parameter, J, taylor
-			);
+			if( p == 0 )
+			{	forward_ltvv_op_0(
+					compare_change, arg, parameter, J, taylor
+				);
+				if( (compare_change == 1 ) & (compare_first == 0) )
+					compare_first = i_op;
+			}
 			break;
 			// -------------------------------------------------
 
@@ -602,16 +645,24 @@ void forward1sweep(
 			// -------------------------------------------------
 
 			case NepvOp:
-			if( p == 0 ) forward_nepv_op_0(
-				compare_change, arg, parameter, J, taylor
-			);
+			if( p == 0 )
+			{	forward_nepv_op_0(
+					compare_change, arg, parameter, J, taylor
+				);
+				if( (compare_change == 1 ) & (compare_first == 0) )
+					compare_first = i_op;
+			}
 			break;
 			// -------------------------------------------------
 
 			case NevvOp:
-			if( p == 0 ) forward_nevv_op_0(
-				compare_change, arg, parameter, J, taylor
-			);
+			if( p == 0 )
+			{	forward_nevv_op_0(
+					compare_change, arg, parameter, J, taylor
+				);
+				if( (compare_change == 1 ) & (compare_first == 0) )
+					compare_first = i_op;
+			}
 			break;
 			// -------------------------------------------------
 

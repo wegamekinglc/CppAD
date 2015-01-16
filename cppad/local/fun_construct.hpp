@@ -452,9 +452,10 @@ ADFun<Base>::ADFun(const VectorAD &x, const VectorAD &y)
 	CPPAD_ASSERT_UNKNOWN( load_op_.size()  == play_.num_load_op_rec() );
 	forward0sweep(std::cout, false,
 		n, num_var_tape_, &play_, cap_order_taylor_, taylor_.data(),
-		cskip_op_.data(), load_op_, compare_change_
+		cskip_op_.data(), load_op_, compare_change_, compare_first_
 	);
 	CPPAD_ASSERT_UNKNOWN( compare_change_ == 0 );
+	CPPAD_ASSERT_UNKNOWN( compare_first_ == 0 );
 
 	// now set the number of orders stored
 	num_order_taylor_ = 1;

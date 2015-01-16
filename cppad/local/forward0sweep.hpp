@@ -128,6 +128,12 @@ Note that the is no variable with index zero on the tape.
 The return value is equal to the number of comparision operations
 that have a different result from when the information in 
 play was recorded.
+
+\param compare_first
+If compare_change is zero, this value is also zero.
+Otherwise it is the operator index (see forward_next) for the first
+comparision operation that has a different result from when the information in 
+play was recorded.
 */
 
 template <class Base>
@@ -141,7 +147,8 @@ void forward0sweep(
 	Base*                 taylor,
 	bool*                 cskip_op,
 	pod_vector<addr_t>&   var_by_load_op,
-	size_t&               compare_change
+	size_t&               compare_change,
+	size_t&               compare_first
 )
 {	CPPAD_ASSERT_UNKNOWN( J >= 1 );
 	CPPAD_ASSERT_UNKNOWN( play->num_var_rec() == numvar );
@@ -167,7 +174,9 @@ void forward0sweep(
 
 	// initialize the comparision operator counter
 	if( p == 0 )
-		compare_change = 0;
+	{	compare_change = 0;
+		compare_first  = 0;
+	}
 
 	// If this includes a zero calculation, initialize this information
 	pod_vector<bool>   isvar_by_ind;
@@ -385,6 +394,8 @@ void forward0sweep(
 			forward_eqpv_op_0(
 				compare_change, arg, parameter, J, taylor
 			);
+			if( (compare_change == 1 ) & (compare_first == 0) )
+				compare_first = i_op;
 			break;
 			// -------------------------------------------------
 
@@ -392,6 +403,8 @@ void forward0sweep(
 			forward_eqvv_op_0(
 				compare_change, arg, parameter, J, taylor
 			);
+			if( (compare_change == 1 ) & (compare_first == 0) )
+				compare_first = i_op;
 			break;
 			// -------------------------------------------------
 
@@ -448,6 +461,8 @@ void forward0sweep(
 			forward_lepv_op_0(
 				compare_change, arg, parameter, J, taylor
 			);
+			if( (compare_change == 1 ) & (compare_first == 0) )
+				compare_first = i_op;
 			break;
 			// -------------------------------------------------
 
@@ -455,6 +470,8 @@ void forward0sweep(
 			forward_levp_op_0(
 				compare_change, arg, parameter, J, taylor
 			);
+			if( (compare_change == 1 ) & (compare_first == 0) )
+				compare_first = i_op;
 			break;
 			// -------------------------------------------------
 
@@ -462,6 +479,8 @@ void forward0sweep(
 			forward_levv_op_0(
 				compare_change, arg, parameter, J, taylor
 			);
+			if( (compare_change == 1 ) & (compare_first == 0) )
+				compare_first = i_op;
 			break;
 			// -------------------------------------------------
 
@@ -474,6 +493,8 @@ void forward0sweep(
 			forward_ltpv_op_0(
 				compare_change, arg, parameter, J, taylor
 			);
+			if( (compare_change == 1 ) & (compare_first == 0) )
+				compare_first = i_op;
 			break;
 			// -------------------------------------------------
 
@@ -481,6 +502,8 @@ void forward0sweep(
 			forward_ltvp_op_0(
 				compare_change, arg, parameter, J, taylor
 			);
+			if( (compare_change == 1 ) & (compare_first == 0) )
+				compare_first = i_op;
 			break;
 			// -------------------------------------------------
 
@@ -488,6 +511,8 @@ void forward0sweep(
 			forward_ltvv_op_0(
 				compare_change, arg, parameter, J, taylor
 			);
+			if( (compare_change == 1 ) & (compare_first == 0) )
+				compare_first = i_op;
 			break;
 			// -------------------------------------------------
 
@@ -506,6 +531,8 @@ void forward0sweep(
 			forward_nepv_op_0(
 				compare_change, arg, parameter, J, taylor
 			);
+			if( (compare_change == 1 ) & (compare_first == 0) )
+				compare_first = i_op;
 			break;
 			// -------------------------------------------------
 
@@ -513,6 +540,8 @@ void forward0sweep(
 			forward_nevv_op_0(
 				compare_change, arg, parameter, J, taylor
 			);
+			if( (compare_change == 1 ) & (compare_first == 0) )
+				compare_first = i_op;
 			break;
 			// -------------------------------------------------
 

@@ -83,6 +83,11 @@ private:
 	/// for the previous zero order forward (than when function was recorded)
 	size_t compare_change_;
 
+	/// If compare_change_ is zero, this value is also zero. Otherwise it is
+	/// the op_index for the comparison operator that corresponded to the
+	/// change from compare_change == 0 to compare_change == 1.
+	size_t compare_first_;
+
 	/// number of orders stored in taylor_
 	size_t num_order_taylor_;
 
