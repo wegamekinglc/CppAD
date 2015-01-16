@@ -85,6 +85,6 @@ $children%
 The file
 $cref compare_change.cpp$$
 contains an example and test of this operation.
-They return true if they succeed and false otherwise.
+It returns true if they succeed and false otherwise.
 
 $end

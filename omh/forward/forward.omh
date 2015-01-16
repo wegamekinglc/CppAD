@@ -20,7 +20,7 @@ $childtable%
 	omh/forward/forward_order.omh%
 	omh/forward/forward_dir.omh%
 	omh/forward/size_order.omh%
-	omh/forward/compare_change.omh%
+	omh/forward/plan.omh%
 	cppad/local/capacity_order.hpp%
 	cppad/local/num_skip.hpp
 %$$
