@@ -34,7 +34,7 @@ $table
 $cref/CppADCreateUnaryBool/BoolFun/Deprecated/$$  $cnext 
 	$title BoolFun$$ 
 $rnext
-$cref/CppADCreateDiscrete/Discrete/Deprecated/$$  $cnext 
+$cref/CppADCreateDiscrete/Discrete/CppADCreateDiscrete Deprecated 2007-07-28/$$  $cnext 
 	$title Discrete$$
 $rnext
 $cref InstallUnix$$                               $cnext
