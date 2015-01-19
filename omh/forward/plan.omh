@@ -25,7 +25,7 @@ $index forward, zero order$$
 $head Syntax$$
 $icode%number% = %f%.compare_change_number()
 %$$
-$icode%f%.compare_change_set(%count%)
+$icode%f%.compare_change_count(%count%)
 %$$
 $icode%op_index% = %f%.compare_change_op_index()
 
@@ -55,7 +55,7 @@ syntax, the object $icode f$$ has prototype
 $codei%
 	const ADFun<%Base%> %f%
 %$$
-In the $code compare_change_set$$ 
+In the $code compare_change_count$$ 
 syntax, the object $icode f$$ has prototype
 $codei%
 	ADFun<%Base%> %f%
