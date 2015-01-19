@@ -23,11 +23,11 @@ $index zero, order forward$$
 $index forward, zero order$$
 
 $head Syntax$$
-$icode%count% = %f%.compare_change_count()
+$icode%number% = %f%.compare_change_number()
 %$$
-$icode%f%.compare_change_set(%number%)
+$icode%f%.compare_change_set(%count%)
 %$$
-$icode%op_index% = %f%.compare_change_get()
+$icode%op_index% = %f%.compare_change_op_index()
 
 %$$
 $bold See Also$$
@@ -50,7 +50,7 @@ The function $latex F(x)$$ and the algorithm will have the same values.
 
 
 $head f$$
-In the $code compare_change_count$$ and $code compare_change_get$$
+In the $code compare_change_number$$ and $code compare_change_op_index$$
 syntax, the object $icode f$$ has prototype
 $codei%
 	const ADFun<%Base%> %f%
@@ -61,10 +61,10 @@ $codei%
 	ADFun<%Base%> %f%
 %$$
 
-$head count$$
-The return value $icode count$$ has prototype
+$head number$$
+The return value $icode number$$ has prototype
 $codei%
-	size_t %count%
+	size_t %number%
 %$$
 It is the number of 
 $codei%AD<%Base%>%$$ $cref/comparison/Compare/$$ operations,
@@ -74,7 +74,7 @@ $codei%
 %$$
 that have a different result for this value of $icode x$$
 than the value used when $icode f$$ was created by taping an algorithm.
-If $icode count$$ is non-zero,
+If $icode number$$ is non-zero,
 you may want to re-tape the algorithm with the
 $cref/independent variables/glossary/Tape/Independent Variable/$$
 equal to the values in $icode x$$, 
@@ -85,20 +85,20 @@ significantly more time than evaluation using $cref forward_zero$$.
 If the functions values have not changed (see $cref FunCheck$$)
 it may not be worth re-taping a new AD operation sequence. 
 
-$head number$$
-The argument $icode number$$ has prototype
+$head count$$
+The argument $icode count$$ has prototype
 $icode%
-	size_t %number%
+	size_t %count%
 %$$ 
 It specifies which comparison change should correspond to the
 operator index stored during subsequent calls to
 $codei%
 	%f%.Forward(0, %x%)
 %$$
-For example, if $icode%number% == 1%$$,
+For example, if $icode%count% == 1%$$,
 the operator index will correspond to the first comparison change. 
-This is the default value used if $icode number$$ is not specified.
-The value $icode number$$ must be greater than zero.
+This is the default value used if $icode count$$ is not specified.
+The value $icode count$$ must be greater than zero.
 
 $head op_index$$
 The return value $icode op_index$$ has prototype
@@ -106,12 +106,12 @@ $codei%
 	size_t %op_index%
 %$$
 It is the operator index corresponding the 
-$icode number$$-th comparison change during the previous call to
+$icode count$$-th comparison change during the previous call to
 $codei%
 	%f%.Forward(0, %x%)
 %$$
-Note that if $icode number$$ is greater than the corresponding
-$icode count$$, there is no such comparison change and $icode op_index$$
+Note that if $icode count$$ is greater than the corresponding
+$icode number$$, there is no such comparison change and $icode op_index$$
 will be zero.
 
 $subhead Purpose$$
