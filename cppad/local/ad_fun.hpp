@@ -425,8 +425,8 @@ public:
 	{	return compare_change_number_; }
 
 	/// operator index for the count-th  comparison change 
-	size_t compare_change_count(void) const
-	{	return compare_change_count_; }
+	size_t compare_change_op_index(void) const
+	{	return compare_change_op_index_; }
 
 	/// calculate entire Jacobian
 	template <typename VectorBase>

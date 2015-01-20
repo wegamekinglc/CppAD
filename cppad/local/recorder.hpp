@@ -192,8 +192,7 @@ inline size_t recorder<Base>::PutOp(OpCode op)
 {	size_t i    = op_rec_.extend(1);
 	CPPAD_ASSERT_KNOWN(
 		(abort_op_index_ == 0) || (abort_op_index_ != i),
-		"This is the abort operator index specified by "
-		"Independent(x, abort_op_index)."
+		"Operator index equals abort_op_index in Independent"
 	);
 	op_rec_[i]  = static_cast<CPPAD_OP_CODE_TYPE>(op);
 	CPPAD_ASSERT_UNKNOWN( op_rec_.size() == i + 1 );
