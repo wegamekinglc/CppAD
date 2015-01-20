@@ -124,14 +124,19 @@ In the case where the index is zero,
 the load operator results in a parameter (not a variable).
 Note that the is no variable with index zero on the tape.
 
-\param compare_change
-The return value is equal to the number of comparision operations
+\param compare_change_count
+Is the count value for changing number and op_index during
+zero order foward mode.
+
+\param compare_change_number
+If compare_change_count is zero, this value is set to zero.
+Otherwise, the return value is the number of comparision operations
 that have a different result from when the information in 
 play was recorded.
 
-\param compare_first
-If compare_change is zero, this value is also zero.
-Otherwise it is the operator index (see forward_next) for the first
+\param compare_change_op_index
+If compare_change_count is zero, this value is set to zero.
+Otherwise it is the operator index (see forward_next) for the count-th
 comparision operation that has a different result from when the information in 
 play was recorded.
 */
@@ -147,8 +152,9 @@ void forward0sweep(
 	Base*                 taylor,
 	bool*                 cskip_op,
 	pod_vector<addr_t>&   var_by_load_op,
-	size_t&               compare_change,
-	size_t&               compare_first
+	size_t                compare_change_count,
+	size_t&               compare_change_number,
+	size_t&               compare_change_op_index
 )
 {	CPPAD_ASSERT_UNKNOWN( J >= 1 );
 	CPPAD_ASSERT_UNKNOWN( play->num_var_rec() == numvar );
@@ -174,8 +180,8 @@ void forward0sweep(
 
 	// initialize the comparision operator counter
 	if( p == 0 )
-	{	compare_change = 0;
-		compare_first  = 0;
+	{	compare_change_number   = 0;
+		compare_change_op_index = 0;
 	}
 
 	// If this includes a zero calculation, initialize this information
@@ -392,19 +398,23 @@ void forward0sweep(
 
 			case EqpvOp:
 			forward_eqpv_op_0(
-				compare_change, arg, parameter, J, taylor
+				compare_change_number, arg, parameter, J, taylor
 			);
-			if( (compare_change == 1 ) & (compare_first == 0) )
-				compare_first = i_op;
+			if( compare_change_count )
+			{	if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
+			}
 			break;
 			// -------------------------------------------------
 
 			case EqvvOp:
 			forward_eqvv_op_0(
-				compare_change, arg, parameter, J, taylor
+				compare_change_number, arg, parameter, J, taylor
 			);
-			if( (compare_change == 1 ) & (compare_first == 0) )
-				compare_first = i_op;
+			if( compare_change_count )
+			{	if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
+			}
 			break;
 			// -------------------------------------------------
 
@@ -459,28 +469,34 @@ void forward0sweep(
 
 			case LepvOp:
 			forward_lepv_op_0(
-				compare_change, arg, parameter, J, taylor
+				compare_change_number, arg, parameter, J, taylor
 			);
-			if( (compare_change == 1 ) & (compare_first == 0) )
-				compare_first = i_op;
+			if( compare_change_count )
+			{	if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
+			}
 			break;
 			// -------------------------------------------------
 
 			case LevpOp:
 			forward_levp_op_0(
-				compare_change, arg, parameter, J, taylor
+				compare_change_number, arg, parameter, J, taylor
 			);
-			if( (compare_change == 1 ) & (compare_first == 0) )
-				compare_first = i_op;
+			if( compare_change_count )
+			{	if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
+			}
 			break;
 			// -------------------------------------------------
 
 			case LevvOp:
 			forward_levv_op_0(
-				compare_change, arg, parameter, J, taylor
+				compare_change_number, arg, parameter, J, taylor
 			);
-			if( (compare_change == 1 ) & (compare_first == 0) )
-				compare_first = i_op;
+			if( compare_change_count )
+			{	if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
+			}
 			break;
 			// -------------------------------------------------
 
@@ -491,28 +507,34 @@ void forward0sweep(
 
 			case LtpvOp:
 			forward_ltpv_op_0(
-				compare_change, arg, parameter, J, taylor
+				compare_change_number, arg, parameter, J, taylor
 			);
-			if( (compare_change == 1 ) & (compare_first == 0) )
-				compare_first = i_op;
+			if( compare_change_count )
+			{	if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
+			}
 			break;
 			// -------------------------------------------------
 
 			case LtvpOp:
 			forward_ltvp_op_0(
-				compare_change, arg, parameter, J, taylor
+				compare_change_number, arg, parameter, J, taylor
 			);
-			if( (compare_change == 1 ) & (compare_first == 0) )
-				compare_first = i_op;
+			if( compare_change_count )
+			{	if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
+			}
 			break;
 			// -------------------------------------------------
 
 			case LtvvOp:
 			forward_ltvv_op_0(
-				compare_change, arg, parameter, J, taylor
+				compare_change_number, arg, parameter, J, taylor
 			);
-			if( (compare_change == 1 ) & (compare_first == 0) )
-				compare_first = i_op;
+			if( compare_change_count )
+			{	if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
+			}
 			break;
 			// -------------------------------------------------
 
@@ -529,19 +551,23 @@ void forward0sweep(
 
 			case NepvOp:
 			forward_nepv_op_0(
-				compare_change, arg, parameter, J, taylor
+				compare_change_number, arg, parameter, J, taylor
 			);
-			if( (compare_change == 1 ) & (compare_first == 0) )
-				compare_first = i_op;
+			if( compare_change_count )
+			{	if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
+			}
 			break;
 			// -------------------------------------------------
 
 			case NevvOp:
 			forward_nevv_op_0(
-				compare_change, arg, parameter, J, taylor
+				compare_change_number, arg, parameter, J, taylor
 			);
-			if( (compare_change == 1 ) & (compare_first == 0) )
-				compare_first = i_op;
+			if( compare_change_count )
+			{	if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
+			}
 			break;
 			// -------------------------------------------------
 

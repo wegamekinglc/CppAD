@@ -262,6 +262,9 @@ i.e., operation sequences that were recorded using the type \c AD<Base>.
 template <typename Base>
 ADFun<Base>::ADFun(void) : 
 check_for_nan_(true) ,
+compare_change_count_(1),
+compare_change_number_(0),
+compare_change_op_index_(0),
 num_var_tape_(0) 
 { }
 
@@ -294,7 +297,9 @@ void ADFun<Base>::operator=(const ADFun<Base>& f)
 	// 
 	// size_t objects
 	check_for_nan_             = f.check_for_nan_;
-	compare_change_            = f.compare_change_;
+	compare_change_count_      = f.compare_change_count_;
+	compare_change_number_     = f.compare_change_number_;
+	compare_change_op_index_   = f.compare_change_op_index_;
 	num_order_taylor_          = f.num_order_taylor_;
 	cap_order_taylor_          = f.cap_order_taylor_;
 	num_direction_taylor_      = f.num_direction_taylor_;
@@ -430,6 +435,11 @@ ADFun<Base>::ADFun(const VectorAD &x, const VectorAD &y)
 	// ad_fun.hpp member values not set by dependent
 	check_for_nan_ = true;
 
+	// compare changes values
+	compare_change_count_    = 1;
+	compare_change_number_   = 0;
+	compare_change_op_index_ = 0;
+
 	// allocate memory for one zero order taylor_ coefficient
 	CPPAD_ASSERT_UNKNOWN( num_order_taylor_ == 0 );
 	CPPAD_ASSERT_UNKNOWN( num_direction_taylor_ == 0 );
@@ -452,10 +462,14 @@ ADFun<Base>::ADFun(const VectorAD &x, const VectorAD &y)
 	CPPAD_ASSERT_UNKNOWN( load_op_.size()  == play_.num_load_op_rec() );
 	forward0sweep(std::cout, false,
 		n, num_var_tape_, &play_, cap_order_taylor_, taylor_.data(),
-		cskip_op_.data(), load_op_, compare_change_, compare_first_
+		cskip_op_.data(), load_op_,
+		compare_change_count_,
+		compare_change_number_,
+		compare_change_op_index_
 	);
-	CPPAD_ASSERT_UNKNOWN( compare_change_ == 0 );
-	CPPAD_ASSERT_UNKNOWN( compare_first_ == 0 );
+	CPPAD_ASSERT_UNKNOWN( compare_change_count_    == 1 );
+	CPPAD_ASSERT_UNKNOWN( compare_change_number_   == 0 );
+	CPPAD_ASSERT_UNKNOWN( compare_change_op_index_ == 0 );
 
 	// now set the number of orders stored
 	num_order_taylor_ = 1;

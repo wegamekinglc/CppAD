@@ -150,14 +150,18 @@ VectorBase ADFun<Base>::Forward(
 	{	forward0sweep(s, true,
 			n, num_var_tape_, &play_, C, 
 			taylor_.data(), cskip_op_.data(), load_op_,
-			compare_change_, compare_first_
+			compare_change_count_,
+			compare_change_number_,
+			compare_change_op_index_
 		);
 	}
 	else
 	{	forward1sweep(s, true, p, q, 
 			n, num_var_tape_, &play_, C, 
 			taylor_.data(), cskip_op_.data(), load_op_,
-			compare_change_, compare_first_
+			compare_change_count_,
+			compare_change_number_,
+			compare_change_op_index_
 		);
 	}
 

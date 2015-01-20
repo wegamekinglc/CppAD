@@ -79,14 +79,19 @@ private:
 	/// Check for nan's and report message to user (default value is true).
 	bool check_for_nan_;
 
-	/// number of comparision operations that had a different result 
-	/// for the previous zero order forward (than when function was recorded)
-	size_t compare_change_;
+	/// If zero, ignoring comparison operators. Otherwise is the
+	/// compare change count at which to store the operator index.
+	size_t compare_change_count_;
 
-	/// If compare_change_ is zero, this value is also zero. Otherwise it is
-	/// the op_index for the comparison operator that corresponded to the
-	/// change from compare_change == 0 to compare_change == 1.
-	size_t compare_first_;
+	/// If compare_change_count_ is zero, compare_change_number_ is also zero.
+	/// Otherwise, it is set to the number of comparison operations that had a 
+	/// different result during the subsequent zero order forward.
+	size_t compare_change_number_;
+
+	/// If compare_change_count is zero, compare_change_op_index_ is also
+	/// zero. Otherwise it is the operator index for the comparison operator 
+	//// that corresponded to the number changing from count-1 to count.
+	size_t compare_change_op_index_;
 
 	/// number of orders stored in taylor_
 	size_t num_order_taylor_;
@@ -403,10 +408,25 @@ public:
 		return dep_parameter_[i]; 
 	}
 
-	/// number of comparision operations that had a different result 
+	/// Deprecated: number of comparison operations that changed
 	/// for the previous zero order forward (than when function was recorded)
 	size_t CompareChange(void) const
-	{	return compare_change_; }
+	{	return compare_change_number_; }
+
+	/// count as which to store operator index
+	void compare_change_count(size_t count)
+	{	compare_change_count_    = count;
+		compare_change_number_   = 0;
+		compare_change_op_index_ = 0;
+	}
+
+	/// number of comparison operations that changed
+	size_t compare_change_number(void) const
+	{	return compare_change_number_; }
+
+	/// operator index for the count-th  comparison change 
+	size_t compare_change_count(void) const
+	{	return compare_change_count_; }
 
 	/// calculate entire Jacobian
 	template <typename VectorBase>
