@@ -138,6 +138,15 @@ bool compare_change(void)
 	}
 	ok &= caught_error;
 
+
+	// set count to zero to demonstrate case where comparisons are not checked
+	f.compare_change_count(0);
+	y    = f.Forward(0, x);
+	ok  &= (y[0] == x[0]);
+	ok  &= (y[0] != Minimum(x[0], x[1]));
+	ok  &= (f.compare_change_number()   == 0); 
+	ok  &= (f.compare_change_op_index() == 0); 
+
 	return ok;
 }
 

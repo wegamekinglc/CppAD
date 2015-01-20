@@ -447,27 +447,23 @@ void forward1sweep(
 			// -------------------------------------------------
 
 			case EqpvOp:
-			if( p == 0 )
+			if( ( p == 0 ) & ( compare_change_count > 0 ) )
 			{	forward_eqpv_op_0(
 					compare_change_number, arg, parameter, J, taylor
 				);
-				if( compare_change_count )
-				{	if( compare_change_count == compare_change_number )
-						compare_change_op_index = i_op;
-				}
+				if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
 			}
 			break;
 			// -------------------------------------------------
 
 			case EqvvOp:
-			if( p == 0 )
+			if( ( p == 0 ) & ( compare_change_count > 0 ) )
 			{	forward_eqvv_op_0(
 					compare_change_number, arg, parameter, J, taylor
 				);
-				if( compare_change_count )
-				{	if( compare_change_count == compare_change_number )
-						compare_change_op_index = i_op;
-				}
+				if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
 			}
 			break;
 			// -------------------------------------------------
@@ -574,39 +570,33 @@ void forward1sweep(
 			// -------------------------------------------------
 
 			case LepvOp:
-			if( p == 0 )
+			if( ( p == 0 ) & ( compare_change_count > 0 ) )
 			{	forward_lepv_op_0(
 					compare_change_number, arg, parameter, J, taylor
 				);
-				if( compare_change_count )
-				{	if( compare_change_count == compare_change_number )
-						compare_change_op_index = i_op;
-				}
+				if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
 			}
 			break;
 
 			case LevpOp:
-			if( p == 0 )
+			if( ( p == 0 ) & ( compare_change_count > 0 ) )
 			{	forward_levp_op_0(
 					compare_change_number, arg, parameter, J, taylor
 				);
-				if( compare_change_count )
-				{	if( compare_change_count == compare_change_number )
-						compare_change_op_index = i_op;
-				}
+				if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
 			}
 			break;
 			// -------------------------------------------------
 
 			case LevvOp:
-			if( p == 0 )
+			if( ( p == 0 ) & ( compare_change_count > 0 ) )
 			{	forward_levv_op_0(
 					compare_change_number, arg, parameter, J, taylor
 				);
-				if( compare_change_count )
-				{	if( compare_change_count == compare_change_number )
-						compare_change_op_index = i_op;
-				}
+				if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
 			}
 			break;
 			// -------------------------------------------------
@@ -617,39 +607,33 @@ void forward1sweep(
 			// -------------------------------------------------
 
 			case LtpvOp:
-			if( p == 0 )
+			if( ( p == 0 ) & ( compare_change_count > 0 ) )
 			{	forward_ltpv_op_0(
 					compare_change_number, arg, parameter, J, taylor
 				);
-				if( compare_change_count )
-				{	if( compare_change_count == compare_change_number )
-						compare_change_op_index = i_op;
-				}
+				if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
 			}
 			break;
 
 			case LtvpOp:
-			if( p == 0 )
+			if( ( p == 0 ) & ( compare_change_count > 0 ) )
 			{	forward_ltvp_op_0(
 					compare_change_number, arg, parameter, J, taylor
 				);
-				if( compare_change_count )
-				{	if( compare_change_count == compare_change_number )
-						compare_change_op_index = i_op;
-				}
+				if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
 			}
 			break;
 			// -------------------------------------------------
 
 			case LtvvOp:
-			if( p == 0 )
+			if( ( p == 0 ) & ( compare_change_count > 0 ) )
 			{	forward_ltvv_op_0(
 					compare_change_number, arg, parameter, J, taylor
 				);
-				if( compare_change_count )
-				{	if( compare_change_count == compare_change_number )
-						compare_change_op_index = i_op;
-				}
+				if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
 			}
 			break;
 			// -------------------------------------------------
@@ -666,27 +650,23 @@ void forward1sweep(
 			// -------------------------------------------------
 
 			case NepvOp:
-			if( p == 0 )
+			if( ( p == 0 ) & ( compare_change_count > 0 ) )
 			{	forward_nepv_op_0(
 					compare_change_number, arg, parameter, J, taylor
 				);
-				if( compare_change_count )
-				{	if( compare_change_count == compare_change_number )
-						compare_change_op_index = i_op;
-				}
+				if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
 			}
 			break;
 			// -------------------------------------------------
 
 			case NevvOp:
-			if( p == 0 )
+			if( ( p == 0 ) & ( compare_change_count > 0 ) )
 			{	forward_nevv_op_0(
 					compare_change_number, arg, parameter, J, taylor
 				);
-				if( compare_change_count )
-				{	if( compare_change_count == compare_change_number )
-						compare_change_op_index = i_op;
-				}
+				if( compare_change_count == compare_change_number )
+					compare_change_op_index = i_op;
 			}
 			break;
 			// -------------------------------------------------

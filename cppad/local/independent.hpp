@@ -91,7 +91,7 @@ by calling the CppAD $cref/error handler/ErrorHandler/$$.
 When this error handler leads to an assert, the user
 can inspect the call stack to see the source code corresponding to 
 this operator index; see
-$cref/purpose/compare_change_plan/op_index/Purpose/$$.
+$cref/purpose/compare_change/op_index/Purpose/$$.
 
 
 $head VectorAD$$

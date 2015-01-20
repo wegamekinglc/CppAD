@@ -397,23 +397,25 @@ void forward0sweep(
 			// -------------------------------------------------
 
 			case EqpvOp:
-			forward_eqpv_op_0(
-				compare_change_number, arg, parameter, J, taylor
-			);
 			if( compare_change_count )
-			{	if( compare_change_count == compare_change_number )
-					compare_change_op_index = i_op;
+			{	forward_eqpv_op_0(
+					compare_change_number, arg, parameter, J, taylor
+				);
+				{	if( compare_change_count == compare_change_number )
+						compare_change_op_index = i_op;
+				}
 			}
 			break;
 			// -------------------------------------------------
 
 			case EqvvOp:
-			forward_eqvv_op_0(
-				compare_change_number, arg, parameter, J, taylor
-			);
 			if( compare_change_count )
-			{	if( compare_change_count == compare_change_number )
-					compare_change_op_index = i_op;
+			{	forward_eqvv_op_0(
+					compare_change_number, arg, parameter, J, taylor
+				);
+				{	if( compare_change_count == compare_change_number )
+						compare_change_op_index = i_op;
+				}
 			}
 			break;
 			// -------------------------------------------------
@@ -468,34 +470,37 @@ void forward0sweep(
 			// -------------------------------------------------
 
 			case LepvOp:
-			forward_lepv_op_0(
-				compare_change_number, arg, parameter, J, taylor
-			);
 			if( compare_change_count )
-			{	if( compare_change_count == compare_change_number )
-					compare_change_op_index = i_op;
+			{	forward_lepv_op_0(
+					compare_change_number, arg, parameter, J, taylor
+				);
+				{	if( compare_change_count == compare_change_number )
+						compare_change_op_index = i_op;
+				}
 			}
 			break;
 			// -------------------------------------------------
 
 			case LevpOp:
-			forward_levp_op_0(
-				compare_change_number, arg, parameter, J, taylor
-			);
 			if( compare_change_count )
-			{	if( compare_change_count == compare_change_number )
-					compare_change_op_index = i_op;
+			{	forward_levp_op_0(
+					compare_change_number, arg, parameter, J, taylor
+				);
+				{	if( compare_change_count == compare_change_number )
+						compare_change_op_index = i_op;
+				}
 			}
 			break;
 			// -------------------------------------------------
 
 			case LevvOp:
-			forward_levv_op_0(
-				compare_change_number, arg, parameter, J, taylor
-			);
 			if( compare_change_count )
-			{	if( compare_change_count == compare_change_number )
-					compare_change_op_index = i_op;
+			{	forward_levv_op_0(
+					compare_change_number, arg, parameter, J, taylor
+				);
+				{	if( compare_change_count == compare_change_number )
+						compare_change_op_index = i_op;
+				}
 			}
 			break;
 			// -------------------------------------------------
@@ -506,34 +511,37 @@ void forward0sweep(
 			// -------------------------------------------------
 
 			case LtpvOp:
-			forward_ltpv_op_0(
-				compare_change_number, arg, parameter, J, taylor
-			);
 			if( compare_change_count )
-			{	if( compare_change_count == compare_change_number )
-					compare_change_op_index = i_op;
+			{	forward_ltpv_op_0(
+					compare_change_number, arg, parameter, J, taylor
+				);
+				{	if( compare_change_count == compare_change_number )
+						compare_change_op_index = i_op;
+				}
 			}
 			break;
 			// -------------------------------------------------
 
 			case LtvpOp:
-			forward_ltvp_op_0(
-				compare_change_number, arg, parameter, J, taylor
-			);
 			if( compare_change_count )
-			{	if( compare_change_count == compare_change_number )
-					compare_change_op_index = i_op;
+			{	forward_ltvp_op_0(
+					compare_change_number, arg, parameter, J, taylor
+				);
+				{	if( compare_change_count == compare_change_number )
+						compare_change_op_index = i_op;
+				}
 			}
 			break;
 			// -------------------------------------------------
 
 			case LtvvOp:
-			forward_ltvv_op_0(
-				compare_change_number, arg, parameter, J, taylor
-			);
 			if( compare_change_count )
-			{	if( compare_change_count == compare_change_number )
-					compare_change_op_index = i_op;
+			{	forward_ltvv_op_0(
+					compare_change_number, arg, parameter, J, taylor
+				);
+				{	if( compare_change_count == compare_change_number )
+						compare_change_op_index = i_op;
+				}
 			}
 			break;
 			// -------------------------------------------------
@@ -550,23 +558,25 @@ void forward0sweep(
 			// -------------------------------------------------
 
 			case NepvOp:
-			forward_nepv_op_0(
-				compare_change_number, arg, parameter, J, taylor
-			);
 			if( compare_change_count )
-			{	if( compare_change_count == compare_change_number )
-					compare_change_op_index = i_op;
+			{	forward_nepv_op_0(
+					compare_change_number, arg, parameter, J, taylor
+				);
+				{	if( compare_change_count == compare_change_number )
+						compare_change_op_index = i_op;
+				}
 			}
 			break;
 			// -------------------------------------------------
 
 			case NevvOp:
-			forward_nevv_op_0(
-				compare_change_number, arg, parameter, J, taylor
-			);
 			if( compare_change_count )
-			{	if( compare_change_count == compare_change_number )
-					compare_change_op_index = i_op;
+			{	forward_nevv_op_0(
+					compare_change_number, arg, parameter, J, taylor
+				);
+				{	if( compare_change_count == compare_change_number )
+						compare_change_op_index = i_op;
+				}
 			}
 			break;
 			// -------------------------------------------------
@@ -884,8 +894,6 @@ void forward0sweep(
 	CPPAD_ASSERT_UNKNOWN( user_state == user_start );
 	CPPAD_ASSERT_UNKNOWN( i_var + 1 == play->num_var_rec() );
 
-	if( compare_change_count == 0 )
-		compare_change_number = 0;
 	return;
 }
 
