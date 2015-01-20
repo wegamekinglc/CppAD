@@ -170,9 +170,9 @@ Is the count value for changing number and op_index during
 zero order foward mode.
 
 \param compare_change_number
-if p is non-zero, this value is not changed, otherwise:
-If compare_change_count is zero, this value is set to zero.
-Otherwise, the return value is the number of comparision operations
+If p is non-zero, this value is not changed, otherwise:
+If compare_change_count is zero, this value is set to zero, otherwise:
+this value is set to the number of comparision operations
 that have a different result from when the information in 
 play was recorded.
 
@@ -1022,6 +1022,8 @@ void forward1sweep(
 	CPPAD_ASSERT_UNKNOWN( user_state == user_start );
 	CPPAD_ASSERT_UNKNOWN( i_var + 1 == play->num_var_rec() );
 
+	if( (p == 0) & (compare_change_count == 0) )
+		compare_change_number = 0; 
 	return;
 }
 

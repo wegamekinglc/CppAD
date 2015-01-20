@@ -884,6 +884,8 @@ void forward0sweep(
 	CPPAD_ASSERT_UNKNOWN( user_state == user_start );
 	CPPAD_ASSERT_UNKNOWN( i_var + 1 == play->num_var_rec() );
 
+	if( compare_change_count == 0 )
+		compare_change_number = 0;
 	return;
 }
 
