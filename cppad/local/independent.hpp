@@ -84,15 +84,15 @@ and is the number of independent variables for this
 AD operation sequence.
 
 $head abort_op_index$$
-The syntax that includes this parameter is not available when
-$cref/NDEBUG/Faq/Speed/NDEBUG/$$ is defined.
+$index abort_op_index$$
 It specifies the operator index at which the execution is be aborted 
 by calling the CppAD $cref/error handler/ErrorHandler/$$.
 When this error handler leads to an assert, the user
 can inspect the call stack to see the source code corresponding to 
 this operator index; see
 $cref/purpose/compare_change/op_index/Purpose/$$.
-
+No abort will occur if $icode abort_op_index$$ is zero,
+of if $cref/NDEBUG/Faq/Speed/NDEBUG/$$ is defined.
 
 $head VectorAD$$
 The type $icode VectorAD$$ must be a $cref SimpleVector$$ class with

@@ -2803,6 +2803,9 @@ void ADFun<Base>::optimize(void)
 	// now replace the recording
 	play_.get(rec);
 
+	// set flag so this function knows it has been optimized
+	has_been_optimized_ = true;
+
 	// free memory allocated for sparse Jacobian calculation
 	// (the results are no longer valid)
 	for_jac_sparse_pack_.resize(0, 0);

@@ -115,26 +115,28 @@ bool compare_change(void)
 	ok  &= (f.compare_change_op_index() > 0 ); 
 	size_t op_index = f.compare_change_op_index();
 
+	// Local block during which default CppAD error handler is replaced.
 	// If you do not replace the default CppAD error handler,
 	// and you run in the debugger, you will be able to inspect the
 	// call stack and see that 'if( x < y )' is where the comparison is.
-	CppAD::ErrorHandler local_error_handler(error_handler);
-
 	bool caught_error = false;
-	std::string check_msg = 
-		"Operator index equals abort_op_index in Independent";
-	try {
-		// determine the operation index where the change occurred
-		CppAD::Independent(ax, op_index);
-		ay[0] = Minimum(ax[0], ax[1]);
-	}
-	catch( error_info info )
-	{	caught_error = true;
-		ok          &= info.known;
-		ok          &= info.msg == check_msg;
-		// Must abort the recording so we can start a new one
-		// (and to avoid a memory leak).
-		AD<double>::abort_recording();
+	{	CppAD::ErrorHandler local_error_handler(error_handler);
+
+		std::string check_msg = 
+			"Operator index equals abort_op_index in Independent";
+		try {
+			// determine the operation index where the change occurred
+			CppAD::Independent(ax, op_index);
+			ay[0] = Minimum(ax[0], ax[1]);
+		}
+		catch( error_info info )
+		{	caught_error = true;
+			ok          &= info.known;
+			ok          &= info.msg == check_msg;
+			// Must abort the recording so we can start a new one
+			// (and to avoid a memory leak).
+			AD<double>::abort_recording();
+		}
 	}
 	ok &= caught_error;
 
@@ -144,6 +146,28 @@ bool compare_change(void)
 	y    = f.Forward(0, x);
 	ok  &= (y[0] == x[0]);
 	ok  &= (y[0] != Minimum(x[0], x[1]));
+	ok  &= (f.compare_change_number()   == 0); 
+	ok  &= (f.compare_change_op_index() == 0); 
+
+	// now demonstrate that compare_change_number works for an optimized
+	// tape (note that compare_change_op_index is always zero after optimize)
+	f.optimize();
+	f.compare_change_count(1);
+	y    = f.Forward(0, x);
+	ok  &= (y[0] == x[0]);
+	ok  &= (y[0] != Minimum(x[0], x[1]));
+	ok  &= (f.compare_change_number()   == 1); 
+	ok  &= (f.compare_change_op_index() == 0); 
+
+	// now retape to get the a tape that agrees with the algorithm
+	ax[0] = x[0];
+	ax[1] = x[1];
+	Independent(ax);
+	ay[0] = Minimum(ax[0], ax[1]);
+	f.Dependent(ax, ay);
+	y    = f.Forward(0, x);
+	ok  &= (y[0] == x[1]);
+	ok  &= (y[0] == Minimum(x[0], x[1]));
 	ok  &= (f.compare_change_number()   == 0); 
 	ok  &= (f.compare_change_op_index() == 0); 
 

@@ -133,6 +133,7 @@ If $icode count$$ is greater than the corresponding
 $icode number$$, there is no such comparison change and $icode op_index$$
 will also be zero.
 If $icode count$$ is zero,
+if the function $icode f$$ has been $cref/optimized/optimize/$$,
 or if no calls to $icode%f%.Forward(0, %x%)%$$ follow the previous
 setting of $icode count$$,
 $icode op_index$$ is zero.
@@ -146,11 +147,8 @@ For example, using an $cref/conditional expression/CondExp/$$
 may be appropriate in some cases.
 See $cref/abort_op_index/Independent/abort_op_index/$$ in the syntax
 $codei%
-	Independent(%x%, %op_index%)
+	Independent(%x%, %abort_op_index%)
 %$$
-Note that the operator index $icode op_index$$,
-must correspond to the original tape,
-and not an $cref/optimized/optimize/$$ version of the tape.
 
 $children%
 	example/compare_change.cpp

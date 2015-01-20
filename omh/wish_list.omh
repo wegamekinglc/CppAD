@@ -174,16 +174,14 @@ $head Optimization$$
 $index optimize, tape$$
 $index tape, optimize$$
 
-$subhead CompareChange$$
-The $code ComOp$$ operators are no longer removed by
-the $cref optimize$$ procedure (so that $cref CompareChange$$
-can be used after optimization).
+$subhead Comparison Changes$$
+The comparison operators used to not be taped when
+$cref/NDEBUG/Faq/Speed/NDEBUG/$$ was defined.
+They are now taped so that the $cref compare_change$$ interface
+works even for compiler optimize code.
 This caused a significant slow down in the 
-$cref cppad_det_lu.cpp$$ speed test.
-For the other $cref speed_cppad$$ tests, this had little
-or no effect.
-Perhaps $code optimize$$ should have an option whereby
-the user can choose to have these operators removed.
+$cref cppad_det_lu.cpp$$ speed test (with no options specified).
+Perhaps there should be an option to skip the comparison taping.
 
 $subhead Expression Hashing$$
 During expression sequence $cref/optimization/optimize/$$,

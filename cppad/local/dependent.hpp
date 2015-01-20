@@ -278,6 +278,7 @@ void ADFun<Base>::Dependent(ADTape<Base> *tape, const ADvector &y)
 	tape->Rec_.PutOp(EndOp);
 
 	// some size_t values in ad_fun.hpp
+	has_been_optimized_        = false;
 	compare_change_count_      = 1;
 	compare_change_number_     = 0;
 	compare_change_op_index_   = 0;

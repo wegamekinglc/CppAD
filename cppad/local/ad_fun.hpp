@@ -76,6 +76,9 @@ class ADFun {
 // ------------------------------------------------------------
 // Private member variables
 private:
+	/// Has this ADFun object been optmized
+	bool has_been_optimized_;
+
 	/// Check for nan's and report message to user (default value is true).
 	bool check_for_nan_;
 
@@ -426,7 +429,10 @@ public:
 
 	/// operator index for the count-th  comparison change 
 	size_t compare_change_op_index(void) const
-	{	return compare_change_op_index_; }
+	{	if( has_been_optimized_ )
+			return 0;
+		return compare_change_op_index_; 
+	}
 
 	/// calculate entire Jacobian
 	template <typename VectorBase>
