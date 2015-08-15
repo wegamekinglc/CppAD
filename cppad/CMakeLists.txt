@@ -1,9 +1,9 @@
 # $Id:$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
-# the terms of the 
+# the terms of the
 #                     Eclipse Public License Version 1.0.
 #
 # A copy of this license is included in the COPYING file of this distribution.
@@ -12,7 +12,7 @@
 # Build the cppad/configure.hpp file.
 # Inherit environment from ../CMakeLists.txt
 # -----------------------------------------------------------------------------
-MACRO(check_match match_variable match_constant output_variable) 
+MACRO(check_match match_variable match_constant output_variable)
 	STRING(COMPARE EQUAL ${${match_variable}} ${match_constant} match_flag )
 	IF( match_flag )
 		SET(${output_variable} 1)
@@ -24,7 +24,7 @@ ENDMACRO(check_match)
 # -----------------------------------------------------------------------------
 # command line arguments
 #
-# cppad_testvector 
+# cppad_testvector
 command_line_arg(cppad_testvector cppad STRING
 "Namespace of vector used for testing, one of: boost, cppad, eigen, std"
 )
@@ -34,7 +34,7 @@ command_line_arg(cppad_max_num_threads 48 STRING
 	"maximum number of threads that CppAD can use use"
 )
 # cppad_sparse_list
-command_line_arg(cppad_sparse_list YES BOOL 
+command_line_arg(cppad_sparse_list YES BOOL
 	"use sparse list for internal sparse set representation"
 )
 #
@@ -49,7 +49,7 @@ command_line_arg(cppad_tape_addr_type "unsigned int" STRING
 )
 #
 # cppad_implicit_ctor_from_any_type
-command_line_arg(cppad_implicit_ctor_from_any_type NO BOOL 
+command_line_arg(cppad_implicit_ctor_from_any_type NO BOOL
 	"implicit (instead of explicit) conversion from any type to AD<Base>"
 )
 # -----------------------------------------------------------------------------
@@ -80,8 +80,8 @@ IF( NOT cppad_boostvector )
 IF( NOT cppad_cppadvector )
 IF( NOT cppad_eigenvector )
 IF( NOT cppad_stdvector )
-MESSAGE(FATAL_ERROR 
-"cppad_testvector not one of following: boost, cppad, eigen, std." 
+MESSAGE(FATAL_ERROR
+"cppad_testvector not one of following: boost, cppad, eigen, std."
 )
 ENDIF( NOT cppad_stdvector )
 ENDIF( NOT cppad_eigenvector )
@@ -91,7 +91,7 @@ ENDIF( NOT cppad_boostvector )
 IF( cppad_boostvector )
 	# FIND_PACKAGE(Boost) done by ../CMakeLists.txt
 	IF( NOT Boost_FOUND )
-		MESSAGE(FATAL_ERROR 
+		MESSAGE(FATAL_ERROR
 "cppad_testvector == boost but cannot find boost include files"
 		)
 	ENDIF( NOT Boost_FOUND )
@@ -99,12 +99,16 @@ ENDIF( cppad_boostvector )
 #
 IF( cppad_eigenvector )
 	IF( NOT eigen_prefix )
-		MESSAGE(FATAL_ERROR 
+		MESSAGE(FATAL_ERROR
 "cppad_testvector == eigen but eigen_prefix is not specified"
 		)
 	ENDIF( NOT eigen_prefix )
 ENDIF( cppad_eigenvector )
 
+# =============================================================================
+# Begin C++11 features
+#
+SET(cppad_cplusplus_201100_ok 1)
 # -----------------------------------------------------------------------------
 # cppad_has_rvalue
 #
@@ -114,9 +118,12 @@ int main(void)
 	if( value != 3 )
 		return 1;
 	return 0;
-}" 
+}"
 )
 check_source_runs("${source}" cppad_has_rvalue)
+IF( NOT cppad_has_rvalue )
+	SET(cppad_cplusplus_201100_ok 0)
+ENDIF( NOT cppad_has_rvalue )
 # -----------------------------------------------------------------------------
 # cppad_has_nullptr
 #
@@ -127,6 +134,75 @@ int main(void)
 }"
 )
 check_source_runs("${source}" cppad_has_nullptr)
+IF( NOT cppad_has_nullptr )
+	SET(cppad_cplusplus_201100_ok 0)
+ENDIF( NOT cppad_has_nullptr )
+# -----------------------------------------------------------------------------
+# cppad_has_cstdint_8_to_64
+#
+SET(source "
+# include <cstdint>
+template <class T> inline bool is_pod(void)               { return false; }
+template <>        inline bool is_pod<uint8_t>(void)      { return true;  }
+template <>        inline bool is_pod<uint16_t>(void)     { return true;  }
+template <>        inline bool is_pod<uint32_t>(void)     { return true;  }
+template <>        inline bool is_pod<uint64_t>(void)     { return true;  }
+int main(void)
+{	return 0; }
+"
+)
+check_source_runs("${source}" cppad_has_cstdint_8_to_64)
+IF( NOT cppad_has_cstdint_8_to_64 )
+	SET(cppad_cplusplus_201100_ok 0)
+ENDIF( NOT cppad_has_cstdint_8_to_64 )
+# -----------------------------------------------------------------------------
+# cppad_compiler_has_erf
+# cppad_compiler_has_asinh
+# cppad_compiler_has_acosh
+# cppad_compiler_has_atanh
+# cppad_compiler_has_expm1
+#
+SET(source_template "
+# include <cmath>
+int main(void)
+{	std::c11_function(0.0);
+	return 0;
+}
+"
+)
+FOREACH(c11_function erf asinh acosh atanh expm1 log1p)
+	STRING(REPLACE "c11_function" ${c11_function} source "${source_template}" )
+	# really only checking if program compiles
+	check_source_runs("${source}" cppad_compiler_has_${c11_function} )
+	IF( NOT cppad_compiler_has_${c11_function} )
+		SET(cppad_cplusplus_201100_ok 0)
+	ENDIF( NOT cppad_compiler_has_${c11_function} )
+ENDFOREACH(c11_function)
+# -----------------------------------------------------------------------------
+# cppad_has_high_resolution_clock
+#
+SET(source "
+# include <chrono>
+int main(void)
+{	std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
+    start = std::chrono::high_resolution_clock::now();
+    end   = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> difference = end - start;
+	double elapsed_seconds = difference.count();
+	if( elapsed_seconds > 0.0 )
+		return 0;
+	return 1;
+}
+"
+)
+check_source_runs("${source}" cppad_has_high_resolution_clock)
+IF( NOT cppad_has_high_resolution_clock )
+	SET(cppad_cplusplus_201100_ok 0)
+ENDIF( NOT cppad_has_high_resolution_clock )
+# =============================================================================
+# End C++11 features
+#
+MESSAGE(STATUS "cppad_cplusplus_201100_ok = ${cppad_cplusplus_201100_ok}")
 # -----------------------------------------------------------------------------
 # cppad_has_gettimeofday
 #
@@ -145,41 +221,13 @@ check_source_runs("${source}" cppad_has_gettimeofday)
 SET(source "
 # include <cstring>
 template <class T> inline bool is_pod(void)               { return false; }
-template <>        inline bool is_pod<unsigned int>(void) { return true;  }  
-template <>        inline bool is_pod<size_t>(void)       { return true;  }  
+template <>        inline bool is_pod<unsigned int>(void) { return true;  }
+template <>        inline bool is_pod<size_t>(void)       { return true;  }
 int main(void)
 {	return 0; }
 "
 )
 check_source_runs("${source}" cppad_size_t_not_unsigned_int)
-# -----------------------------------------------------------------------------
-# cppad_has_cstdint_8_to_64
-#
-SET(source "
-# include <cstdint>
-template <class T> inline bool is_pod(void)               { return false; }
-template <>        inline bool is_pod<uint8_t>(void)      { return true;  }  
-template <>        inline bool is_pod<uint16_t>(void)     { return true;  }  
-template <>        inline bool is_pod<uint32_t>(void)     { return true;  }  
-template <>        inline bool is_pod<uint64_t>(void)     { return true;  }  
-int main(void)
-{	return 0; }
-"
-)
-check_source_runs("${source}" cppad_has_cstdint_8_to_64)
-# -----------------------------------------------------------------------------
-# cppad_compiler_has_erf
-#
-SET(source "
-# include <cmath>
-int main(void)
-{	if( std::erf(0.0) == 0.0 )
-		return 0; 
-	return 1;
-}
-"
-)
-check_source_runs("${source}" cppad_compiler_has_erf)
 # -----------------------------------------------------------------------------
 # cppad_tape_addr_type, cppad_tape_id_type
 #
@@ -194,8 +242,8 @@ int main(void)
 	)
 	check_source_runs("${source}" ${cmake_var}_is_unsigned)
 	IF( ${cmake_var}_is_unsigned STREQUAL 0  )
-		MESSAGE(STATUS 
-"Warning: using a signed ${cmake_var} is for CppAD developers only !" 
+		MESSAGE(STATUS
+"Warning: using a signed ${cmake_var} is for CppAD developers only !"
 	)
 	ENDIF( ${cmake_var}_is_unsigned STREQUAL 0  )
 ENDFOREACH( cmake_var )
@@ -226,7 +274,7 @@ int main(void)
 " )
 CHECK_CXX_SOURCE_RUNS("${source}" cppad_max_num_threads_is_integer_ge_4)
 IF( NOT cppad_max_num_threads_is_integer_ge_4 )
-	MESSAGE(FATAL_ERROR 
+	MESSAGE(FATAL_ERROR
 	"cppad_max_num_threads is not an integer greater than or equal 4"
 	)
 ENDIF( NOT cppad_max_num_threads_is_integer_ge_4 )
@@ -235,6 +283,6 @@ ENDIF( NOT cppad_max_num_threads_is_integer_ge_4 )
 # Copy a file to another location and modify its contents.
 # configure_file(InputFile OutputFile [COPYONLY] [ESCAPE_QUOTES] [@ONLY])
 CONFIGURE_FILE(
-	${CMAKE_CURRENT_SOURCE_DIR}/configure.hpp.in             
+	${CMAKE_CURRENT_SOURCE_DIR}/configure.hpp.in
 	${CMAKE_CURRENT_SOURCE_DIR}/configure.hpp
 )

@@ -1,18 +1,18 @@
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
-# the terms of the 
+# the terms of the
 #                     Eclipse Public License Version 1.0.
 #
 # A copy of this license is included in the COPYING file of this distribution.
 # Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # -----------------------------------------------------------------------------
-# Build the example directory tests 
+# Build the example directory tests
 # Inherit environment from ../CMakeList.txt
 
-# Specifies build type for this directory. Possible values are 
+# Specifies build type for this directory. Possible values are
 # empty, Debug, Release, RelWithDebInfo and MinSizeRel
 SET(CMAKE_BUILD_TYPE DEBUG)
 
@@ -28,9 +28,9 @@ SET(sources mul_level_adolc.cpp mul_level_adolc_ode.cpp)
 sources_libs_define(adolc "${sources}" adolc ADOLC_EXAMPLES)
 
 # colpack_prefix
-SET(sources 
-	colpack_hes.cpp 
-	colpack_jac.cpp 
+SET(sources
+	colpack_hes.cpp
+	colpack_jac.cpp
 	../cppad/local/cppad_colpack.cpp
 )
 sources_libs_define(colpack "${sources}" ColPack COLPACK_EXAMPLES)
@@ -62,7 +62,7 @@ ENDIF( ipopt_prefix )
 # Copy a file to another location and modify its contents.
 # configure_file(InputFile OutputFile [COPYONLY] [ESCAPE_QUOTES] [@ONLY])
 CONFIGURE_FILE(
-	${CMAKE_CURRENT_SOURCE_DIR}/test_one.sh.in             
+	${CMAKE_CURRENT_SOURCE_DIR}/test_one.sh.in
 	${CMAKE_CURRENT_SOURCE_DIR}/test_one.sh
 )
 
@@ -76,6 +76,7 @@ ADD_EXECUTABLE(example EXCLUDE_FROM_ALL example.cpp
 	abort_recording.cpp
 	abs.cpp
 	acos.cpp
+	acosh.cpp
 	add.cpp
 	add_eq.cpp
 	ad_assign.cpp
@@ -85,14 +86,16 @@ ADD_EXECUTABLE(example EXCLUDE_FROM_ALL example.cpp
 	ad_input.cpp
 	ad_output.cpp
 	asin.cpp
+	asinh.cpp
 	atan.cpp
+	atanh.cpp
 	atan2.cpp
 	base_alloc.hpp
 	base_require.cpp
 	bender_quad.cpp
 	bool_fun.cpp
 	capacity_order.cpp
-	change_const.cpp
+	change_param.cpp
 	check_for_nan.cpp
 	check_numeric_type.cpp
 	check_simple_vector.cpp
@@ -110,6 +113,7 @@ ADD_EXECUTABLE(example EXCLUDE_FROM_ALL example.cpp
 	erf.cpp
 	error_handler.cpp
 	exp.cpp
+	expm1.cpp
 	for_one.cpp
 	for_two.cpp
 	forward.cpp
@@ -134,6 +138,7 @@ ADD_EXECUTABLE(example EXCLUDE_FROM_ALL example.cpp
 	jacobian.cpp
 	limits.cpp
 	log.cpp
+	log1p.cpp
 	log10.cpp
 	lu_factor.cpp
 	lu_invert.cpp
@@ -185,10 +190,12 @@ ADD_EXECUTABLE(example EXCLUDE_FROM_ALL example.cpp
 	sinh.cpp
 	sparse_hessian.cpp
 	sparse_jacobian.cpp
+	sparse_sub_hes.cpp
 	sqrt.cpp
 	stack_machine.cpp
 	sub.cpp
 	sub_eq.cpp
+	sub_sparse_hes.cpp
 	tan.cpp
 	tanh.cpp
 	tape_index.cpp
@@ -198,16 +205,17 @@ ADD_EXECUTABLE(example EXCLUDE_FROM_ALL example.cpp
 	value.cpp
 	var2par.cpp
 	vec_ad.cpp
-	vector_bool.cpp 
+	vector_bool.cpp
+	zdouble.cpp
 )
 
 # Compiler flags for cppad source
-add_cppad_cxx_flags(example) 
+add_cppad_cxx_flags(example)
 
 # List of libraries to be linked into the specified target
-TARGET_LINK_LIBRARIES(example 
-	${adolc_libs} 
-	${colpack_libs} 
+TARGET_LINK_LIBRARIES(example
+	${adolc_libs}
+	${colpack_libs}
 	${eigen_libs}
 )
 

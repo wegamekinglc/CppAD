@@ -4,7 +4,7 @@
 # CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
-# the terms of the 
+# the terms of the
 #                     Eclipse Public License Version 1.0.
 #
 # A copy of this license is included in the COPYING file of this distribution.
@@ -15,21 +15,21 @@ then
 	echo "bin/check_copyright.sh: must be executed from its parent directory"
 	exit 1
 fi
-if [ -d '.git' ]
+if [ ! -e .git ]
 then
-	scc='git'
-elif [ -d '.svn' ]
-then
-	scc='svn'
-else
-	echo 'check_copright.sh: cannot find .git or .svn'
-	exit 1
+	echo 'This is not a git repository so cannot check copyright.'
+	echo 'check_copyright.sh: skipped'
+	exit 0
 fi
-if ! ${scc}_commit.sh list > /dev/null
-then
-	${scc}_commit.sh list
-fi
-list=`${scc}_commit.sh list | sed -e '/makefile.in$/d'`
+list=`git status | sed -n \
+        -e '/^[#\t ]*deleted:/p' \
+        -e '/^[#\t ]*modified:/p' \
+        -e '/^[#\t ]*both modified:/p' \
+        -e '/^[#\t ]*renamed:/p' \
+        -e '/^[#\t ]*new file:/p' | \
+            sed -e 's/^.*: *//' -e 's/ -> /\n/' | \
+			sed -e '/makefile.in$/d' |
+                sort -u`
 cat << EOF > check_copyright.1.$$
 # Change copyright second year to current year
 s/Copyright (C) \\([0-9]*\\)-[0-9][0-9] Bradley M. Bell/Copyright (C) \\1-15 Bradley M. Bell/

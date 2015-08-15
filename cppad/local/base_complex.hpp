@@ -2,7 +2,7 @@
 # ifndef CPPAD_BASE_COMPLEX_INCLUDED
 # define CPPAD_BASE_COMPLEX_INCLUDED
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -21,6 +21,10 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_complex.hpp$$
 $spell
+	expm1
+	atanh
+	acosh
+	asinh
 	endif
 	eps
 	abs_geq
@@ -111,20 +115,20 @@ and $icode%Rel%$$ equal to
 $code Lt$$, $code Le$$, $code Eq$$, $code Ge$$, and $code Gt$$.
 
 $head EqualOpSeq$$
-Complex numbers do not carry operation sequence information. 
-Thus they are equal in this sense if and only if there values are equal.  
+Complex numbers do not carry operation sequence information.
+Thus they are equal in this sense if and only if there values are equal.
 $codep */
 namespace CppAD {
 	inline bool EqualOpSeq(
-		const std::complex<double> &x , 
+		const std::complex<double> &x ,
 		const std::complex<double> &y )
-	{	return x == y; 
+	{	return x == y;
 	}
 }
 /* $$
 
 $head Identical$$
-Complex numbers do not carry operation sequence information. 
+Complex numbers do not carry operation sequence information.
 Thus they are all parameters so the identical functions just check values.
 $codep */
 namespace CppAD {
@@ -141,7 +145,7 @@ namespace CppAD {
 /* $$
 
 $head Ordered$$
-Complex types do not support comparison operators, 
+Complex types do not support comparison operators,
 $codep */
 # undef  CPPAD_USER_MACRO
 # define CPPAD_USER_MACRO(Fun)                                     \
@@ -159,23 +163,11 @@ namespace CppAD {
 	CPPAD_USER_MACRO(GreaterThanOrZero)
 	CPPAD_USER_MACRO(GreaterThanZero)
 	inline bool abs_geq(
-		const std::complex<double>& x , 
+		const std::complex<double>& x ,
 		const std::complex<double>& y )
 	{	return std::abs(x) >= std::abs(y); }
 }
 /* $$
-
-$head erf$$
-Complex types do not support the error function
-(use CPPAD_USER_MACRO define above).
-$codep */
-# if CPPAD_COMPILER_HAS_ERF
-namespace CppAD {
-	CPPAD_USER_MACRO(erf)
-}
-# endif
-/* $$
-
 
 $head Integer$$
 The implementation of this function must agree
@@ -207,7 +199,7 @@ namespace CppAD {
 /* $$
 
 $head Valid Unary Math$$
-The following macro invocations define the standard unary 
+The following macro invocations define the standard unary
 math functions that are valid with complex arguments and are
 required to use $code AD< std::complex<double> >$$.
 $codep */
@@ -223,7 +215,7 @@ namespace CppAD {
 /* $$
 
 $head Invalid Unary Math$$
-The following macro definition and invocations define the standard unary 
+The following macro definition and invocations define the standard unary
 math functions that are invalid with complex arguments and are
 required to use $code AD< std::complex<double> >$$.
 $codep */
@@ -243,6 +235,14 @@ namespace CppAD {
 	CPPAD_USER_MACRO(asin)
 	CPPAD_USER_MACRO(atan)
 	CPPAD_USER_MACRO(sign)
+# if CPPAD_USE_CPLUSPLUS_2011
+	CPPAD_USER_MACRO(erf)
+	CPPAD_USER_MACRO(asinh)
+	CPPAD_USER_MACRO(acosh)
+	CPPAD_USER_MACRO(atanh)
+	CPPAD_USER_MACRO(expm1)
+	CPPAD_USER_MACRO(log1p)
+# endif
 }
 /* $$
 
@@ -252,7 +252,7 @@ is required to use $code AD< std::complex<double> >$$:
 $codep */
 namespace CppAD {
 	inline std::complex<double> pow(
-		const std::complex<double> &x , 
+		const std::complex<double> &x ,
 		const std::complex<double> &y )
 	{	return std::pow(x, y); }
 }
@@ -285,7 +285,7 @@ namespace CppAD {
 		}
 	};
 	// deprecated machine epsilon
-	template <> 
+	template <>
 	inline std::complex<double> epsilon< std::complex<double> > (void)
 	{	return numeric_limits< std::complex<double> >::epsilon(); }
 }
@@ -331,9 +331,9 @@ namespace CppAD {
 	CPPAD_COND_EXP_REL( std::complex<float> )
 	// EqualOpSeq -----------------------------------------------------
 	inline bool EqualOpSeq(
-		const std::complex<float> &x , 
+		const std::complex<float> &x ,
 		const std::complex<float> &y )
-	{	return x == y; 
+	{	return x == y;
 	}
 	// Identical ------------------------------------------------------
 	inline bool IdenticalPar(const std::complex<float> &x)
@@ -351,7 +351,7 @@ namespace CppAD {
 	CPPAD_USER_MACRO_ONE(GreaterThanOrZero)
 	CPPAD_USER_MACRO_ONE(GreaterThanZero)
 	inline bool abs_geq(
-		const std::complex<float>& x , 
+		const std::complex<float>& x ,
 		const std::complex<float>& y )
 	{	return std::abs(x) >= std::abs(y); }
 	// Integer ------------------------------------------------------
@@ -377,7 +377,7 @@ namespace CppAD {
 	CPPAD_USER_MACRO_TWO(sign)
 	// The pow function
 	inline std::complex<float> pow(
-		const std::complex<float> &x , 
+		const std::complex<float> &x ,
 		const std::complex<float> &y )
 	{	return std::pow(x, y); }
 	// numeric_limits -------------------------------------------------
@@ -400,7 +400,7 @@ namespace CppAD {
 			return std::complex<float>(max, 0.0);
 		}
 	};
-	template <> 
+	template <>
 	inline std::complex<float> epsilon< std::complex<float> >(void)
 	{	return numeric_limits< std::complex<float> >::epsilon(); }
 }

@@ -6,7 +6,7 @@
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -38,9 +38,9 @@ the operators appear in alphabetical order. Binary operation where both
 operands have type AD< \a Base > use the following convention for thier endings:
 \verbatim
     Ending  Left-Operand  Right-Operand
-      pvOp     parameter       variable  
-      vpOp      variable      parameter  
-      vvOp      variable       variable  
+      pvOp     parameter       variable
+      vpOp      variable      parameter
+      vvOp      variable       variable
 \endverbatim
 For example, AddpvOp represents the addition operator where the left
 operand is a parameter and the right operand is a variable.
@@ -48,11 +48,14 @@ operand is a parameter and the right operand is a variable.
 // alphabetical order is checked by bin/check_op_code.sh
 enum OpCode {
 	AbsOp,    //  abs(variable)
-	AcosOp,   // asin(variable)
+	AcosOp,   // acos(variable)
+	AcoshOp,   // acosh(variable)
 	AddpvOp,  //      parameter  + variable
 	AddvvOp,  //      variable   + variable
 	AsinOp,   // asin(variable)
+	AsinhOp,  // asinh(variable)
 	AtanOp,   // atan(variable)
+	AtanhOp,   // atanh(variable)
 	BeginOp,  // used to mark the beginning of the tape
 	CExpOp,   // CondExpRel(left, right, trueCase, falseCase)
 	// arg[0]     = the Rel operator: Lt, Le, Eq, Ge, Gt, or Ne
@@ -60,29 +63,29 @@ enum OpCode {
 	// arg[1] & 2 = is right a variable
 	// arg[1] & 4 = is trueCase a variable
 	// arg[1] & 8 = is falseCase a variable
-	// arg[2]     = index correspoding to left 
-	// arg[3]     = index correspoding to right 
-	// arg[4]     = index correspoding to trueCase 
-	// arg[5]     = index correspoding to falseCase 
+	// arg[2]     = index correspoding to left
+	// arg[3]     = index correspoding to right
+	// arg[4]     = index correspoding to trueCase
+	// arg[5]     = index correspoding to falseCase
 	CosOp,    //  cos(variable)
 	CoshOp,   // cosh(variable)
 	CSkipOp,  // Conditional skip
 	// arg[0]     = the Rel operator: Lt, Le, Eq, Ge, Gt, or Ne
 	// arg[1] & 1 = is left a variable
 	// arg[1] & 2 = is right a variable
-	// arg[2]     = index correspoding to left 
-	// arg[3]     = index correspoding to right 
+	// arg[2]     = index correspoding to left
+	// arg[3]     = index correspoding to right
 	// arg[4] = number of operations to skip if CExpOp comparision is true
 	// arg[5] = number of operations to skip if CExpOp comparision is false
 	// arg[6] -> arg[5+arg[4]]               = skip operations if true
 	// arg[6+arg[4]] -> arg[5+arg[4]+arg[5]] = skip operations if false
 	// arg[6+arg[4]+arg[5]] = arg[4] + arg[5]
-	CSumOp,   // Cummulative summation 
+	CSumOp,   // Cummulative summation
 	// arg[0] = number of addition variables in summation
 	// arg[1] = number of subtraction variables in summation
 	// arg[2] = index of parameter that initializes summation
 	// arg[3] -> arg[2+arg[0]] = index for positive variables
-	// arg[3+arg[0]] -> arg[2+arg[0]+arg[1]] = index for minus variables 
+	// arg[3+arg[0]] -> arg[2+arg[0]+arg[1]] = index for minus variables
 	// arg[3+arg[0]+arg[1]] = arg[0] + arg[1]
 	DisOp,    //  discrete::eval(index, variable)
 	DivpvOp,  //      parameter  / variable
@@ -93,6 +96,7 @@ enum OpCode {
 	EqvvOp,   //  variable   == variable
 	ErfOp,    //  erf(variable)
 	ExpOp,    //  exp(variable)
+	Expm1Op,   // expm1(variable)
 	InvOp,    //                             independent variable
 	LdpOp,    //    z[parameter]
 	LdvOp,    //    z[variable]
@@ -100,6 +104,7 @@ enum OpCode {
 	LevpOp,   //  variable  <= parameter
 	LevvOp,   //  variable  <= variable
 	LogOp,    //  log(variable)
+	Log1pOp,   // log1p(variable)
 	LtpvOp,   //  parameter < variable
 	LtvpOp,   //  variable  < parameter
 	LtvvOp,   //  variable  < variable
@@ -146,7 +151,7 @@ Number of arguments for a specified operator.
 \return
 Number of arguments corresponding to the specified operator.
 
-\param op 
+\param op
 Operator for which we are fetching the number of arugments.
 
 \par NumArgTable
@@ -156,8 +161,8 @@ For example, for the first three OpCode enum values we have
 \verbatim
 OpCode   j   NumArgTable[j]  Meaning
 AbsOp    0                1  index of variable we are taking absolute value of
-AcosOp   1                1  index of variable we are taking cosine of
-AddpvOp  1                2  indices of parameter and variable we are adding
+AcosOp   1                1  index of variable we are taking acos of
+AcoshOp  2                1  index of variable we are taking acosh of
 \endverbatim
 Note that the meaning of the arguments depends on the operator.
 */
@@ -168,10 +173,13 @@ inline size_t NumArg( OpCode op)
 	static const size_t NumArgTable[] = {
 		1, // AbsOp
 		1, // AcosOp
+		1, // AcoshOp
 		2, // AddpvOp
 		2, // AddvvOp
 		1, // AsinOp
+		1, // AsinhOp
 		1, // AtanOp
+		1, // AtanhOp
 		1, // BeginOp  offset first real argument to have index 1
 		6, // CExpOp
 		1, // CosOp
@@ -187,6 +195,7 @@ inline size_t NumArg( OpCode op)
 		2, // EqvvOp
 		3, // ErfOp
 		1, // ExpOp
+		1, // Expm1Op
 		0, // InvOp
 		3, // LdpOp
 		3, // LdvOp
@@ -194,6 +203,7 @@ inline size_t NumArg( OpCode op)
 		2, // LevpOp
 		2, // LevvOp
 		1, // LogOp
+		1, // Log1pOp
 		2, // LtpvOp
 		2, // LtvpOp
 		2, // LtvvOp
@@ -258,7 +268,7 @@ For example, for the first three OpCode enum values we have
 OpCode   j   NumResTable[j]  Meaning
 AbsOp    0                1  variable that is the result of the absolute value
 AcosOp   1                2  acos(x) and sqrt(1-x*x) are required for this op
-AddpvOp  1                1  variable that is the result of the addition
+AcoshOp  2                2  acosh(x) and sqrt(x*x-1) are required for this op
 \endverbatim
 */
 inline size_t NumRes(OpCode op)
@@ -268,10 +278,13 @@ inline size_t NumRes(OpCode op)
 	static const size_t NumResTable[] = {
 		1, // AbsOp
 		2, // AcosOp
+		2, // AcoshOp
 		1, // AddpvOp
 		1, // AddvvOp
 		2, // AsinOp
+		2, // AsinhOp
 		2, // AtanOp
+		2, // AtanhOp
 		1, // BeginOp  offsets first variable to have index one (not zero)
 		1, // CExpOp
 		2, // CosOp
@@ -287,6 +300,7 @@ inline size_t NumRes(OpCode op)
 		0, // EqvvOp
 		5, // ErfOp
 		1, // ExpOp
+		1, // Expm1Op
 		1, // InvOp
 		1, // LdpOp
 		1, // LdvOp
@@ -294,6 +308,7 @@ inline size_t NumRes(OpCode op)
 		0, // LevpOp
 		0, // LevvOp
 		1, // LogOp
+		1, // Log1pOp
 		0, // LtpvOp
 		0, // LtvpOp
 		0, // LtvvOp
@@ -327,7 +342,7 @@ inline size_t NumRes(OpCode op)
 		0  // Last entry not used: avoids g++ 4.3.2 warn when pycppad builds
 	};
 	// check ensuring conversion to size_t is as expected
-	CPPAD_ASSERT_UNKNOWN( size_t(NumberOp) == 
+	CPPAD_ASSERT_UNKNOWN( size_t(NumberOp) ==
 		sizeof(NumResTable) / sizeof(NumResTable[0]) - 1
 	);
 	// this test ensures that all indices are within the table
@@ -343,7 +358,7 @@ Fetch the name for a specified operation.
 \return
 name of the specified operation.
 
-\param op 
+\param op
 Operator for which we are fetching the name
 */
 inline const char* OpName(OpCode op)
@@ -351,10 +366,13 @@ inline const char* OpName(OpCode op)
 	static const char *OpNameTable[] = {
 		"Abs"   ,
 		"Acos"  ,
+		"Acosh" ,
 		"Addpv" ,
 		"Addvv" ,
 		"Asin"  ,
+		"Asinh"  ,
 		"Atan"  ,
+		"Atanh" ,
 		"Begin" ,
 		"CExp"  ,
 		"Cos"   ,
@@ -370,6 +388,7 @@ inline const char* OpName(OpCode op)
 		"Eqvv"  ,
 		"Erf"   ,
 		"Exp"   ,
+		"Expm1" ,
 		"Inv"   ,
 		"Ldp"   ,
 		"Ldv"   ,
@@ -377,6 +396,7 @@ inline const char* OpName(OpCode op)
 		"Levp"  ,
 		"Levv"  ,
 		"Log"   ,
+		"Log1p" ,
 		"Ltpv"  ,
 		"Ltvp"  ,
 		"Ltvv"  ,
@@ -406,11 +426,11 @@ inline const char* OpName(OpCode op)
 		"Usrap" ,
 		"Usrav" ,
 		"Usrrp" ,
-		"Usrrv"  
+		"Usrrv"
 	};
 	// check ensuring conversion to size_t is as expected
-	CPPAD_ASSERT_UNKNOWN( 
-		size_t(NumberOp) == sizeof(OpNameTable)/sizeof(OpNameTable[0]) 
+	CPPAD_ASSERT_UNKNOWN(
+		size_t(NumberOp) == sizeof(OpNameTable)/sizeof(OpNameTable[0])
 	);
 	// this test ensures that all indices are within the table
 	CPPAD_ASSERT_UNKNOWN( size_t(op) < size_t(NumberOp) );
@@ -443,9 +463,9 @@ by width '*' characters.
 */
 template <class Type>
 void printOpField(
-	std::ostream      &os , 
+	std::ostream      &os ,
 	const char *   leader ,
-	const Type     &value , 
+	const Type     &value ,
 	size_t          width )
 {
 	std::ostringstream buffer;
@@ -469,7 +489,7 @@ void printOpField(
 	}
 
 	// count number of spaces at begining
-	size_t nspace = 0; 
+	size_t nspace = 0;
 	while(str[nspace] == ' ' && nspace < len)
 		nspace++;
 
@@ -480,7 +500,7 @@ void printOpField(
 
 	i = width - len + nspace;
 	while(i--)
-		os << " "; 
+		os << " ";
 }
 
 /*!
@@ -511,10 +531,10 @@ is the vector of argument indices for this operation
 */
 template <class Base>
 void printOp(
-	std::ostream&          os     , 
+	std::ostream&          os     ,
 	const player<Base>*    play   ,
-	size_t                 i_op   , 
-	size_t                 i_var  , 
+	size_t                 i_op   ,
+	size_t                 i_var  ,
 	OpCode                 op     ,
 	const addr_t*          ind    )
 {	size_t i;
@@ -522,7 +542,7 @@ void printOp(
 		! thread_alloc::in_parallel() ,
 		"cannot print trace of AD operations in parallel mode"
 	);
-	static const char *CompareOpName[] = 
+	static const char *CompareOpName[] =
 		{ "Lt", "Le", "Eq", "Ge", "Gt", "Ne" };
 
 	// print operator
@@ -531,10 +551,10 @@ void printOp(
 		printOpField(os,  "v=",      i_var, 5);
 	else	printOpField(os,  "v=",      "",    5);
 	if( op == CExpOp || op == CSkipOp )
-	{	printOpField(os, "", OpName(op), 5); 
+	{	printOpField(os, "", OpName(op), 5);
 		printOpField(os, "", CompareOpName[ ind[0] ], 3);
 	}
-	else	printOpField(os, "", OpName(op), 8); 
+	else	printOpField(os, "", OpName(op), 8);
 
 	// print other fields
 	size_t ncol = 5;
@@ -545,8 +565,8 @@ void printOp(
 		ind[0]     = the Rel operator: Lt, Le, Eq, Ge, Gt, or Ne
 		ind[1] & 1 = is left a variable
 		ind[1] & 2 = is right a variable
-		ind[2]     = index correspoding to left 
-		ind[3]     = index correspoding to right 
+		ind[2]     = index correspoding to left
+		ind[3]     = index correspoding to right
 		ind[4] = number of operations to skip if CExpOp comparision is true
 		ind[5] = number of operations to skip if CExpOp comparision is false
 		ind[6] -> ind[5+ind[4]]               = skip operations if true
@@ -588,7 +608,7 @@ void printOp(
 		ind[1] = number of subtraction variables in summation
 		ind[2] = index of parameter that initializes summation
 		ind[3], ... , ind[2+ind[0]] = index for positive variables
-		ind[3+ind[0]], ..., ind[2+ind[0]+ind[1]] = negative variables 
+		ind[3+ind[0]], ..., ind[2+ind[0]+ind[1]] = negative variables
 		ind[3+ind[0]+ind[1]] == ind[0] + ind[1]
 		*/
 		CPPAD_ASSERT_UNKNOWN( ind[3+ind[0]+ind[1]] == ind[0]+ind[1] );
@@ -679,12 +699,17 @@ void printOp(
 
 		case AbsOp:
 		case AcosOp:
+		case AcoshOp:
 		case AsinOp:
+		case AsinhOp:
 		case AtanOp:
+		case AtanhOp:
 		case CosOp:
 		case CoshOp:
 		case ExpOp:
+		case Expm1Op:
 		case LogOp:
+		case Log1pOp:
 		case SignOp:
 		case SinOp:
 		case SinhOp:
@@ -698,8 +723,8 @@ void printOp(
 
 		case ErfOp:
 		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 3 );
-		// ind[2] points to the parameter 0
-		// ind[3] points to the parameter 2 / sqrt(pi)
+		// ind[1] points to the parameter 0
+		// ind[2] points to the parameter 2 / sqrt(pi)
 		printOpField(os, "  v=", ind[0], ncol);
 		break;
 
@@ -750,7 +775,7 @@ void printOp(
 			printOpField(os, " x=", ind[1], ncol);
 		}
 		break;
-	
+
 
 		case CExpOp:
 		CPPAD_ASSERT_UNKNOWN(ind[1] != 0);
@@ -808,7 +833,7 @@ that correspond to this operation
 */
 template <class Value>
 void printOpResult(
-	std::ostream          &os     , 
+	std::ostream          &os     ,
 	size_t                 nfz    ,
 	const  Value          *fz     ,
 	size_t                 nrz    ,
@@ -866,7 +891,9 @@ inline void assert_arg_before_result(
 		// 1 argument , 1 result
 		case AbsOp:
 		case ExpOp:
+		case Expm1Op:
 		case LogOp:
+		case Log1pOp:
 		case ParOp:
 		case SignOp:
 		case SqrtOp:
@@ -875,8 +902,11 @@ inline void assert_arg_before_result(
 
 		// 1 argument, 2 results
 		case AcosOp:
+		case AcoshOp:
 		case AsinOp:
+		case AsinhOp:
 		case AtanOp:
+		case AtanhOp:
 		case CosOp:
 		case CoshOp:
 		case SinOp:
@@ -898,12 +928,12 @@ inline void assert_arg_before_result(
 		case NepvOp:
 		CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) <= result );
 		break;
-		// 
+		//
 		case LevpOp:
 		case LtvpOp:
 		CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) <= result );
 		break;
-		// 
+		//
 		case LevvOp:
 		case LtvvOp:
 		case EqvvOp:
@@ -962,7 +992,7 @@ inline void assert_arg_before_result(
 		case LdvOp:
 		CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < result );
 		break;
-		
+
 		// 3 arguments, third variable, no result
 		case StpvOp:
 		CPPAD_ASSERT_UNKNOWN( size_t(arg[2]) <= result );

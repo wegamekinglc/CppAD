@@ -3,7 +3,7 @@
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -48,21 +48,24 @@ extern bool abort_recording(void);
 extern bool ad_assign(void);
 extern bool ad_ctor(void);
 extern bool abs(void);
-extern bool Acos(void);
+extern bool acos(void);
+extern bool acosh(void);
 extern bool Add(void);
 extern bool AddEq(void);
 extern bool ad_fun(void);
 extern bool ad_in_c(void);
 extern bool ad_input(void);
 extern bool ad_output(void);
-extern bool Asin(void);
-extern bool Atan(void);
-extern bool Atan2(void);
+extern bool asin(void);
+extern bool asinh(void);
+extern bool atan(void);
+extern bool atanh(void);
+extern bool atan2(void);
 extern bool base_require(void);
 extern bool BenderQuad(void);
 extern bool BoolFun(void);
 extern bool capacity_order(void);
-extern bool change_const(void);
+extern bool change_param(void);
 extern bool check_for_nan(void);
 extern bool CheckNumericType(void);
 extern bool CheckSimpleVector(void);
@@ -83,7 +86,8 @@ extern bool eigen_det(void);
 extern bool EqualOpSeq(void);
 extern bool Erf(void);
 extern bool ErrorHandler(void);
-extern bool Exp(void);
+extern bool exp(void);
+extern bool expm1(void);
 extern bool ForOne(void);
 extern bool ForTwo(void);
 extern bool ForSparseJac(void);
@@ -107,8 +111,9 @@ extern bool JacLuDet(void);
 extern bool JacMinorDet(void);
 extern bool Jacobian(void);
 extern bool limits(void);
-extern bool Log(void);
-extern bool Log10(void);
+extern bool log(void);
+extern bool log10(void);
+extern bool log1p(void);
 extern bool LuFactor(void);
 extern bool LuInvert(void);
 extern bool LuRatio(void);
@@ -159,10 +164,12 @@ extern bool Sin(void);
 extern bool Sinh(void);
 extern bool sparse_hessian(void);
 extern bool sparse_jacobian(void);
+extern bool sparse_sub_hes(void);
 extern bool Sqrt(void);
 extern bool StackMachine(void);
 extern bool Sub(void);
 extern bool SubEq(void);
+extern bool sub_sparse_hes(void);
 extern bool Tan(void);
 extern bool Tanh(void);
 extern bool TapeIndex(void);
@@ -173,6 +180,7 @@ extern bool Value(void);
 extern bool Var2Par(void);
 extern bool vec_ad(void);
 extern bool vectorBool(void);
+extern bool zdouble(void);
 
 namespace {
 	// function that runs one test
@@ -180,7 +188,7 @@ namespace {
 	static size_t Run_error_count = 0;
 	bool Run(bool TestOk(void), std::string name)
 	{	bool ok      = true;
-		std::streamsize width =  20;         
+		std::streamsize width =  20;
 		std::cout.width( width );
 		std::cout.setf( std::ios_base::left );
 		std::cout << name;
@@ -210,20 +218,23 @@ int main(void)
 	ok &= Run( ad_assign,         "ad_assign"        );
 	ok &= Run( ad_ctor,           "ad_ctor"          );
 	ok &= Run( abs,               "abs"              );
-	ok &= Run( Acos,              "Acos"             );
+	ok &= Run( acos,              "acos"             );
+	ok &= Run( acosh,             "acosh"            );
 	ok &= Run( Add,               "Add"              );
 	ok &= Run( AddEq,             "AddEq"            );
 	ok &= Run( ad_fun,            "ad_fun"           );
 	ok &= Run( ad_in_c,           "ad_in_c"          );
 	ok &= Run( ad_input,          "ad_input"         );
 	ok &= Run( ad_output,         "ad_output"        );
-	ok &= Run( Asin,              "Asin"             );
-	ok &= Run( Atan,              "Atan"             );
-	ok &= Run( Atan2,             "Atan2"            );
+	ok &= Run( asin,              "asin"             );
+	ok &= Run( asinh,             "asinh"            );
+	ok &= Run( atan,              "atan"             );
+	ok &= Run( atanh,             "atanh"            );
+	ok &= Run( atan2,             "atan2"            );
 	ok &= Run( BenderQuad,        "BenderQuad"       );
 	ok &= Run( BoolFun,           "BoolFun"          );
 	ok &= Run( capacity_order,    "capacity_order"   );
-	ok &= Run( change_const,      "change_const"     );
+	ok &= Run( change_param,      "change_param"     );
 	ok &= Run( check_for_nan,     "check_for_nan"    );
 	ok &= Run( CheckNumericType,  "CheckNumericType" );
 	ok &= Run( CheckSimpleVector, "CheckSimpleVector");
@@ -240,12 +251,13 @@ int main(void)
 	ok &= Run( EqualOpSeq,        "EqualOpSeq"       );
 	ok &= Run( Erf,               "Erf"              );
 	ok &= Run( ErrorHandler,      "ErrorHandler"     );
-	ok &= Run( Exp,               "Exp"              );
+	ok &= Run( exp,               "exp"              );
+	ok &= Run( expm1,             "expm1"            );
 	ok &= Run( ForOne,            "ForOne"           );
 	ok &= Run( ForTwo,            "ForTwo"           );
-	ok &= Run( Forward,           "Forward"          ); 
-	ok &= Run( forward_dir,       "forward_dir"      ); 
-	ok &= Run( forward_order,     "forward_order"    ); 
+	ok &= Run( Forward,           "Forward"          );
+	ok &= Run( forward_dir,       "forward_dir"      );
+	ok &= Run( forward_order,     "forward_order"    );
 	ok &= Run( ForSparseJac,      "ForSparseJac"     );
 	ok &= Run( fun_assign,        "fun_assign"       );
 	ok &= Run( FunCheck,          "FunCheck"         );
@@ -264,8 +276,9 @@ int main(void)
 	ok &= Run( JacMinorDet,       "JacMinorDet"      );
 	ok &= Run( Jacobian,          "Jacobian"         );
 	ok &= Run( limits,            "limits"           );
-	ok &= Run( Log,               "Log"              );
-	ok &= Run( Log10,             "Log10"            );
+	ok &= Run( log,               "log"              );
+	ok &= Run( log10,             "log10"            );
+	ok &= Run( log1p,             "log1p"            );
 	ok &= Run( LuFactor,          "LuFactor"         );
 	ok &= Run( LuInvert,          "LuInvert"         );
 	ok &= Run( LuRatio,           "LuRatio"          );
@@ -313,10 +326,12 @@ int main(void)
 	ok &= Run( Sinh,              "Sinh"             );
 	ok &= Run( sparse_hessian,    "sparse_hessian"   );
 	ok &= Run( sparse_jacobian,   "sparse_jacobian"  );
+	ok &= Run( sparse_sub_hes,    "sparse_sub_hes"   );
 	ok &= Run( Sqrt,              "Sqrt"             );
 	ok &= Run( StackMachine,      "StackMachine"     );
 	ok &= Run( Sub,               "Sub"              );
 	ok &= Run( SubEq,             "SubEq"            );
+	ok &= Run( sub_sparse_hes,    "sub_sparse_hes"   );
 	ok &= Run( Tan,               "Tan"              );
 	ok &= Run( Tanh,              "Tanh"             );
 	ok &= Run( TapeIndex,         "TapeIndex"        );
@@ -327,6 +342,7 @@ int main(void)
 	ok &= Run( Var2Par,           "Var2Par"          );
 	ok &= Run( vec_ad,            "vec_ad"           );
 	ok &= Run( vectorBool,        "vectorBool"       );
+	ok &= Run( zdouble,           "zdouble"          );
 # ifdef CPPAD_ADOLC_EXAMPLES
 	ok &= Run( mul_level_adolc,      "mul_level_adolc"     );
 	ok &= Run( mul_level_adolc_ode,  "mul_level_adolc_ode" );

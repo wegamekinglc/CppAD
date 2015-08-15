@@ -1,7 +1,7 @@
 #! /bin/bash -e
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the
@@ -25,11 +25,14 @@ fi
 version="$1"
 error_file="$2"
 output_directory="$3"
+# PREDEFINED:see http://www.stack.nl/~dimitri/doxygen/manual/preprocessing.html
 # 2DO: change EXTRACT_ALL to NO so get warnings for undocumented functions.
 echo "create bin/doxyfile.$$"
 cat << EOF > bin/doxyfile.$$
 ALWAYS_DETAILED_SEC     = YES
 BUILTIN_STL_SUPPORT     = YES
+ENABLE_PREPROCESSING    = YES
+MACRO_EXPANSION         = YES
 EXTRACT_ALL             = YES
 EXTRACT_LOCAL_CLASSES   = YES
 EXTRACT_PRIVATE         = YES
@@ -37,6 +40,7 @@ EXTRACT_STATIC          = YES
 EXTRACT_ANON_NSPACES    = YES
 FILE_PATTERNS           =  *.hpp  *.cpp
 FULL_PATH_NAMES         = NO
+GENERATE_HTML           = YES
 GENERATE_LATEX          = NO
 GENERATE_TREEVIEW       = YES
 INHERIT_DOCS            = NO
@@ -48,8 +52,10 @@ INPUT                   = \
 	./cppad_ipopt/src \
 	./speed/src
 LATEX_BATCHMODE         = YES
+MACRO_EXPANSION         = YES
 MULTILINE_CPP_IS_BRIEF  = YES
 OUTPUT_DIRECTORY        = $output_directory
+PREDEFINED              = "__cplusplus=201103" "CPPAD_USE_CPLUSPLUS_2011=1"
 PROJECT_NAME            = "CppAD: A C++ Algorithmic Differentiation Package"
 PROJECT_NUMBER          = $version
 QT_AUTOBRIEF            = YES

@@ -1,9 +1,9 @@
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
-# the terms of the 
+# the terms of the
 #                     Eclipse Public License Version 1.0.
 #
 # A copy of this license is included in the COPYING file of this distribution.
@@ -18,7 +18,7 @@ if CppAD_ADOLC
 ADOLC_SRC_FILES    =  mul_level_adolc.cpp mul_level_adolc_ode.cpp
 ADOLC_EXTRA_FILES  =
 ADOLC_LIB          = -ladolc -lColPack -L$(ADOLC_DIR)/lib -L$(ADOLC_DIR)/lib64
-ADOLC_FLAGS        = -DCPPAD_ADOLC_EXAMPLES -I$(ADOLC_DIR)/include 
+ADOLC_FLAGS        = -DCPPAD_ADOLC_EXAMPLES -I$(ADOLC_DIR)/include
 else
 ADOLC_EXTRA_FILES =  mul_level_adolc.cpp mul_level_adolc_ode.cpp
 ADOLC_SRC_FILES   =
@@ -37,11 +37,11 @@ EIGEN_FLAGS         = -DCPPAD_EIGEN_EXAMPLES
 libeigen_a_CXXFLAGS = \
 	-g $(CXX_FLAGS_EIGEN) \
 	-DCPPAD_EIGEN_EXAMPLES \
-	-I$(EIGEN_DIR)/include 
+	-I$(EIGEN_DIR)/include
 else
 EIGEN_EXTRA_FILES   = eigen_det.cpp eigen_array.cpp
 EIGEN_LIB           =
-EIGEN_FLAGS         = 
+EIGEN_FLAGS         =
 endif
 else
 EIGEN_EXTRA_FILES   = eigen_det.cpp eigen_array.cpp
@@ -57,7 +57,7 @@ EXTRA_DIST        =  \
 	$(ADOLC_EXTRA_FILES) \
 	$(EIGEN_EXTRA_FILES)
 #
-check_PROGRAMS    = example 
+check_PROGRAMS    = example
 #
 if CppAD_MS_COMPILER
 AM_CXXFLAGS       = -EHsc -g $(ADOLC_FLAGS) $(EIGEN_FLAGS) $(CXX_FLAGS)
@@ -82,6 +82,7 @@ example_SOURCES   = \
 	abort_recording.cpp \
 	abs.cpp \
 	acos.cpp \
+	acosh.cpp \
 	add.cpp \
 	add_eq.cpp \
 	ad_assign.cpp \
@@ -91,14 +92,16 @@ example_SOURCES   = \
 	ad_input.cpp \
 	ad_output.cpp \
 	asin.cpp \
+	asinh.cpp \
 	atan.cpp \
+	atanh.cpp \
 	atan2.cpp \
 	base_alloc.hpp \
 	base_require.cpp \
 	bender_quad.cpp \
 	bool_fun.cpp \
 	capacity_order.cpp \
-	change_const.cpp \
+	change_param.cpp \
 	check_for_nan.cpp \
 	check_numeric_type.cpp \
 	check_simple_vector.cpp \
@@ -116,6 +119,7 @@ example_SOURCES   = \
 	erf.cpp \
 	error_handler.cpp \
 	exp.cpp \
+	expm1.cpp \
 	for_one.cpp \
 	for_two.cpp \
 	forward.cpp \
@@ -140,6 +144,7 @@ example_SOURCES   = \
 	jacobian.cpp \
 	limits.cpp \
 	log.cpp \
+	log1p.cpp \
 	log10.cpp \
 	lu_factor.cpp \
 	lu_invert.cpp \
@@ -191,10 +196,12 @@ example_SOURCES   = \
 	sinh.cpp \
 	sparse_hessian.cpp \
 	sparse_jacobian.cpp \
+	sparse_sub_hes.cpp \
 	sqrt.cpp \
 	stack_machine.cpp \
 	sub.cpp \
 	sub_eq.cpp \
+	sub_sparse_hes.cpp \
 	tan.cpp \
 	tanh.cpp \
 	tape_index.cpp \
@@ -204,7 +211,8 @@ example_SOURCES   = \
 	value.cpp \
 	var2par.cpp \
 	vec_ad.cpp  \
-	vector_bool.cpp 
+	vector_bool.cpp \
+	zdouble.cpp
 
 test: check
 	./example

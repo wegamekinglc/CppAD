@@ -2,7 +2,7 @@
 # ifndef CPPAD_BASE_FLOAT_INCLUDED
 # define CPPAD_BASE_FLOAT_INCLUDED
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -17,6 +17,10 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_float.hpp$$
 $spell
+	expm1
+	atanh
+	acosh
+	asinh
 	erf
 	endif
 	abs_geq
@@ -54,11 +58,11 @@ $cref/ordered type/base_cond_exp/CondExpTemplate/Ordered Type/$$.
 Hence its $code CondExpOp$$ function is defined by
 $codep */
 namespace CppAD {
-	inline float CondExpOp( 
+	inline float CondExpOp(
 		enum CompareOp     cop          ,
 		const float&       left         ,
-		const float&       right        , 
-		const float&       exp_if_true  , 
+		const float&       right        ,
+		const float&       exp_if_true  ,
 		const float&       exp_if_false )
 	{	return CondExpTemplate(cop, left, right, exp_if_true, exp_if_false);
 	}
@@ -146,12 +150,17 @@ namespace CppAD {
 	CPPAD_STANDARD_MATH_UNARY(float, sqrt)
 	CPPAD_STANDARD_MATH_UNARY(float, tan)
 	CPPAD_STANDARD_MATH_UNARY(float, tanh)
-# if CPPAD_COMPILER_HAS_ERF
+# if CPPAD_USE_CPLUSPLUS_2011
 	CPPAD_STANDARD_MATH_UNARY(float, erf)
+	CPPAD_STANDARD_MATH_UNARY(float, asinh)
+	CPPAD_STANDARD_MATH_UNARY(float, acosh)
+	CPPAD_STANDARD_MATH_UNARY(float, atanh)
+	CPPAD_STANDARD_MATH_UNARY(float, expm1)
+	CPPAD_STANDARD_MATH_UNARY(float, log1p)
 # endif
 }
 /* $$
-The absolute value function is special because its $code std$$ name is 
+The absolute value function is special because its $code std$$ name is
 $code fabs$$
 $codep */
 namespace CppAD {
@@ -174,7 +183,7 @@ namespace CppAD {
 	}
 }
 /* $$
- 
+
 $head pow $$
 The following defines a $code CppAD::pow$$ function that
 is required to use $code AD<float>$$:
@@ -205,7 +214,7 @@ namespace CppAD {
 		{	return std::numeric_limits<float>::max(); }
 	};
 	// deprecated machine epsilon
-	template <> 
+	template <>
 	inline float epsilon<float>(void)
 	{	return numeric_limits<float>::epsilon(); }
 }

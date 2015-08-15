@@ -242,6 +242,17 @@ void RevJacSweep(
 			break;
 			// -------------------------------------------------
 
+# if CPPAD_USE_CPLUSPLUS_2011
+			case AcoshOp:
+			// sqrt(x * x - 1), acosh(x)
+			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
+			reverse_sparse_jacobian_unary_op(
+				i_var, arg[0], var_sparsity
+			);
+			break;
+# endif
+			// -------------------------------------------------
+
 			case AsinOp:
 			// sqrt(1 - x * x), asin(x)
 			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
@@ -251,6 +262,17 @@ void RevJacSweep(
 			break;
 			// -------------------------------------------------
 
+# if CPPAD_USE_CPLUSPLUS_2011
+			case AsinhOp:
+			// sqrt(1 + x * x), asinh(x)
+			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
+			reverse_sparse_jacobian_unary_op(
+				i_var, arg[0], var_sparsity
+			);
+			break;
+# endif
+			// -------------------------------------------------
+
 			case AtanOp:
 			// 1 + x * x, atan(x)
 			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
@@ -258,6 +280,17 @@ void RevJacSweep(
 				i_var, arg[0], var_sparsity
 			);
 			break;
+			// -------------------------------------------------
+
+# if CPPAD_USE_CPLUSPLUS_2011
+			case AtanhOp:
+			// 1 - x * x, atanh(x)
+			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
+			reverse_sparse_jacobian_unary_op(
+				i_var, arg[0], var_sparsity
+			);
+			break;
+# endif
 			// -------------------------------------------------
 
 			case BeginOp:
@@ -341,7 +374,9 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case ErfOp:
-			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
+			// arg[1] is always the parameter 0
+			// arg[0] is always the parameter 2 / sqrt(pi)
+			CPPAD_ASSERT_NARG_NRES(op, 3, 5);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[0], var_sparsity
 			);
@@ -354,6 +389,16 @@ void RevJacSweep(
 				i_var, arg[0], var_sparsity
 			);
 			break;
+			// -------------------------------------------------
+
+# if CPPAD_USE_CPLUSPLUS_2011
+			case Expm1Op:
+			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
+			reverse_sparse_jacobian_unary_op(
+				i_var, arg[0], var_sparsity
+			);
+			break;
+# endif
 			// -------------------------------------------------
 
 			case InvOp:
@@ -407,6 +452,16 @@ void RevJacSweep(
 				i_var, arg[0], var_sparsity
 			);
 			break;
+			// -------------------------------------------------
+
+# if CPPAD_USE_CPLUSPLUS_2011
+			case Log1pOp:
+			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
+			reverse_sparse_jacobian_unary_op(
+				i_var, arg[0], var_sparsity
+			);
+			break;
+# endif
 			// -------------------------------------------------
 
 			case MulvvOp:
@@ -650,14 +705,14 @@ void RevJacSweep(
 			// where one of the sets is not in var_sparsity.
 			if( user_bool )
 			{	for(j = 0; j < user_q; j++)
-					if( bool_s[ user_j * user_q + j ] )	
-						var_sparsity.add_element(arg[0], j);	
+					if( bool_s[ user_j * user_q + j ] )
+						var_sparsity.add_element(arg[0], j);
 			}
 			else
 			{	set_itr = set_s[user_j].begin();
 				set_end = set_s[user_j].end();
 				while( set_itr != set_end )
-					var_sparsity.add_element(arg[0], *set_itr++);	
+					var_sparsity.add_element(arg[0], *set_itr++);
 			}
 			if( user_j == 0 )
 				user_state = user_start;

@@ -2,7 +2,7 @@
 # ifndef CPPAD_BASE_DOUBLE_INCLUDED
 # define CPPAD_BASE_DOUBLE_INCLUDED
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -17,6 +17,10 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_double.hpp$$
 $spell
+	expm1
+	atanh
+	acosh
+	asinh
 	erf
 	endif
 	abs_geq
@@ -54,11 +58,11 @@ $cref/ordered type/base_cond_exp/CondExpTemplate/Ordered Type/$$.
 Hence its $code CondExpOp$$ function is defined by
 $codep */
 namespace CppAD {
-	inline double CondExpOp( 
+	inline double CondExpOp(
 		enum CompareOp     cop          ,
 		const double&       left         ,
-		const double&       right        , 
-		const double&       exp_if_true  , 
+		const double&       right        ,
+		const double&       exp_if_true  ,
 		const double&       exp_if_false )
 	{	return CondExpTemplate(cop, left, right, exp_if_true, exp_if_false);
 	}
@@ -145,12 +149,17 @@ namespace CppAD {
 	CPPAD_STANDARD_MATH_UNARY(double, sqrt)
 	CPPAD_STANDARD_MATH_UNARY(double, tan)
 	CPPAD_STANDARD_MATH_UNARY(double, tanh)
-# if CPPAD_COMPILER_HAS_ERF
+# if CPPAD_USE_CPLUSPLUS_2011
 	CPPAD_STANDARD_MATH_UNARY(double, erf)
+	CPPAD_STANDARD_MATH_UNARY(double, asinh)
+	CPPAD_STANDARD_MATH_UNARY(double, acosh)
+	CPPAD_STANDARD_MATH_UNARY(double, atanh)
+	CPPAD_STANDARD_MATH_UNARY(double, expm1)
+	CPPAD_STANDARD_MATH_UNARY(double, log1p)
 # endif
 }
 /* $$
-The absolute value function is special because its $code std$$ name is 
+The absolute value function is special because its $code std$$ name is
 $code fabs$$
 $codep */
 namespace CppAD {
@@ -205,7 +214,7 @@ namespace CppAD {
 		{	return std::numeric_limits<double>::max(); }
 	};
 	// deprecated machine epsilon
-	template <> 
+	template <>
 	inline double epsilon<double>(void)
 	{	return numeric_limits<double>::epsilon(); }
 }

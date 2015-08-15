@@ -3,7 +3,7 @@
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -18,15 +18,18 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 // prototype external compiled tests (this line expected by bin/new_test.sh)
 extern bool abs(void);
-extern bool Acos(void);
+extern bool acos(void);
+extern bool acosh(void);
 extern bool adfun_copy(void);
 extern bool Add(void);
 extern bool AddEq(void);
 extern bool AddZero(void);
 extern bool alloc_openmp(void);
-extern bool Asin(void);
+extern bool asin(void);
+extern bool asinh(void);
 extern bool assign(void);
-extern bool Atan(void);
+extern bool atan(void);
+extern bool atanh(void);
 extern bool atan2(void);
 extern bool base_adolc(void);
 extern bool base_alloc_test(void);
@@ -36,6 +39,7 @@ extern bool Compare(void);
 extern bool compare_change(void);
 extern bool CondExp(void);
 extern bool CondExpAD(void);
+extern bool cond_exp_rev(void);
 extern bool copy(void);
 extern bool Cos(void);
 extern bool Cosh(void);
@@ -44,8 +48,9 @@ extern bool dbl_epsilon(void);
 extern bool Div(void);
 extern bool DivEq(void);
 extern bool DivZeroOne(void);
-extern bool Erf(void);
+extern bool erf(void);
 extern bool Exp(void);
+extern bool expm1(void);
 extern bool ForHess(void);
 extern bool for_sparse_jac(void);
 extern bool Forward(void);
@@ -56,11 +61,14 @@ extern bool FunCheck(void);
 extern bool ipopt_solve(void);
 extern bool jacobian(void);
 extern bool limits(void);
-extern bool Log(void);
-extern bool Log10(void);
+extern bool log(void);
+extern bool log10(void);
+extern bool log1p(void);
 extern bool Mul(void);
 extern bool mul_level(void);
+extern bool mul_cskip(void);
 extern bool MulEq(void);
+extern bool mul_zdouble(void);
 extern bool MulZeroOne(void);
 extern bool NearEqualExt(void);
 extern bool Neg(void);
@@ -104,7 +112,7 @@ namespace {
 	static size_t Run_error_count = 0;
 	bool Run(bool TestOk(void), std::string name)
 	{	bool ok               = true;
-		std::streamsize width =  20;         
+		std::streamsize width =  20;
 		std::cout.width( width );
 		std::cout.setf( std::ios_base::left );
 		std::cout << name;
@@ -128,18 +136,21 @@ int main(void)
 {	bool ok = true;
 	using namespace std;
 
-	// This line is used by test_one.sh 
+	// This line is used by test_one.sh
 
 	// run external compiled tests (this line expected by bin/new_test.sh)
 	ok &= Run( abs,             "abs"            );
-	ok &= Run( Acos,            "Acos"           );
+	ok &= Run( acos,            "acos"           );
+	ok &= Run( acosh,           "acosh"          );
 	ok &= Run( adfun_copy,      "adfun_copy"     );
 	ok &= Run( Add,             "Add"            );
 	ok &= Run( AddEq,           "AddEq"          );
 	ok &= Run( AddZero,         "AddZero"        );
-	ok &= Run( Asin,            "Asin"           );
+	ok &= Run( asin,            "asin"           );
+	ok &= Run( asinh,           "asinh"          );
 	ok &= Run( assign,          "assign"         );
-	ok &= Run( Atan,            "Atan"           );
+	ok &= Run( atan,            "atan"           );
+	ok &= Run( atanh,           "atanh"          );
 	ok &= Run( atan2,           "atan2"          );
 	ok &= Run( check_simple_vector, "check_simple_vector" );
 	ok &= Run( checkpoint,      "checkpoint"     );
@@ -147,6 +158,7 @@ int main(void)
 	ok &= Run( compare_change,  "compare_change" );
 	ok &= Run( CondExp,         "CondExp"        );
 	ok &= Run( CondExpAD,       "CondExpAD"      );
+	ok &= Run( cond_exp_rev,    "cond_exp_rev"   );
 	ok &= Run( copy,            "copy"           );
 	ok &= Run( Cos,             "Cos"            );
 	ok &= Run( Cosh,            "Cosh"           );
@@ -154,8 +166,9 @@ int main(void)
 	ok &= Run( Div,             "Div"            );
 	ok &= Run( DivEq,           "DivEq"          );
 	ok &= Run( DivZeroOne,      "DivZeroOne"     );
-	ok &= Run( Erf,             "Erf"            );
+	ok &= Run( erf,             "erf"            );
 	ok &= Run( Exp,             "Exp"            );
+	ok &= Run( expm1,           "expm1"          );
 	ok &= Run( ForHess,         "ForHess"        );
 	ok &= Run( for_sparse_jac,  "for_sparse_jac" );
 	ok &= Run( Forward,         "Forward"        );
@@ -165,11 +178,14 @@ int main(void)
 	ok &= Run( FunCheck,        "FunCheck"       );
 	ok &= Run( jacobian,        "jacobian"       );
 	ok &= Run( limits,          "limits"         );
-	ok &= Run( Log,             "Log"            );
-	ok &= Run( Log10,           "Log10"          );
+	ok &= Run( log,             "log"            );
+	ok &= Run( log10,           "log10"          );
+	ok &= Run( log1p,           "log1p"          );
 	ok &= Run( Mul,             "Mul"            );
 	ok &= Run( mul_level,       "mul_level"      );
+	ok &= Run( mul_cskip,       "Mul_cskip"      );
 	ok &= Run( MulEq,           "MulEq"          );
+	ok &= Run( mul_zdouble,     "mul_zdouble"    );
 	ok &= Run( MulZeroOne,      "MulZeroOne"     );
 	ok &= Run( NearEqualExt,    "NearEqualExt"   );
 	ok &= Run( Neg,             "Neg"            );

@@ -1,10 +1,10 @@
 #! /bin/bash -e
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
-# the terms of the 
+# the terms of the
 #                     Eclipse Public License Version 1.0.
 #
 # A copy of this license is included in the COPYING file of this distribution.
@@ -24,7 +24,7 @@ then
 	echo "Cannot find the file $1"
 	exit 1
 fi
-fun=`grep "^bool *[a-zA-Z0-9_]*( *void *)" $1 | tail -1 | \
+fun=`grep "^bool *[a-zA-Z0-9_]* *( *void *)" $1 | tail -1 | \
 	sed -e "s/^bool *\([a-zA-Z0-9_]*\) *( *void *)/\1/"`
 if [ -e test_one.exe ]
 then
@@ -32,24 +32,28 @@ then
 fi
 sed < test_more.cpp > test_one.cpp \
 -e '/ok *\&= *Run( /d' \
--e "s/.*This line is used by test_one.sh.*/	ok \&= Run( $fun, \"$fun\");/"  
+-e "s/.*This line is used by test_one.sh.*/	ok \&= Run( $fun, \"$fun\");/"
 #
 #
+cxxflags='@cppad_cxx_flags@'
 if echo "$fun" | grep 'eigen' > /dev/null
 then
-	cxxflags='-g -Wall -ansi -pedantic-errors'
-else
-	cxxflags='-g -Wall -ansi -pedantic-errors -Wshadow'
+	cxxflags=`echo "$cxxflags" | sed -e 's|-Wshadow||'`
 fi
-cmd="g++ test_one.cpp $*
+cmd="g++ test_one.cpp $*"
+if [ -e @colpack_prefix@/include ]
+then
+	cmd="$cmd ../cppad/local/cppad_colpack.cpp"
+fi
+cmd="$cmd
 	-o test_one.exe
 	$cxxflags
-	-std=c++11
+	-g
 	-DCPPAD_ADOLC_TEST
 	-DCPPAD_OPENMP_TEST
 	-DCPPAD_MAX_NUM_THREADS=1
 	@OPENMP_FLAGS@
-	-I.. 
+	-I..
 "
 if [ -e @adolc_prefix@/include ]
 then
@@ -78,7 +82,7 @@ do
 	if [ -e @ipopt_prefix@/$lib/pkgconfig ]
 	then
 		export PKG_CONFIG_PATH="@ipopt_prefix@/$lib/pkgconfig"
-		cflags=`pkg-config --cflags ipopt | 
+		cflags=`pkg-config --cflags ipopt |
 			sed -e 's|/coin$|/|' -e 's|/coin | |'`
 		libs=`pkg-config --libs ipopt`
 		cmd="$cmd $cflags $libs"
