@@ -163,10 +163,8 @@ $list number$$
 Fix a bug in the optimization of calls to $cref atomic$$ functions.
 This bug existed before recent change to optimizing conditional expressions.
 This required adding the
-$cref/nz_compare/RevSparseJac/nz_compare/$$ argument to the
+$cref/dependency/RevSparseJac/dependency/$$ argument to the
 reverse Jacobian sparsity pattern calculation.
-For further details; see sparsity heading under conditional expressions in the
-$cref/whish list/WishList/Conditional Expressions/Sparsity/$$.
 $lnext
 Fix the deprecated autotools install (see $cref auto_tools$$)
 which was broken by the changes on 10-22.

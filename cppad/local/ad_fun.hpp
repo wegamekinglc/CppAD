@@ -154,6 +154,7 @@ private:
 	void ForSparseJacCase(
 		bool               set_type  ,
 		bool               transpose ,
+		bool               dependency,
 		size_t             q         ,
 		const VectorSet&   r         ,
 		VectorSet&         s
@@ -164,6 +165,7 @@ private:
 	void ForSparseJacCase(
 		const std::set<size_t>&  set_type  ,
 		bool                     transpose ,
+		bool                     dependency,
 		size_t                   q         ,
 		const VectorSet&         r         ,
 		VectorSet&               s
@@ -175,7 +177,7 @@ private:
 	void RevSparseJacCase(
 		bool               set_type  ,
 		bool               transpose ,
-		bool               nz_compare,
+		bool               dependency,
 		size_t             p         ,
 		const VectorSet&   s         ,
 		VectorSet&         r
@@ -186,7 +188,7 @@ private:
 	void RevSparseJacCase(
 		const std::set<size_t>&  set_type  ,
 		bool                     transpose ,
-		bool                     nz_compare,
+		bool                     dependency,
 		size_t                   p         ,
 		const VectorSet&         s         ,
 		VectorSet&               r
@@ -307,14 +309,15 @@ public:
 	// (see doxygen documentation in for_sparse_jac.hpp)
 	template <typename VectorSet>
 	VectorSet ForSparseJac(
-		size_t q, const VectorSet &r, bool transpose = false
+		size_t q, const VectorSet &r, bool transpose = false,
+		bool dependency = false
 	);
 	// reverse mode Jacobian sparsity
 	// (see doxygen documentation in rev_sparse_jac.hpp)
 	template <typename VectorSet>
 	VectorSet RevSparseJac(
 		size_t q, const VectorSet &s, bool transpose = false,
-		bool nz_compare = false
+		bool dependency = false
 	);
 	// reverse mode Hessian sparsity
 	// (see doxygen documentation in rev_sparse_hes.hpp)
