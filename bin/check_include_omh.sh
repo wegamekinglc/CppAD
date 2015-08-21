@@ -53,7 +53,7 @@ sed < bin/check_include_omh.2.$$ > bin/check_include_omh.3.$$ \
 	-e 's/%//' \
 	-e 's/$\$//' \
 	-e '/^ *$/d' \
-	-e 's/^[ 	]*//' \
+	-e 's/^[	]*//' \
 	-e 's|\\|/|g'
 #
 different="no"
@@ -73,7 +73,8 @@ done
 echo "-------------------------------------------------------------------"
 if [ $different = "yes" ]
 then
-	echo "Error: nothing should be between the two dashed lines above"
+	echo "Error: nothing should be between the two dashed lines above."
+	echo 'Perhaps this file is not and has not yet been added to repository ?'
 	exit 1
 else
 	echo "Ok: nothing is between the two dashed lines above"
