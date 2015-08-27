@@ -325,6 +325,32 @@ public:
 	VectorSet RevSparseHes(
 		size_t q, const VectorSet &s, bool transpose = false
 	);
+	// internal set sparsity version of RevSparseHes
+	// (used by checkpoint functions only)
+	void RevSparseHesCheckpoint(
+		size_t                        q         ,
+		vector<bool>&                 s         ,
+		bool                          transpose ,
+		CPPAD_INTERNAL_SPARSE_SET&    h
+	);
+	// internal set sparsity version of RevSparseJac
+	// (used by checkpoint functions only)
+	void RevSparseJacCheckpoint(
+		size_t                        q          ,
+		CPPAD_INTERNAL_SPARSE_SET&    r          ,
+		bool                          transpose  ,
+		bool                          dependency ,
+		CPPAD_INTERNAL_SPARSE_SET&    s
+	);
+    // internal set sparsity version of RevSparseJac
+    // (used by checkpoint functions only)
+	void ForSparseJacCheckpoint(
+	size_t                        q          ,
+	CPPAD_INTERNAL_SPARSE_SET&    r          ,
+	bool                          transpose  ,
+	bool                          dependency ,
+	CPPAD_INTERNAL_SPARSE_SET&    s
+	);
 
 	/// amount of memory used for Jacobain sparsity pattern
 	size_t size_forward_bool(void) const
