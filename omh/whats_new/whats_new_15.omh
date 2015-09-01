@@ -13,6 +13,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 $begin whats_new_15$$
 $dollar @$$
 $spell
+	ctor
 	dimensioned
 	cskip_op
 	adolc
@@ -50,6 +51,8 @@ $spell
 	hasnan
 	Adolc
 	resize
+	bool
+	alloc
 $$
 
 $section CppAD Changes and Additions During 2015$$
@@ -59,6 +62,43 @@ This section contains a list of the changes to CppAD during 2015
 (in reverse order by date).
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
+
+$head 08-31$$
+$list number$$
+Add the
+$cref/pack/atomic_option/atomic_sparsity/pack_sparsity_enum/$$
+sparsity option for $cref atomic_base$$ operations.
+$lnext
+Add the pack sparsity option to
+$cref/checkpoint/checkpoint/sparsity/$$ functions.
+$lnext
+Added the $cref atomic_sparsity.cpp$$ example.
+$lnext
+Remove mention of OpenMP from $cref/thread_alloc::thread_num/ta_thread_num/$$
+($cref thread_alloc$$ never was OpenMP specific).
+$lend
+
+$head 08-30$$
+$list number$$
+The $cref/sparsity/atomic_ctor/atomic_base/sparsity/$$
+argument was added to the $code atomic_base$$ constructor and the
+$cref/checkpoint/checkpoint/sparsity/$$ constructor.
+$lnext
+Make $cref atomic_norm_sq.cpp$$ an example with no set sparsity
+and $cref atomic_reciprocal.cpp$$ an example with no bool sparsity.
+$lnext
+Improve discussion of $code Independent$$ and
+$cref/parallel mode/Independent/Parallel Mode/$$.
+$lend
+
+$head 08-29$$
+Some asserts in the $cref checkpoint$$ implementation were not using
+the CppAD $cref ErrorHandler$$. This has been fixed.
+
+$head 08-28$$
+Free $cref checkpoint$$ function sparsity patters during
+$cref forward$$ operations that use its atomic operation.
+(They kept between sparsity calculations because they do not change.)
 
 $head 08-26$$
 Fix a bug in $cref RevSparseJac$$ when used to compute sparsity pattern

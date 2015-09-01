@@ -14,6 +14,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 # include <cppad/local/sparse_set.hpp>
 # include <cppad/local/sparse_list.hpp>
+# include <cppad/local/sparse_pack.hpp>
 
 namespace CppAD { // BEGIN_CPPAD_NAMESPACE
 /*!
@@ -33,6 +34,8 @@ $spell
 	algo
 	atom_fun
 	const
+	enum
+	bool
 $$
 
 $section Checkpointing Functions$$
@@ -40,8 +43,8 @@ $index function, checkpoint$$
 $index checkpoint, function$$
 
 $head Syntax$$
-$codei%checkpoint<%Base%> %atom_fun%(%name%, %algo%, %ax%, %ay%)
-%sv% = atom_fun%.size_var()
+$codei%checkpoint<%Base%> %atom_fun%(%name%, %algo%, %ax%, %ay%, %sparsity%)
+%sv% = %atom_fun%.size_var()
 %atom_fun%.option(%option_value%)
 %algo%(%ax%, %ay%)
 %atom_fun%(%ax%, %ay%)
@@ -51,6 +54,10 @@ $head Purpose$$
 You can reduce the size of the tape and memory required for AD by
 checkpointing functions of the form $latex y = f(x)$$ where
 $latex f : B^n \rightarrow B^m$$.
+It may also reduce the time to make a recording at different
+independent variable values.
+(The checkpoint recording can not depend on independent variables but the
+recording that uses it may.)
 
 $head Method$$
 The $code checkpoint$$ class is derived from $code atomic_base$$
@@ -74,7 +81,7 @@ You cannot currently be recording
 $codei%AD<%Base%>%$$ operations when the constructor is called.
 $lnext
 This object $icode atom_fun$$ must not be destructed for as long
-as any $code CppAD::ADFun<%Base%>$$ object use this atomic operation.
+as any $codei%ADFun<%Base%>%$$ object uses its atomic operation.
 $lnext
 This class is implemented as a derived class of
 $cref/atomic_base/atomic_ctor/atomic_base/$$ and hence
@@ -117,6 +124,19 @@ Its input size must be equal to $icode m$$ and does not change.
 The input values of its elements do not matter.
 Upon return, it is an $codei%AD<%Base%>%$$ version of
 $latex y = f(x)$$.
+
+$head sparsity$$
+This argument has prototype
+$codei%
+	atomic_base<%Base%>::option_enum %sparsity%
+%$$
+It specifies $cref/sparsity/atomic_ctor/atomic_base/sparsity/$$
+in the $code atomic_base$$ constructor and must be either
+$codei%atomic_base<%Base%>::pack_sparsity_enum%$$,
+$codei%atomic_base<%Base%>::bool_sparsity_enum%$$, or
+$codei%atomic_base<%Base%>::set_sparsity_enum%$$.
+This argument is optional and its default value is unspecified.
+
 
 $head size_var$$
 This $code size_var$$ member function return value has prototype
@@ -181,17 +201,26 @@ template <class Base>
 class checkpoint : public atomic_base<Base> {
 // ---------------------------------------------------------------------------
 private:
+	/// same as option_enum in base class
+	typedef typename atomic_base<Base>::option_enum option_enum;
+	//
+	/// AD function corresponding to this checkpoint object
 	ADFun<Base> f_;
 	//
-	/// sparsity for f(x)^{(1)}
-	CPPAD_INTERNAL_SPARSE_SET  entire_jac_sparse_;
+	/// sparsity for entire Jacobian f(x)^{(1)} does not change so can cache it
+	CPPAD_INTERNAL_SPARSE_SET  jac_sparse_set_;
+	vectorBool                 jac_sparse_bool_;
 	//
-	/// sparsity for sum_i f_i(x)^{(2)}
-	CPPAD_INTERNAL_SPARSE_SET  entire_hes_sparse_;
-	//
-	/// set entire_jac_sparse_
-	void set_entire_jac_sparse(void)
-	{	assert( entire_jac_sparse_.n_set() == 0 );
+	/// sparsity for sum_i f_i(x)^{(2)} does not change so can cache it
+	CPPAD_INTERNAL_SPARSE_SET  hes_sparse_set_;
+	vectorBool                 hes_sparse_bool_;
+	// ------------------------------------------------------------------------
+	option_enum sparsity(void)
+	{	return static_cast< atomic_base<Base>* >(this)->sparsity(); }
+	// ------------------------------------------------------------------------
+	/// set jac_sparse_set_
+	void set_jac_sparse_set(void)
+	{	CPPAD_ASSERT_UNKNOWN( jac_sparse_set_.n_set() == 0 );
 		bool transpose  = false;
 		bool dependency = true;
 		size_t n = f_.Domain();
@@ -204,7 +233,7 @@ private:
 			for(size_t j = 0; j < n; j++)
 				identity.add_element(j, j);
 			f_.ForSparseJacCheckpoint(
-				n, identity, transpose, dependency, entire_jac_sparse_
+				n, identity, transpose, dependency, jac_sparse_set_
 			);
 			f_.size_forward_set(0);
 		}
@@ -214,16 +243,49 @@ private:
 			for(size_t i = 0; i < m; i++)
 				identity.add_element(i, i);
 			f_.RevSparseJacCheckpoint(
-				m, identity, transpose, dependency, entire_jac_sparse_
+				m, identity, transpose, dependency, jac_sparse_set_
 			);
 		}
 		CPPAD_ASSERT_UNKNOWN( f_.size_forward_set() == 0 );
 		CPPAD_ASSERT_UNKNOWN( f_.size_forward_bool() == 0 );
 	}
-	//
-	/// set entire_hes_sparse_
-	void set_entire_hes_sparse(void)
-	{	assert( entire_hes_sparse_.n_set() == 0 );
+	/// set jac_sparse_bool_
+	void set_jac_sparse_bool(void)
+	{	CPPAD_ASSERT_UNKNOWN( jac_sparse_bool_.size() == 0 );
+		bool transpose  = false;
+		bool dependency = true;
+		size_t n = f_.Domain();
+		size_t m = f_.Range();
+		// Use the choice for forward / reverse that results in smaller
+		// size for the sparsity pattern of all variables in the tape.
+		if( n <= m )
+		{	vectorBool identity(n * n);
+			for(size_t j = 0; j < n; j++)
+			{	for(size_t i = 0; i < n; i++)
+					identity[ i * n + j ] = (i == j);
+			}
+			jac_sparse_bool_ = f_.ForSparseJac(
+				n, identity, transpose, dependency
+			);
+			f_.size_forward_bool(0);
+		}
+		else
+		{	vectorBool identity(m * m);
+			for(size_t j = 0; j < m; j++)
+			{	for(size_t i = 0; i < m; i++)
+					identity[ i * m + j ] = (i == j);
+			}
+			jac_sparse_bool_ = f_.RevSparseJac(
+				m, identity, transpose, dependency
+			);
+		}
+		CPPAD_ASSERT_UNKNOWN( f_.size_forward_bool() == 0 );
+		CPPAD_ASSERT_UNKNOWN( f_.size_forward_set() == 0 );
+	}
+	// ------------------------------------------------------------------------
+	/// set hes_sparse_set_
+	void set_hes_sparse_set(void)
+	{	CPPAD_ASSERT_UNKNOWN( hes_sparse_set_.n_set() == 0 );
 		size_t n = f_.Domain();
 		size_t m = f_.Range();
 		//
@@ -233,24 +295,218 @@ private:
 			all_one[i] = true;
 
 		// set version of sparsity for n by n idendity matrix
-		vector< std::set<size_t> > identity(n);
+		CPPAD_INTERNAL_SPARSE_SET identity;
+		identity.resize(n, n);
 		for(size_t j = 0; j < n; j++)
-			identity[j].insert(j);
+			identity.add_element(j, j);
+
+		// compute sparsity pattern for H(x) = sum_i f_i(x)^{(2)}
+		bool transpose  = false;
+		bool dependency = false;
+		f_.ForSparseJacCheckpoint(
+			n, identity, transpose, dependency, jac_sparse_set_
+		);
+		f_.RevSparseHesCheckpoint(
+			n, all_one, transpose, hes_sparse_set_
+		);
+		CPPAD_ASSERT_UNKNOWN( hes_sparse_set_.n_set() == n );
+		CPPAD_ASSERT_UNKNOWN( hes_sparse_set_.end()   == n );
+		//
+		// drop the forward sparsity results from f_
+		f_.size_forward_set(0);
+	}
+	/// set hes_sparse_bool_
+	void set_hes_sparse_bool(void)
+	{	CPPAD_ASSERT_UNKNOWN( hes_sparse_bool_.size() == 0 );
+		size_t n = f_.Domain();
+		size_t m = f_.Range();
+		//
+		// set version of sparsity for vector of all ones
+		vectorBool all_one(m);
+		for(size_t i = 0; i < m; i++)
+			all_one[i] = true;
+
+		// set version of sparsity for n by n idendity matrix
+		vectorBool identity(n * n);
+		for(size_t j = 0; j < n; j++)
+		{	for(size_t i = 0; i < n; i++)
+				identity[ i * n + j ] = (i == j);
+		}
 
 		// compute sparsity pattern for H(x) = sum_i f_i(x)^{(2)}
 		bool transpose  = false;
 		bool dependency = false;
 		f_.ForSparseJac(n, identity, transpose, dependency);
-		f_.RevSparseHesCheckpoint(
-			n, all_one, transpose, entire_hes_sparse_
-		);
-		CPPAD_ASSERT_UNKNOWN( entire_hes_sparse_.n_set() == n );
-		CPPAD_ASSERT_UNKNOWN( entire_hes_sparse_.end()   == n );
+		hes_sparse_bool_ = f_.RevSparseHes(n, all_one, transpose);
+		CPPAD_ASSERT_UNKNOWN( hes_sparse_bool_.size() == n * n );
 		//
 		// drop the forward sparsity results from f_
-		f_.size_forward_set(0);
+		f_.size_forward_bool(0);
+		CPPAD_ASSERT_UNKNOWN( f_.size_forward_bool() == 0 );
+		CPPAD_ASSERT_UNKNOWN( f_.size_forward_set() == 0 );
+	}
+	// ------------------------------------------------------------------------
+	/*!
+	Link from user_atomic to forward sparse Jacobian pack and bool
+
+	\copydetails atomic_base::for_sparse_jac
+	*/
+	template <class sparsity_type>
+	bool for_sparse_jac(
+		size_t                                  q  ,
+		const sparsity_type&                    r  ,
+		      sparsity_type&                    s  )
+	{	// during user sparsity calculations
+		size_t m = f_.Range();
+		size_t n = f_.Domain();
+		if( jac_sparse_bool_.size() == 0 )
+			set_jac_sparse_bool();
+		if( jac_sparse_set_.n_set() != 0 )
+			jac_sparse_set_.resize(0, 0);
+		CPPAD_ASSERT_UNKNOWN( jac_sparse_bool_.size() == m * n );
+		CPPAD_ASSERT_UNKNOWN( jac_sparse_set_.n_set() == 0 );
+		CPPAD_ASSERT_UNKNOWN( r.size() == n * q );
+		CPPAD_ASSERT_UNKNOWN( s.size() == m * q );
+		//
+		bool ok = true;
+		for(size_t i = 0; i < m; i++)
+		{	for(size_t k = 0; k < q; k++)
+				s[i * q + k] = false;
+		}
+		// sparsity for  s = jac_sparse_bool_ * r
+		for(size_t i = 0; i < m; i++)
+		{	// compute row i of the return pattern
+			for(size_t j = 0; j < n; j++)
+			{	if( jac_sparse_bool_[ i * n + j] )
+				{	for(size_t k = 0; k < q; k++)
+						// s[i * q + k] |= r[j * q + k ];
+						s[i * q + k] = bool(s[i * q + k]) | bool(r[j * q + k]);
+				}
+			}
+		}
+		return ok;
+	}
+	// ------------------------------------------------------------------------
+	/*!
+	Link from user_atomic to reverse sparse Jacobian pack and bool
+
+	\copydetails atomic_base::rev_sparse_jac
+	*/
+	template <class sparsity_type>
+	bool rev_sparse_jac(
+		size_t                                  q  ,
+		const sparsity_type&                    rt ,
+		      sparsity_type&                    st )
+	{	// during user sparsity calculations
+		size_t m = f_.Range();
+		size_t n = f_.Domain();
+		if( jac_sparse_bool_.size() == 0 )
+			set_jac_sparse_bool();
+		if( jac_sparse_set_.n_set() != 0 )
+			jac_sparse_set_.resize(0, 0);
+		CPPAD_ASSERT_UNKNOWN( jac_sparse_bool_.size() == m * n );
+		CPPAD_ASSERT_UNKNOWN( jac_sparse_set_.n_set() == 0 );
+		CPPAD_ASSERT_UNKNOWN( rt.size() == m * q );
+		CPPAD_ASSERT_UNKNOWN( st.size() == n * q );
+		bool ok  = true;
+		//
+		for(size_t j = 0; j < n; j++)
+		{	for(size_t k = 0; k < q; k++)
+				st[j * q + k] = false;
+		}
+		//
+		// sparsity for  s = r * jac_sparse_bool_
+		// s^T = jac_sparse_bool_^T * r^T
+		for(size_t i = 0; i < m; i++)
+		{	// i is the row index in r^T
+			for(size_t k = 0; k < q; k++)
+			{	// k is column index in r^T
+				if( rt[i * q + k] )
+				{	// i is column index in jac_sparse_bool_^T
+					for(size_t j = 0; j < n; j++)
+					{	if( jac_sparse_bool_[i * n + j] )
+							st[j * q + k ] = true;
+					}
+				}
+			}
+		}
+		return ok;
+	}
+	/*!
+	Link from user_atomic to reverse sparse Hessian  bools
+
+	\copydetails atomic_base::rev_sparse_hes
+	*/
+	template <class sparsity_type>
+	bool rev_sparse_hes(
+		const vector<bool>&                     vx ,
+		const vector<bool>&                     s  ,
+		      vector<bool>&                     t  ,
+		size_t                                  q  ,
+		const sparsity_type&                    r  ,
+		const sparsity_type&                    u  ,
+		      sparsity_type&                    v  )
+	{	size_t n = f_.Domain();
+		size_t m = f_.Range();
+		CPPAD_ASSERT_UNKNOWN( vx.size() == n );
+		CPPAD_ASSERT_UNKNOWN(  s.size() == m );
+		CPPAD_ASSERT_UNKNOWN(  t.size() == n );
+		CPPAD_ASSERT_UNKNOWN(  r.size() == n * q );
+		CPPAD_ASSERT_UNKNOWN(  u.size() == m * q );
+		CPPAD_ASSERT_UNKNOWN(  v.size() == n * q );
+		//
+		bool ok        = true;
+
+		// make sure hes_sparse_bool_ has been set
+		if( hes_sparse_bool_.size() == 0 )
+			set_hes_sparse_bool();
+		if( hes_sparse_set_.n_set() != 0 )
+			hes_sparse_set_.resize(0, 0);
+		CPPAD_ASSERT_UNKNOWN( hes_sparse_bool_.size() == n * n );
+		CPPAD_ASSERT_UNKNOWN( hes_sparse_set_.n_set() == 0 );
+
+
+		// compute sparsity pattern for T(x) = S(x) * f'(x)
+		t = f_.RevSparseJac(1, s);
+# ifndef NDEBUG
+		for(size_t j = 0; j < n; j++)
+			CPPAD_ASSERT_UNKNOWN( vx[j] || ! t[j] )
+# endif
+
+		// V(x) = f'(x)^T * g''(y) * f'(x) * R  +  g'(y) * f''(x) * R
+		// U(x) = g''(y) * f'(x) * R
+		// S(x) = g'(y)
+
+		// compute sparsity pattern for A(x) = f'(x)^T * U(x)
+		bool transpose = true;
+		sparsity_type a(n * q);
+		a = f_.RevSparseJac(q, u, transpose);
+
+		// Need sparsity pattern for H(x) = (S(x) * f(x))''(x) * R,
+		// but use less efficient sparsity for  f(x)''(x) * R so that
+		// hes_sparse_set_ can be used every time this is needed.
+		for(size_t i = 0; i < n; i++)
+		{	for(size_t k = 0; k < q; k++)
+				v[i * q + k] = false;
+			for(size_t j = 0; j < n; j++)
+			{	if( hes_sparse_bool_[i * n + j] )
+				{	for(size_t k = 0; k < q; k++)
+						// v[i * q + k] |= r[ j * q + k ];
+						v[i * q + k] = bool(v[i*q + k]) | bool(r[j*q + k]);
+				}
+			}
+		}
+
+		// compute sparsity pattern for V(x) = A(x) + H(x)
+		for(size_t i = 0; i < n; i++)
+		{	for(size_t k = 0; k < q; k++)
+				// v[ i * q + k ] |= a[ i * q + k];
+				v[ i * q + k ] = bool(v[ i * q + k]) | bool(a[ i * q + k]);
+		}
+		return ok;
 	}
 public:
+	// ------------------------------------------------------------------------
 	/*!
 	Constructor of a checkpoint object
 
@@ -266,11 +522,20 @@ public:
 
 	\param ay [out]
 	function value at specified argument value.
+
+	\param sparsity [in]
+	what type of sparsity patterns are computed by this function,
+	bool_sparsity_enum or set_sparsity_enum. Default value is unspecified.
 	*/
 	template <class Algo, class ADVector>
-	checkpoint(const char* name,
-		Algo& algo, const ADVector& ax, ADVector& ay)
-	: atomic_base<Base>(name)
+	checkpoint(
+		const char*                    name     ,
+		Algo&                          algo     ,
+		const ADVector&                ax       ,
+		ADVector&                      ay       ,
+		option_enum                    sparsity =
+				atomic_base<Base>::bool_sparsity_enum
+	) : atomic_base<Base>(name, sparsity)
 	{	CheckSimpleVector< CppAD::AD<Base> , ADVector>();
 
 		// make a copy of ax because Independent modifies AD information
@@ -289,15 +554,14 @@ public:
 		// now disable checking of comparison opertaions
 		// 2DO: add a debugging mode that checks for changes and aborts
 		f_.compare_change_count(0);
-		//
-		// set sparsity for entire Jacobian once and for all
-		set_entire_jac_sparse();
 	}
+	// ------------------------------------------------------------------------
 	/*!
 	Implement the user call to <tt>atom_fun.size_var()</tt>.
 	*/
 	size_t size_var(void)
 	{	return f_.size_var(); }
+	// ------------------------------------------------------------------------
 	/*!
 	Implement the user call to <tt>atom_fun(ax, ay)</tt>.
 
@@ -323,6 +587,7 @@ public:
 		);
 		this->atomic_base<Base>::operator()(ax, ay, id);
 	}
+	// ------------------------------------------------------------------------
 	/*!
 	Link from user_atomic to forward mode
 
@@ -345,19 +610,54 @@ public:
 		CPPAD_ASSERT_UNKNOWN( m == ty.size() / (q+1) );
 		bool ok  = true;
 		//
-		// repeat it every time forward zero is used.
+		if( vx.size() == 0 )
+		{	// during user forward mode
+			if( jac_sparse_set_.n_set() != 0 )
+				jac_sparse_set_.resize(0,0);
+			if( jac_sparse_bool_.size() != 0 )
+				jac_sparse_bool_.clear();
+			//
+			if( hes_sparse_set_.n_set() != 0 )
+				hes_sparse_set_.resize(0,0);
+			if( hes_sparse_bool_.size() != 0 )
+				hes_sparse_bool_.clear();
+		}
 		if( vx.size() > 0 )
-		{	// Compute Jacobian sparsity pattern.
-			assert( entire_jac_sparse_.n_set() == m );
-			assert( entire_jac_sparse_.end()   == n );
-			for(size_t i = 0; i < m; i++)
-			{	vy[i] = false;
-				entire_jac_sparse_.begin(i);
-				size_t j = entire_jac_sparse_.next_element();
-				while(j < n )
-				{	// y[i] depends on the value of x[j]
-					vy[i] |= vx[j];
-					j = entire_jac_sparse_.next_element();
+		{	// need Jacobian sparsity pattern to determine variable relation
+			// during user recording using checkpoint functions
+			if( sparsity() == atomic_base<Base>::set_sparsity_enum )
+			{	if( jac_sparse_set_.n_set() == 0 )
+					set_jac_sparse_set();
+				CPPAD_ASSERT_UNKNOWN( jac_sparse_set_.n_set() == m );
+				CPPAD_ASSERT_UNKNOWN( jac_sparse_set_.end()   == n );
+				//
+				for(size_t i = 0; i < m; i++)
+				{	vy[i] = false;
+					jac_sparse_set_.begin(i);
+					size_t j = jac_sparse_set_.next_element();
+					while(j < n )
+					{	// y[i] depends on the value of x[j]
+						vy[i] |= vx[j];
+						j = jac_sparse_set_.next_element();
+					}
+				}
+			}
+			else
+			{	if( jac_sparse_set_.n_set() != 0 )
+					jac_sparse_set_.resize(0, 0);
+				if( jac_sparse_bool_.size() == 0 )
+					set_jac_sparse_bool();
+				CPPAD_ASSERT_UNKNOWN( jac_sparse_set_.n_set() == 0 );
+				CPPAD_ASSERT_UNKNOWN( jac_sparse_bool_.size() == m * n );
+				//
+				for(size_t i = 0; i < m; i++)
+				{	vy[i] = false;
+					for(size_t j = 0; j < n; j++)
+					{	if( jac_sparse_bool_[ i * n + j ] )
+						{	// y[i] depends on the value of x[j]
+							vy[i] |= vx[j];
+						}
+					}
 				}
 			}
 		}
@@ -371,6 +671,7 @@ public:
 		f_.capacity_order(c, r);
 		return ok;
 	}
+	// ------------------------------------------------------------------------
 	/*!
 	Link from user_atomic to reverse mode
 
@@ -382,7 +683,10 @@ public:
 		const vector<Base>&       ty ,
 		      vector<Base>&       px ,
 		const vector<Base>&       py )
-	{
+	{	size_t n = f_.Domain();
+		size_t m = f_.Range();
+		CPPAD_ASSERT_UNKNOWN( n == tx.size() / (q+1) );
+		CPPAD_ASSERT_UNKNOWN( m == ty.size() / (q+1) );
 		CPPAD_ASSERT_UNKNOWN( f_.size_var() > 0 );
 		CPPAD_ASSERT_UNKNOWN( tx.size() % (q+1) == 0 );
 		CPPAD_ASSERT_UNKNOWN( ty.size() % (q+1) == 0 );
@@ -392,8 +696,6 @@ public:
 # ifdef NDEBUG
 		f_.Forward(q, tx);
 # else
-		size_t n = tx.size() / (q+1);
-		size_t m = ty.size() / (q+1);
 		CPPAD_ASSERT_UNKNOWN( px.size() == n * (q+1) );
 		CPPAD_ASSERT_UNKNOWN( py.size() == m * (q+1) );
 		size_t i, j, k;
@@ -416,6 +718,29 @@ public:
 		f_.capacity_order(c, r);
 		return ok;
 	}
+	// ------------------------------------------------------------------------
+	/*!
+	Link from user_atomic to forward sparse Jacobian pack
+
+	\copydetails atomic_base::for_sparse_jac
+	*/
+	virtual bool for_sparse_jac(
+		size_t                                  q  ,
+		const vectorBool&                       r  ,
+		      vectorBool&                       s  )
+	{	return for_sparse_jac< vectorBool >(q, r, s);
+	}
+	/*!
+	Link from user_atomic to forward sparse Jacobian bool
+
+	\copydetails atomic_base::for_sparse_jac
+	*/
+	virtual bool for_sparse_jac(
+		size_t                                  q  ,
+		const vector<bool>&                     r  ,
+		      vector<bool>&                     s  )
+	{	return for_sparse_jac< vector<bool> >(q, r, s);
+	}
 	/*!
 	Link from user_atomic to forward sparse Jacobian sets
 
@@ -425,67 +750,64 @@ public:
 		size_t                                  q  ,
 		const vector< std::set<size_t> >&       r  ,
 		      vector< std::set<size_t> >&       s  )
-	{	assert( entire_jac_sparse_.n_set() != 0 );
-		assert( r.size() == f_.Domain() );
-		assert( s.size() == f_.Range() );
-
-		bool ok = true;
+	{	// during user sparsity calculations
 		size_t m = f_.Range();
 		size_t n = f_.Domain();
+		if( jac_sparse_bool_.size() != 0 )
+			jac_sparse_bool_.clear();
+		if( jac_sparse_set_.n_set() == 0 )
+			set_jac_sparse_set();
+		CPPAD_ASSERT_UNKNOWN( jac_sparse_bool_.size() == 0 );
+		CPPAD_ASSERT_UNKNOWN( jac_sparse_set_.n_set() == m );
+		CPPAD_ASSERT_UNKNOWN( jac_sparse_set_.end()   == n );
+		CPPAD_ASSERT_UNKNOWN( r.size() == n );
+		CPPAD_ASSERT_UNKNOWN( s.size() == m );
+
+		bool ok = true;
 		for(size_t i = 0; i < m; i++)
 			s[i].clear();
 
-		// sparsity for  s = entire_jac_sparse_ * r
+		// sparsity for  s = jac_sparse_set_ * r
 		for(size_t i = 0; i < m; i++)
 		{	// compute row i of the return pattern
-			entire_jac_sparse_.begin(i);
-			size_t j = entire_jac_sparse_.next_element();
+			jac_sparse_set_.begin(i);
+			size_t j = jac_sparse_set_.next_element();
 			while(j < n )
 			{	std::set<size_t>::const_iterator itr_j;
 				const std::set<size_t>& r_j( r[j] );
 				for(itr_j = r_j.begin(); itr_j != r_j.end(); itr_j++)
 				{	size_t k = *itr_j;
-					assert( k < q );
+					CPPAD_ASSERT_UNKNOWN( k < q );
 					s[i].insert(k);
 				}
-				j = entire_jac_sparse_.next_element();
+				j = jac_sparse_set_.next_element();
 			}
 		}
 
 		return ok;
 	}
+	// ------------------------------------------------------------------------
 	/*!
-	Link from user_atomic to forward sparse Jacobian bools
+	Link from user_atomic to reverse sparse Jacobian pack
 
-	\copydetails atomic_base::for_sparse_jac
+	\copydetails atomic_base::rev_sparse_jac
 	*/
-	virtual bool for_sparse_jac(
+	virtual bool rev_sparse_jac(
 		size_t                                  q  ,
-		const vector<bool>&                     r  ,
-		      vector<bool>&                     s  )
-	{	assert( r.size() == f_.Domain() * q );
-		assert( s.size() == f_.Range() * q );
-		bool ok = true;
-		size_t m = f_.Range();
-		size_t n = f_.Domain();
-		for(size_t i = 0; i < m; i++)
-		{	for(size_t k = 0; k < q; k++)
-				s[i * q + k] = false;
-		}
+		const vectorBool&                       rt ,
+		      vectorBool&                       st )
+	{	return rev_sparse_jac< vectorBool >(q, rt, st);
+	}
+	/*!
+	Link from user_atomic to reverse sparse Jacobian bool
 
-		// sparsity for  s = entire_jac_sparse_ * r
-		for(size_t i = 0; i < m; i++)
-		{	// compute row i of the return pattern
-			entire_jac_sparse_.begin(i);
-			size_t j = entire_jac_sparse_.next_element();
-			while(j < n )
-			{	for(size_t k = 0; k < q; k++)
-					s[i * q + k] |= r[j * q + k ];
-				j = entire_jac_sparse_.next_element();
-			}
-		}
-
-		return ok;
+	\copydetails atomic_base::rev_sparse_jac
+	*/
+	virtual bool rev_sparse_jac(
+		size_t                                  q  ,
+		const vector<bool>&                     rt ,
+		      vector<bool>&                     st )
+	{	return rev_sparse_jac< vector<bool> >(q, rt, st);
 	}
 	/*!
 	Link from user_atomic to reverse Jacobian sets
@@ -496,17 +818,26 @@ public:
 		size_t                                  q  ,
 		const vector< std::set<size_t> >&       rt ,
 		      vector< std::set<size_t> >&       st )
-	{	assert( rt.size() == f_.Range() );
-		assert( st.size() == f_.Domain() );
-		bool ok  = true;
-		//
+	{	// during user sparsity calculations
 		size_t m = f_.Range();
 		size_t n = f_.Domain();
+		if( jac_sparse_bool_.size() != 0 )
+			jac_sparse_bool_.clear();
+		if( jac_sparse_set_.n_set() == 0 )
+			set_jac_sparse_set();
+		CPPAD_ASSERT_UNKNOWN( jac_sparse_bool_.size() == 0 );
+		CPPAD_ASSERT_UNKNOWN( jac_sparse_set_.n_set() == m );
+		CPPAD_ASSERT_UNKNOWN( jac_sparse_set_.end()   == n );
+		CPPAD_ASSERT_UNKNOWN( rt.size() == m );
+		CPPAD_ASSERT_UNKNOWN( st.size() == n );
+		//
+		bool ok  = true;
+		//
 		for(size_t j = 0; j < n; j++)
 			st[j].clear();
-
-		// sparsity for  s = r * entire_jac_sparse_
-		// s^T = entire_jac_sparse_^T * r^T
+		//
+		// sparsity for  s = r * jac_sparse_set_
+		// s^T = jac_sparse_set_^T * r^T
 		for(size_t i = 0; i < m; i++)
 		{	// i is the row index in r^T
 			std::set<size_t>::const_iterator itr_i;
@@ -514,58 +845,51 @@ public:
 			for(itr_i = r_i.begin(); itr_i != r_i.end(); itr_i++)
 			{	// k is the column index in r^T
 				size_t k = *itr_i;
-				assert( k < q );
+				CPPAD_ASSERT_UNKNOWN( k < q );
 				//
-				// i is column index in entire_sparse_jac^T
-				entire_jac_sparse_.begin(i);
-				size_t j = entire_jac_sparse_.next_element();
+				// i is column index in jac_sparse_set^T
+				jac_sparse_set_.begin(i);
+				size_t j = jac_sparse_set_.next_element();
 				while( j < n )
-				{	// j is row index in entire_sparse_jac^T
+				{	// j is row index in jac_sparse_set^T
 					st[j].insert(k);
-					j = entire_jac_sparse_.next_element();
+					j = jac_sparse_set_.next_element();
 				}
 			}
 		}
 
 		return ok;
 	}
+	// ------------------------------------------------------------------------
 	/*!
-	Link from user_atomic to reverse sparse Jacobian sets
+	Link from user_atomic to reverse sparse Hessian pack
 
-	\copydetails atomic_base::rev_sparse_jac
+	\copydetails atomic_base::rev_sparse_hes
 	*/
-	virtual bool rev_sparse_jac(
+	virtual bool rev_sparse_hes(
+		const vector<bool>&                     vx ,
+		const vector<bool>&                     s  ,
+		      vector<bool>&                     t  ,
 		size_t                                  q  ,
-		const vector<bool>&                     rt ,
-		      vector<bool>&                     st )
-	{	assert( rt.size() == f_.Range() * q );
-		assert( st.size() == f_.Domain() * q );
-		bool ok  = true;
-		//
-		size_t n = f_.Domain();
-		size_t m = f_.Range();
-		for(size_t j = 0; j < n; j++)
-		{	for(size_t k = 0; k < q; k++)
-				st[j * q + k] = false;
-		}
+		const vectorBool&                       r  ,
+		const vectorBool&                       u  ,
+		      vectorBool&                       v  )
+	{	return rev_sparse_hes< vectorBool >(vx, s, t, q, r, u, v);
+	}
+	/*!
+	Link from user_atomic to reverse sparse Hessian bool
 
-		// sparsity for  s = r * entire_jac_sparse_
-		// s^T = entire_jac_sparse_^T * r^T
-		for(size_t k = 0; k < q; k++)
-		{	// compute row k of the return pattern s
-			for(size_t i = 0; i < m; i++)
-			{	if( rt[i * q + k] )
-				{	entire_jac_sparse_.begin(i);
-					size_t j = entire_jac_sparse_.next_element();
-					while( j < n )
-					{	st[j * q + k ] = true;
-						j = entire_jac_sparse_.next_element();
-					}
-				}
-			}
-		}
-
-		return ok;
+	\copydetails atomic_base::rev_sparse_hes
+	*/
+	virtual bool rev_sparse_hes(
+		const vector<bool>&                     vx ,
+		const vector<bool>&                     s  ,
+		      vector<bool>&                     t  ,
+		size_t                                  q  ,
+		const vector<bool>&                     r  ,
+		const vector<bool>&                     u  ,
+		      vector<bool>&                     v  )
+	{	return rev_sparse_hes< vector<bool> >(vx, s, t, q, r, u, v);
 	}
 	/*!
 	Link from user_atomic to reverse sparse Hessian sets
@@ -591,9 +915,14 @@ public:
 		//
 		bool ok        = true;
 
-		// make sure entire_hes_sparse_ has been set
-		if( entire_hes_sparse_.n_set() == 0 )
-			set_entire_hes_sparse();
+		// make sure hes_sparse_set_ has been set
+		if( hes_sparse_bool_.size() != 0 )
+			hes_sparse_bool_.clear();
+		if( hes_sparse_set_.n_set() == 0 )
+			set_hes_sparse_set();
+		CPPAD_ASSERT_UNKNOWN( hes_sparse_bool_.size() == 0 );
+		CPPAD_ASSERT_UNKNOWN( hes_sparse_set_.n_set() == n );
+		CPPAD_ASSERT_UNKNOWN( hes_sparse_set_.end()   == n );
 
 		// compute sparsity pattern for T(x) = S(x) * f'(x)
 		t = f_.RevSparseJac(1, s);
@@ -607,17 +936,18 @@ public:
 		// S(x) = g'(y)
 
 		// compute sparsity pattern for A(x) = f'(x)^T * U(x)
+		// 2DO: change a to use INTERNAL_SPARSE_SET
 		bool transpose = true;
 		vector< std::set<size_t> > a(n);
 		a = f_.RevSparseJac(q, u, transpose);
 
 		// Need sparsity pattern for H(x) = (S(x) * f(x))''(x) * R,
 		// but use less efficient sparsity for  f(x)''(x) * R so that
-		// entire_hes_sparse_ can be used every time this is needed.
+		// hes_sparse_set_ can be used every time this is needed.
 		for(size_t i = 0; i < n; i++)
 		{	v[i].clear();
-			entire_hes_sparse_.begin(i);
-			size_t j = entire_hes_sparse_.next_element();
+			hes_sparse_set_.begin(i);
+			size_t j = hes_sparse_set_.next_element();
 			while( j < n )
 			{	std::set<size_t>::const_iterator itr_j;
 				const std::set<size_t>& r_j( r[j] );
@@ -625,7 +955,7 @@ public:
 				{	size_t k = *itr_j;
 					v[i].insert(k);
 				}
-				j = entire_hes_sparse_.next_element();
+				j = hes_sparse_set_.next_element();
 			}
 		}
 		// compute sparsity pattern for V(x) = A(x) + H(x)
@@ -636,73 +966,6 @@ public:
 				CPPAD_ASSERT_UNKNOWN( j < q );
 				v[i].insert(j);
 			}
-		}
-
-		return ok;
-	}
-	/*!
-	Link from user_atomic to reverse sparse Hessian  bools
-
-	\copydetails atomic_base::rev_sparse_hes
-	*/
-	virtual bool rev_sparse_hes(
-		const vector<bool>&                     vx ,
-		const vector<bool>&                     s  ,
-		      vector<bool>&                     t  ,
-		size_t                                  q  ,
-		const vector<bool>&                     r  ,
-		const vector<bool>&                     u  ,
-		      vector<bool>&                     v  )
-	{	size_t n = f_.Domain();
-		size_t m = f_.Range();
-		CPPAD_ASSERT_UNKNOWN( vx.size() == n );
-		CPPAD_ASSERT_UNKNOWN(  s.size() == m );
-		CPPAD_ASSERT_UNKNOWN(  t.size() == n );
-		CPPAD_ASSERT_UNKNOWN(  r.size() == n * q );
-		CPPAD_ASSERT_UNKNOWN(  u.size() == m * q );
-		CPPAD_ASSERT_UNKNOWN(  v.size() == n * q );
-		//
-		bool ok        = true;
-
-		// make sure entire_hes_sparse_ has been set
-		if( entire_hes_sparse_.n_set() == 0 )
-			set_entire_hes_sparse();
-
-		// compute sparsity pattern for T(x) = S(x) * f'(x)
-		t = f_.RevSparseJac(1, s);
-# ifndef NDEBUG
-		for(size_t j = 0; j < n; j++)
-			CPPAD_ASSERT_UNKNOWN( vx[j] || ! t[j] )
-# endif
-
-		// V(x) = f'(x)^T * g''(y) * f'(x) * R  +  g'(y) * f''(x) * R
-		// U(x) = g''(y) * f'(x) * R
-		// S(x) = g'(y)
-
-		// compute sparsity pattern for A(x) = f'(x)^T * U(x)
-		bool transpose = true;
-		vector<bool> a(n * q);
-		a = f_.RevSparseJac(q, u, transpose);
-
-		// Need sparsity pattern for H(x) = (S(x) * f(x))''(x) * R,
-		// but use less efficient sparsity for  f(x)''(x) * R so that
-		// entire_hes_sparse_ can be used every time this is needed.
-		for(size_t i = 0; i < n; i++)
-		{	for(size_t k = 0; k < q; k++)
-				v[i * q + k] = false;
-			entire_hes_sparse_.begin(i);
-			size_t j = entire_hes_sparse_.next_element();
-			while( j < n )
-			{	for(size_t k = 0; k < q; k++)
-					v[i * q + k] |= r[ j * q + k ];
-				j = entire_hes_sparse_.next_element();
-			}
-		}
-
-		// compute sparsity pattern for V(x) = A(x) + H(x)
-		for(size_t i = 0; i < n; i++)
-		{	for(size_t k = 0; k < q; k++)
-				v[ i * q + k ] |= a[ i * q + k];
 		}
 
 		return ok;

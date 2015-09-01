@@ -1,9 +1,9 @@
 // $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -12,18 +12,21 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 /*
 $begin atomic_reciprocal.cpp$$
+$spell
+	enum
+$$
 
 $section Reciprocal as an Atomic Operation: Example and Test$$
-$index reciprocal, atomic operation$$
-$index simple, atomic operation$$
-$index atomic, simple operation$$
-$index operation, simple atomic$$
 
 $head Theory$$
 This example demonstrates using $cref atomic_base$$
 to define the operation
 $latex f : \B{R}^n \rightarrow \B{R}^m$$ where
 $latex n = 1$$, $latex m = 1$$, and $latex f(x) = 1 / x$$.
+
+$head sparsity$$
+$index set_sparsity_enum$$
+This example only uses set sparsity patterns.
 
 $nospell
 
@@ -55,8 +58,9 @@ $head Constructor $$
 $codep */
 	public:
 	// constructor (could use const char* for name)
-	atomic_reciprocal(const std::string& name) : 
-	CppAD::atomic_base<double>(name)
+	atomic_reciprocal(const std::string& name) :
+	// this exmaple only uses set sparsity patterns
+	CppAD::atomic_base<double>(name, atomic_base<double>::set_sparsity_enum)
 	{ }
 	private:
 /* $$
@@ -100,7 +104,7 @@ $codep */
 		// y^1 = f'( x^0 ) x^1
 		double fp = - f / tx[0];
 		if( p <= 1 )
-			ty[1] = fp * tx[1]; 
+			ty[1] = fp * tx[1];
 		if( q <= 1 )
 			return ok;
 
@@ -129,12 +133,12 @@ $codep */
 		const vector<double>&    py
 	)
 	{	size_t n = tx.size() / (q + 1);
-		size_t m = ty.size() / (q + 1);	
+		size_t m = ty.size() / (q + 1);
 		assert( px.size() == n * (q + 1) );
 		assert( py.size() == m * (q + 1) );
 		assert( n == 1 );
 		assert( m == 1 );
-		bool ok = q <= 2;	
+		bool ok = q <= 2;
 
 		double f, fp, fpp, fppp;
 		switch(q)
@@ -170,7 +174,7 @@ $codep */
 			fppp   = - 3.0 * fpp / tx[0];
 			px[2]  = py[2] * fp;
 			px[1]  = py[2] * fpp * tx[1];
-			px[0]  = py[2] * tx[1] * fppp * tx[1] / 2.0 + fpp * tx[2]; 
+			px[0]  = py[2] * tx[1] * fppp * tx[1] / 2.0 + fpp * tx[2];
 			// reverse: F^1 ( tx ) = y^1 = f'( x^0 ) x^1
 			px[1] += py[1] * fp;
 			px[0] += py[1] * fpp * tx[1];
@@ -187,31 +191,12 @@ $codep */
 /* $$
 $head for_sparse_jac$$
 $codep */
-	// forward Jacobian bool sparsity routine called by CppAD
-	virtual bool for_sparse_jac(
-		size_t                                p ,
-		const vector<bool>&                   r ,
-		      vector<bool>&                   s )
-	{	// This function needed if using f.ForSparseJac 
-		// with afun.option( CppAD::atomic_base<double>::bool_sparsity_enum )
-		size_t n = r.size() / p;
-		size_t m = s.size() / p;
-		assert( n == 1 );
-		assert( m == 1 );
-
-		// sparsity for S(x) = f'(x) * R is same as sparsity for R
-		for(size_t j = 0; j < p; j++)
-			s[j] = r[j];
-
-		return true; 
-	}
 	// forward Jacobian set sparsity routine called by CppAD
 	virtual bool for_sparse_jac(
 		size_t                                p ,
 		const vector< std::set<size_t> >&     r ,
 		      vector< std::set<size_t> >&     s )
-	{	// This function needed if using f.ForSparseJac 
-		// with afun.option( CppAD::atomic_base<double>::set_sparsity_enum )
+	{	// This function needed if using f.ForSparseJac
 		size_t n = r.size();
 		size_t m = s.size();
 		assert( n == 1 );
@@ -220,36 +205,17 @@ $codep */
 		// sparsity for S(x) = f'(x) * R is same as sparsity for R
 		s[0] = r[0];
 
-		return true; 
+		return true;
 	}
 /* $$
 $head rev_sparse_jac$$
 $codep */
-	// reverse Jacobian bool sparsity routine called by CppAD
-	virtual bool rev_sparse_jac(
-		size_t                                p  ,
-		const vector<bool>&                   rt ,
-		      vector<bool>&                   st )
-	{	// This function needed if using RevSparseJac or optimize
-		// with afun.option( CppAD::atomic_base<double>::bool_sparsity_enum )
-		size_t n = st.size() / p;
-		size_t m = rt.size() / p;
-		assert( n == 1 );
-		assert( m == 1 );
-
-		// sparsity for S(x)^T = f'(x)^T * R^T is same as sparsity for R^T
-		for(size_t i = 0; i < p; i++)
-			st[i] = rt[i];
-
-		return true; 
-	}
 	// reverse Jacobian set sparsity routine called by CppAD
 	virtual bool rev_sparse_jac(
 		size_t                                p  ,
 		const vector< std::set<size_t> >&     rt ,
 		      vector< std::set<size_t> >&     st )
 	{	// This function needed if using RevSparseJac or optimize
-		// with afun.option( CppAD::atomic_base<double>::set_sparsity_enum )
 		size_t n = st.size();
 		size_t m = rt.size();
 		assert( n == 1 );
@@ -258,54 +224,11 @@ $codep */
 		// sparsity for S(x)^T = f'(x)^T * R^T is same as sparsity for R^T
 		st[0] = rt[0];
 
-		return true; 
+		return true;
 	}
 /* $$
 $head rev_sparse_hes$$
 $codep */
-	// reverse Hessian bool sparsity routine called by CppAD
-	virtual bool rev_sparse_hes(
-		const vector<bool>&                   vx,
-		const vector<bool>&                   s ,
-		      vector<bool>&                   t ,
-		size_t                                p ,
-		const vector<bool>&                   r ,
-		const vector<bool>&                   u ,
-		      vector<bool>&                   v )
-	{	// This function needed if using RevSparseHes
-		// with afun.option( CppAD::atomic_base<double>::bool_sparsity_enum )
-		size_t m = s.size();
-		size_t n = t.size();
-		assert( r.size() == n * p );
-		assert( u.size() == m * p );
-		assert( v.size() == n * p );
-		assert( n == 1 );
-		assert( m == 1 );
-
-		// There are no cross term second derivatives for this case,
-		// so it is not necessary to vx.
-
-		// sparsity for T(x) = S(x) * f'(x) is same as sparsity for S
-		t[0] = s[0];
-
-		// V(x) = f'(x)^T * g''(y) * f'(x) * R  +  g'(y) * f''(x) * R 
-		// U(x) = g''(y) * f'(x) * R
-		// S(x) = g'(y)
-		
-		// back propagate the sparsity for U, note f'(x) may be non-zero;
-		size_t j;
-		for(j = 0; j < p; j++)
-			v[j] = u[j];
-
-		// include forward Jacobian sparsity in Hessian sparsity
-		// (note sparsty for f''(x) * R same as for R)
-		if( s[0] )
-		{	for(j = 0; j < p; j++)
-				v[j] |= r[j];
-		}
-
-		return true;
-	}
 	// reverse Hessian set sparsity routine called by CppAD
 	virtual bool rev_sparse_hes(
 		const vector<bool>&                   vx,
@@ -316,7 +239,6 @@ $codep */
 		const vector< std::set<size_t> >&     u ,
 		      vector< std::set<size_t> >&     v )
 	{	// This function needed if using RevSparseHes
-		// with afun.option( CppAD::atomic_base<double>::set_sparsity_enum )
 		size_t n = vx.size();
 		size_t m = s.size();
 		assert( t.size() == n );
@@ -331,11 +253,11 @@ $codep */
 
 		// sparsity for T(x) = S(x) * f'(x) is same as sparsity for S
 		t[0] = s[0];
-	
-		// V(x) = f'(x)^T * g''(y) * f'(x) * R  +  g'(y) * f''(x) * R 
+
+		// V(x) = f'(x)^T * g''(y) * f'(x) * R  +  g'(y) * f''(x) * R
 		// U(x) = g''(y) * f'(x) * R
 		// S(x) = g'(y)
-		
+
 		// back propagate the sparsity for U, note f'(x) may be non-zero;
 		v[0] = u[0];
 
@@ -380,11 +302,11 @@ $codep */
 	// declare independent variables and start tape recording
 	CppAD::Independent(ax);
 
-	// range space vector 
+	// range space vector
 	size_t m = 1;
 	vector< AD<double> > ay(m);
 
-	// call user function and store reciprocal(x) in au[0] 
+	// call user function and store reciprocal(x) in au[0]
 	vector< AD<double> > au(m);
 	afun(ax, au);        // u = 1 / x
 
@@ -397,7 +319,7 @@ $codep */
 /* $$
 $subhead forward$$
 $codep */
-	// check function value 
+	// check function value
 	double check = x0;
 	ok &= NearEqual( Value(ay[0]) , check,  eps, eps);
 
@@ -425,7 +347,7 @@ $codep */
 /* $$
 $subhead reverse$$
 $codep */
-	// third order reverse mode 
+	// third order reverse mode
 	q     = 3;
 	vector<double> w(m), dw(n * q);
 	w[0]  = 1.;
@@ -443,13 +365,8 @@ $codep */
 	CppAD::vectorBool r1(n * p), s1(m * p);
 	r1[0] = true;          // compute sparsity pattern for x[0]
 	//
-	afun.option( CppAD::atomic_base<double>::bool_sparsity_enum );
 	s1    = f.ForSparseJac(p, r1);
-	ok  &= s1[0] == true;  // f[0] depends on x[0]  
-	//
-	afun.option( CppAD::atomic_base<double>::set_sparsity_enum );
-	s1    = f.ForSparseJac(p, r1);
-	ok  &= s1[0] == true;  // f[0] depends on x[0]  
+	ok  &= s1[0] == true;  // f[0] depends on x[0]
 /* $$
 $subhead rev_sparse_jac$$
 $codep */
@@ -458,28 +375,18 @@ $codep */
 	CppAD::vectorBool s2(q * m), r2(q * n);
 	s2[0] = true;          // compute sparsity pattern for f[0]
 	//
-	afun.option( CppAD::atomic_base<double>::bool_sparsity_enum );
 	r2    = f.RevSparseJac(q, s2);
-	ok  &= r2[0] == true;  // f[0] depends on x[0]  
-	//
-	afun.option( CppAD::atomic_base<double>::set_sparsity_enum );
-	r2    = f.RevSparseJac(q, s2);
-	ok  &= r2[0] == true;  // f[0] depends on x[0]  
+	ok  &= r2[0] == true;  // f[0] depends on x[0]
 /* $$
 $subhead rev_sparse_hes$$
 $codep */
-	// Hessian sparsity (using previous ForSparseJac call) 
+	// Hessian sparsity (using previous ForSparseJac call)
 	CppAD::vectorBool s3(m), h(p * n);
 	s3[0] = true;        // compute sparsity pattern for f[0]
 	//
-	afun.option( CppAD::atomic_base<double>::bool_sparsity_enum );
 	h     = f.RevSparseHes(p, s3);
 	ok  &= h[0] == true; // second partial of f[0] w.r.t. x[0] may be non-zero
 	//
-	afun.option( CppAD::atomic_base<double>::set_sparsity_enum );
-	h     = f.RevSparseHes(p, s3);
-	ok  &= h[0] == true; // second partial of f[0] w.r.t. x[0] may be non-zero
-
 	return ok;
 }
 /* $$
