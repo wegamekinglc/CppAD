@@ -1,10 +1,10 @@
 #! /bin/bash -e
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
-# the terms of the 
+# the terms of the
 #                     Eclipse Public License Version 1.0.
 #
 # A copy of this license is included in the COPYING file of this distribution.
@@ -19,21 +19,17 @@
 # $$
 #
 # $section Download and Install ColPack in Build Directory$$
-# $index colpack, download and install$$
-# $index download, install colpack$$
-# $index install, colpack$$ 
-# $index get_colpack.sh$$
 #
 # $head Syntax$$
 # $code bin/get_colpack.sh$$
 #
 # $head Purpose$$
-# If you are using Unix, this command will download and install 
+# If you are using Unix, this command will download and install
 # $href%http://cscapes.cs.purdue.edu/dox/ColPack/html/%ColPack%$$ in the
 # CppAD $code build$$ directory.
 #
 # $head Distribution Directory$$
-# This command must be executed in the 
+# This command must be executed in the
 # $cref/distribution directory/download/Distribution Directory/$$.
 #
 # $head External Directory$$
@@ -97,7 +93,7 @@ if which autoconf >& /dev/null
 then
 	echo_eval rm aclocal.m4 ltmain.sh
 	echo_eval libtoolize
-	echo_eval autoreconf --force
+	echo_eval autoreconf --install --force
 fi
 # -----------------------------------------------------------------------------
 #

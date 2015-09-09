@@ -350,7 +350,10 @@ void RevJacSweep(
 
 			case DisOp:
 			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
-			// derivative is identically zero
+			// derivative is identically zero but dependency is not
+			if( dependency ) reverse_sparse_jacobian_unary_op(
+				i_var, arg[1], var_sparsity
+			);
 			break;
 			// -------------------------------------------------
 
@@ -413,6 +416,7 @@ void RevJacSweep(
 
 			case LdpOp:
 			reverse_sparse_jacobian_load_op(
+				dependency,
 				op,
 				i_var,
 				arg,
@@ -426,6 +430,7 @@ void RevJacSweep(
 
 			case LdvOp:
 			reverse_sparse_jacobian_load_op(
+				dependency,
 				op,
 				i_var,
 				arg,
@@ -521,7 +526,10 @@ void RevJacSweep(
 
 			case SignOp:
 			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
-			// derivative is identically zero
+			// derivative is identically zero but dependency is not
+			if( dependency ) reverse_sparse_jacobian_unary_op(
+				i_var, arg[0], var_sparsity
+			);
 			break;
 			// -------------------------------------------------
 
@@ -552,13 +560,14 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case StppOp:
-			// sparsity cannot proagate through a parameter
+			// does not affect sparsity or dependency when both are parameters
 			CPPAD_ASSERT_NARG_NRES(op, 3, 0);
 			break;
 			// -------------------------------------------------
 
 			case StpvOp:
 			reverse_sparse_jacobian_store_op(
+				dependency,
 				op,
 				arg,
 				num_vecad_ind,
@@ -571,11 +580,22 @@ void RevJacSweep(
 
 			case StvpOp:
 			CPPAD_ASSERT_NARG_NRES(op, 3, 0);
+			// storing a parameter only affects dependency
+			reverse_sparse_jacobian_store_op(
+				dependency,
+				op,
+				arg,
+				num_vecad_ind,
+				vecad_ind.data(),
+				var_sparsity,
+				vecad_sparsity
+			);
 			break;
 			// -------------------------------------------------
 
 			case StvvOp:
 			reverse_sparse_jacobian_store_op(
+				dependency,
 				op,
 				arg,
 				num_vecad_ind,

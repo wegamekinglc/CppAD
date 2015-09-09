@@ -16,15 +16,17 @@ EOF
 cat << EOF > bug.$$
 # include <cppad/cppad.hpp>
 int main(void)
-{	// C++ source code
+{	bool ok = true;
 	using std::cout;
-
+	//
 	cout << "1. copy template.sh to <name>.sh\n";
 	cout << "2. Edit <name>.sh replacing description and C++ source code\n";
 	cout << "3. Run ./<name>.sh\n";
 	cout << "where <name> is a name that describes the bug\n";
-
-	return 0;
+	//
+	if( ok )
+		return 0;
+	return 1;
 }
 EOF
 # -----------------------------------------------------------------------------
