@@ -179,7 +179,7 @@ public:
 	/// If this is true (false) this connection is only for the case where
 	/// the comparision in the conditional expression is true (false)
 	bool compare(void) const
-	{	return bool(pack_ % 2); }
+	{	return pack_ % 2 != 0; }
 
 	/// This is the index of the conditional expression (in cksip_info)
 	/// for this connection
@@ -2634,7 +2634,7 @@ void optimize_run(
 			tape[i_var].new_op  = rec->num_op_rec();
 			tape[i_var].new_var = rec->PutOp(op);
 			break;
- 			// ---------------------------------------------------
+			// ---------------------------------------------------
 			// Operations with one argument that is a parameter
 			case ParOp:
 			CPPAD_ASSERT_NARG_NRES(op, 1, 1);

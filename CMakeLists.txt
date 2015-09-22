@@ -105,7 +105,12 @@ command_line_arg(cmake_install_postfix NOTFOUND STRING
 # -----------------------------------------------------------------------------
 # cppad_cxx_flags
 command_line_arg(cppad_cxx_flags NOTFOUND STRING
-	"extra flags used with cppad source (besides debug and release flags)"
+	"compile flags used with cppad (besides debug, release, and profile flags)"
+)
+# -----------------------------------------------------------------------------
+# cppad_profile_flag
+command_line_arg(cppad_profile_flag NOTFOUND STRING
+	"compile flag used to compoile and link a profile version of a program"
 )
 # -----------------------------------------------------------------------------
 # External package prefixes
