@@ -21,6 +21,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_complex.hpp$$
 $spell
+	azmul
 	expm1
 	atanh
 	acosh
@@ -180,6 +181,13 @@ namespace CppAD {
 }
 /* $$
 
+$head azmul$$
+$codep */
+namespace CppAD {
+	CPPAD_AZMUL( std::complex<double> )
+}
+/* $$
+
 $head isnan$$
 The gcc 4.1.1 complier defines the function
 $codei%
@@ -284,10 +292,6 @@ namespace CppAD {
 			return std::complex<double>(max, 0.0);
 		}
 	};
-	// deprecated machine epsilon
-	template <>
-	inline std::complex<double> epsilon< std::complex<double> > (void)
-	{	return numeric_limits< std::complex<double> >::epsilon(); }
 }
 /* $$
 $end

@@ -1,10 +1,10 @@
 #! /bin/bash -e
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
-# the terms of the 
+# the terms of the
 #                     Eclipse Public License Version 1.0.
 #
 # A copy of this license is included in the COPYING file of this distribution.
@@ -21,18 +21,18 @@
 # $section Download and Install Sacado in Build Directory$$
 # $index sacado, download and install$$
 # $index download, install sacado$$
-# $index install, sacado$$ 
+# $index install, sacado$$
 #
 # $head Syntax$$
 # $code bin/get_sacado.sh$$
 #
 # $head Purpose$$
-# If you are using Unix, this command will download and install 
+# If you are using Unix, this command will download and install
 # $href%http://trilinos.sandia.gov/packages/sacado%Sacado%$$ in the
 # CppAD $code build$$ directory.
 #
 # $head Distribution Directory$$
-# This command must be executed in the 
+# This command must be executed in the
 # $cref/distribution directory/download/Distribution Directory/$$.
 #
 # $head External Directory$$
@@ -64,9 +64,17 @@ echo_eval() {
 }
 # -----------------------------------------------------------------------------
 echo 'Download sacado to build/external and install it to build/prefix'
-version="trilinos-11.12.1-Source"
+version="11.12.1"
+trilinos_dir="trilinos-$version-Source"
 web_page="http://trilinos.org/oldsite/download/files"
-prefix=`pwd`'/build/prefix'
+cppad_dir=`pwd`
+prefix="$cppad_dir/build/prefix"
+installed_flag="build/external/trilinos-${version}.installed"
+if [ -e "$installed_flag" ]
+then
+	echo "$installed_flag exists: Skipping get_sacado.sh"
+	exit 0
+fi
 # -----------------------------------------------------------------------------
 # determine which version of cmake to use
 cmake --version |  sed -n \
@@ -97,6 +105,7 @@ then
 	exit 1
 fi
 # -----------------------------------------------------------------------------
+# libdir
 if [ -e /usr/lib64 ]
 then
 	libdir='lib64'
@@ -115,31 +124,50 @@ then
 fi
 echo "coin_lapack_blas=$coin_lapack_blas"
 # -----------------------------------------------------------------------------
+# change into build/external directory
 if [ ! -d build/external ]
 then
 	echo_eval mkdir -p build/external
 fi
 echo_eval cd build/external
 # -----------------------------------------------------------------------------
-if [ ! -e "$version.tar.gz" ]
+# create the trilions source directory and change into it
+if [ ! -e "$trilinos_dir.tar.gz" ]
 then
-	echo_eval wget --no-check-certificate $web_page/$version.tar.gz
+	echo_eval wget --no-check-certificate $web_page/$trilinos_dir.tar.gz
 fi
-for package in Sacado Teuchos Trilinois 
+for package in Sacado Teuchos Trilinois
 do
 	echo_eval rm -rf $prefix/include/$package*
-done 
-if [ ! -e "$version" ]
+done
+if [ ! -e "$trilinos_dir" ]
 then
-	echo_eval tar -xzf $version.tar.gz
+	echo_eval tar -xzf $trilinos_dir.tar.gz
+	# ------------------------------------------------------------------------
+	# patch the cmake/tribits/modules/FindPythonInterp.cmake file
+	file="$trilinos_dir/cmake/tribits/modules/FindPythonInterp.cmake"
+	line='[HKEY_LOCAL_MACHINE\\\\SOFTWARE\\\\Python\\\\PythonCore\\\\2.8\\\\'
+	line="${line}InstallPath]"
+	if [ -e "$file" ]
+	then
+		echo "patch $file"
+		sed \
+			-e 's|NAMES \(python2.7 python2.6\)|NAMES python2.8 \1|' \
+			-e "s|^\( *\)\[HKEY_LOCAL_MACHINE.*2\.7.*|\1$line\n&|" \
+			-i $file
+	fi
+	# ------------------------------------------------------------------------
 fi
-#
-echo_eval cd $version
+echo_eval cd $trilinos_dir
+# -----------------------------------------------------------------------------
+# change into build sub-directory
 if [ ! -e build ]
 then
 	echo_eval mkdir build
 fi
 echo_eval cd build
+# -----------------------------------------------------------------------------
+# cmake command and install
 if [ "$coin_lapack_blas" == 'yes' ]
 then
 	echo_eval $cmake_program \
@@ -163,5 +191,6 @@ else
 		../
 fi
 echo_eval make install
-#
+# -----------------------------------------------------------------------------
+echo_eval touch $cppad_dir/$installed_flag
 echo "get_sacado.sh: OK"

@@ -13,6 +13,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 $begin whats_new_15$$
 $dollar @$$
 $spell
+	enum
 	ctor
 	dimensioned
 	cskip_op
@@ -56,6 +57,11 @@ $spell
 	adouble
 	gmtime
 	asctime
+	ipopt
+	fadbad
+	sacado
+	unreferenced
+	azmul
 $$
 
 $section CppAD Changes and Additions During 2015$$
@@ -65,6 +71,79 @@ This section contains a list of the changes to CppAD during 2015
 (in reverse order by date).
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
+
+$head 10-03$$
+$cref base_require$$:
+It is no longer necessary to define the specialization for
+$codei%CppAD::epsilon<%Base>()%$$ for each $icode Base$$ type.
+
+$head 10-02$$
+There was a bug in $code test_more/azmul.cpp$$ whereby the vector
+$code z$$ had the wrong dimension (in two places). This has been fixed.
+
+$head 09-28$$
+$list number$$
+Use the current $cref atomic_option$$ setting to determine
+which type of sparsity patterns to use for
+$cref/dependency/dependency.cpp/$$ calculations during
+$cref optimize$$ procedure.
+It used to be that the
+$cref/bool_sparsity_enum/atomic_option/atomic_sparsity/bool_sparsity_enum/$$
+was used when
+$cref/pack_sparsity_enum/atomic_option/atomic_sparsity/pack_sparsity_enum/$$
+was specified.
+$lnext
+It is not longer an error to take the derivative of the square root function,
+because the result may be the part of a
+$cref/conditional expression/CondExp/$$ that is not used.
+$lnext
+Update the $cref WishList$$ section.
+$lend
+
+
+$head 09-27$$
+$list number$$
+It is no longer necessary to use the $cref zdouble$$ class when
+computing with $cref/multiple levels of AD/mul_level/$$
+$cref/conditional expressions/CondExp/$$ and
+$cref/reverse mode/reverse/$$.
+$lnext
+The $code zdouble$$ class has been deprecated.
+Use the $cref azmul$$ function for absolute zero (when it is needed).
+$lend
+
+$head 09-25$$
+$cref base_require$$:
+$cref/absolute zero multiplication/base_require/Absolute Zero, azmul/$$
+is now required for user defined base types.
+This makes it possible to combine
+$cref/conditional expression/CondExp/$$,
+$cref/multiple levels/mul_level/$$,
+$cref/reverse/Reverse/$$, and
+a base type that has standard ieee multiplication; e.g., $code double$$.
+In other words, not all multiplications will need to have an
+absolute zero (as is the case with the $cref zdouble$$ base class.
+
+$head 09-24$$
+Fix some Visual Studio 2013 C++ level four $code /W4$$ warnings
+(previous warnings were are level 3).
+In addition, disable warning
+$code 4100$$ unreferenced formal parameter,
+and warning
+$code 4127$$ conditional expression is constant.
+
+$head 09-23$$
+CppAD can optionally test its use with the external packages
+$cref/eigen/get_eigen.sh/$$,
+$cref/ipopt/get_ipopt.sh/$$, and
+$cref/colpack/get_colpack.sh/$$.
+In addition, it can compare its $cref speed$$ with the external AD packages
+$cref/adolc/get_adolc.sh/$$,
+$cref/fadbad/get_fadbad.sh/$$, and
+$cref/sacado/get_sacado.sh/$$.
+The scripts that download and install a local copy of these external packages
+have been modified to automatically skip installation
+when it has already been done.
 
 $head 09-21$$
 Improve discussion of
@@ -262,11 +341,17 @@ $lend
 
 
 $head 06-09$$
-Add $cref/abort_op_index/WishList/abort_op_index/$$ to the wish list.
+Add an $cref/abort_op_index/Independent/abort_op_index/$$
+item to the wish list. It has since been removed
+(domain errors may not affect the results due to
+$cref/conditional expressions/CondExp/$$).
+
 
 $head 06-07$$
-Add $cref/absolute zero/WishList/Absolute Zero/$$
+Add
+$cref/absolute zero/base_require/Absolute Zero, azmul/$$
 and $cref/numeric_limits/WishList/Numeric Limits/$$ items to the wish list.
+(The absolute zero item has been completed.)
 Remove the multiple directions with list item.
 
 $head 05-26$$
@@ -297,6 +382,8 @@ This was problem was represented by the file $code bug/cond_exp_2.sh$$.
 $list number$$
 The problem above has been fixed by adding the base type $code zdouble$$, see
 $cref/CppAD motivation/zdouble/Motivation/CppAD/$$ for this new type.
+(It is no longer necessary to use $code zdouble$$ to get an absolute zero
+because CppAD now uses $cref azmul$$ where an absolute zero is required.)
 $lnext
 The sections
 $cref mul_level$$,
@@ -312,10 +399,11 @@ $lnext
 The example above were also changed so that AD variable names that
 indicated the level of AD for the variable.
 $lnext
+$cref base_require$$:
 The base type requirements were modified to include mention of
-$cref/absolute zero/base_require/Absolute Zero/$$.
+$cref/absolute zero/base_require/Absolute Zero, azmul/$$.
 In addition, the base type requirements
-$cref/warning/base_require/Warning/$$ is now more informative.
+$cref/API warning/base_require/API Warning/$$ is now more informative.
 $lend
 
 $head 05-11$$
@@ -324,6 +412,8 @@ Reorganize the $cref unary_standard_math$$ documentation.
 $head 05-10$$
 $list number$$
 Add the exponential minus one function $cref log1p$$.
+$lnext
+$cref base_require$$:
 If you are defining your own base type,
 note that $cref/log1p/base_std_math/erf, asinh, acosh, atanh, expm1, log1p/$$
 was added to the base type requirements.

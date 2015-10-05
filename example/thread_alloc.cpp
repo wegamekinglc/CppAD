@@ -1,9 +1,9 @@
 /* $Id$ */
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -41,14 +41,14 @@ $end
 
 namespace { // Begin empty namespace
 
-	
+
 
 bool raw_allocate(void)
 {	bool ok = true;
 	using CppAD::thread_alloc;
 	size_t thread;
 
-	// check that no memory is initilaly inuse 
+	// check that no memory is initilaly inuse
 	ok &= thread_alloc::free_all();
 
 	// amount of static memory used by thread zero
@@ -59,12 +59,13 @@ bool raw_allocate(void)
 	size_t min_bytes  = min_size_t * sizeof(size_t);
 	size_t n_outter   = 10;
 	size_t n_inner    = 5;
-	size_t cap_bytes, i, j, k;
-	for(i = 0; i < n_outter; i++)
+	for(size_t i = 0; i < n_outter; i++)
 	{	// Do not use CppAD::vector here because its use of thread_alloc
-		// complicates the inuse and avaialble results.	
+		// complicates the inuse and avaialble results.
 		std::vector<void*> v_ptr(n_inner);
-		for( j = 0; j < n_inner; j++)
+		// cap_bytes will be set by get_memory
+		size_t cap_bytes = 0; // set here to avoid MSC warning
+		for(size_t j = 0; j < n_inner; j++)
 		{	// allocate enough memory for min_size_t size_t objects
 			v_ptr[j]    = thread_alloc::get_memory(min_bytes, cap_bytes);
 			size_t* ptr = reinterpret_cast<size_t*>(v_ptr[j]);
@@ -72,10 +73,10 @@ bool raw_allocate(void)
 			size_t  cap_size_t = cap_bytes / sizeof(size_t);
 			ok                &= min_size_t <= cap_size_t;
 			// use placement new to call the size_t copy constructor
-			for(k = 0; k < cap_size_t; k++)
+			for(size_t k = 0; k < cap_size_t; k++)
 				new(ptr + k) size_t(i + j + k);
 			// check that the constructor worked
-			for(k = 0; k < cap_size_t; k++)
+			for(size_t k = 0; k < cap_size_t; k++)
 				ok &= ptr[k] == (i + j + k);
 		}
 		// check that n_inner * cap_bytes are inuse and none are available
@@ -83,7 +84,7 @@ bool raw_allocate(void)
 		ok &= thread_alloc::inuse(thread) == n_inner*cap_bytes + static_inuse;
 		ok &= thread_alloc::available(thread) == 0;
 		// return the memrory to thread_alloc
-		for(j = 0; j < n_inner; j++)
+		for(size_t j = 0; j < n_inner; j++)
 			thread_alloc::return_memory(v_ptr[j]);
 		// check that now n_inner * cap_bytes are now available
 		// and none are in use
@@ -91,7 +92,7 @@ bool raw_allocate(void)
 		ok &= thread_alloc::available(thread) == n_inner * cap_bytes;
 	}
 	thread_alloc::free_available(thread);
-	
+
 	// check that the tests have not held onto memory
 	ok &= ! CppAD::memory_leak();
 
@@ -110,7 +111,7 @@ public:
 bool type_allocate(void)
 {	bool ok = true;
 	using CppAD::thread_alloc;
-	size_t i; 
+	size_t i;
 
 	// check initial memory values
 	size_t thread = thread_alloc::thread_num();
@@ -121,7 +122,7 @@ bool type_allocate(void)
 	// initial allocation of an array
 	size_t  size_min  = 3;
 	size_t  size_one;
-	my_char *array_one  = 
+	my_char *array_one  =
 		thread_alloc::create_array<my_char>(size_min, size_one);
 
 	// check the values and change them to null 'x'
@@ -132,7 +133,7 @@ bool type_allocate(void)
 
 	// now create a longer array
 	size_t size_two;
-	my_char *array_two = 
+	my_char *array_two =
 		thread_alloc::create_array<my_char>(2 * size_min, size_two);
 
 	// check the values in array one
@@ -149,7 +150,7 @@ bool type_allocate(void)
 	ok   &= thread_alloc::inuse(thread) - check < sizeof(my_char);
 	ok   &= thread_alloc::available(thread) == 0;
 
-	// delete the arrays 
+	// delete the arrays
 	thread_alloc::delete_array(array_one);
 	thread_alloc::delete_array(array_two);
 	ok   &= thread_alloc::inuse(thread) == static_inuse;
@@ -158,7 +159,7 @@ bool type_allocate(void)
 
 	// free the memory for use by this thread
 	thread_alloc::free_available(thread);
-	
+
 	// check that the tests have not held onto memory
 	ok &= ! CppAD::memory_leak();
 
@@ -191,13 +192,13 @@ bool check_alignment(void)
 	// check that it is aligned
 	ok &= (v_size_t % n_byte) == 0;
 
-	// return memory to available pool 
+	// return memory to available pool
 	thread_alloc::return_memory(v_ptr);
 
 	// check array allocation ----------------------------------------------
 	size_t size_min = 1;
 	size_t size_out;
-	my_char *array_ptr = 
+	my_char *array_ptr =
 		thread_alloc::create_array<my_char>(size_min, size_out);
 
 	// convert to a size_t value
@@ -224,7 +225,7 @@ bool thread_alloc(void)
 	// and we are in sequential execution mode
 	ok  &= thread_alloc::in_parallel() == false;
 
-	// Instruct thread_alloc to hold onto memory.  This makes memory 
+	// Instruct thread_alloc to hold onto memory.  This makes memory
 	// allocation faster (especially when there are multiple threads).
 	thread_alloc::hold_memory(true);
 

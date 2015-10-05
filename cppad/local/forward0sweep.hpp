@@ -277,7 +277,7 @@ void forward0sweep(
 			CPPAD_ASSERT_UNKNOWN( op != CSkipOp );
 			// if( op == CSkipOp )
 			// {	// CSkip has a variable number of arguments
-			// 	play->forward_cskip(op, arg, i_op, i_var);
+			//	play->forward_cskip(op, arg, i_op, i_var);
 			// }
 			play->forward_next(op, arg, i_op, i_var);
 			CPPAD_ASSERT_UNKNOWN( i_op < play->num_op_rec() );
@@ -449,8 +449,6 @@ void forward0sweep(
 
 # if CPPAD_USE_CPLUSPLUS_2011
 			case ErfOp:
-			CPPAD_ASSERT_UNKNOWN( CPPAD_USE_CPLUSPLUS_2011 );
-			// 2DO: implement zero order version of this function
 			forward_erf_op_0(i_var, arg, parameter, J, taylor);
 			break;
 # endif
@@ -587,14 +585,14 @@ void forward0sweep(
 			break;
 			// -------------------------------------------------
 
-			case MulvvOp:
-			forward_mulvv_op_0(i_var, arg, parameter, J, taylor);
-			break;
-			// -------------------------------------------------
-
 			case MulpvOp:
 			CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < num_par );
 			forward_mulpv_op_0(i_var, arg, parameter, J, taylor);
+			break;
+			// -------------------------------------------------
+
+			case MulvvOp:
+			forward_mulvv_op_0(i_var, arg, parameter, J, taylor);
 			break;
 			// -------------------------------------------------
 
@@ -868,6 +866,23 @@ void forward0sweep(
 			taylor[ i_var * J + 0 ] = user_ty[user_i++];
 			if( user_i == user_m )
 				user_state = user_end;
+			break;
+			// -------------------------------------------------
+
+			case ZmulpvOp:
+			CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < num_par );
+			forward_zmulpv_op_0(i_var, arg, parameter, J, taylor);
+			break;
+			// -------------------------------------------------
+
+			case ZmulvpOp:
+			CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < num_par );
+			forward_zmulvp_op_0(i_var, arg, parameter, J, taylor);
+			break;
+			// -------------------------------------------------
+
+			case ZmulvvOp:
+			forward_zmulvv_op_0(i_var, arg, parameter, J, taylor);
 			break;
 			// -------------------------------------------------
 

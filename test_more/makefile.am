@@ -102,6 +102,7 @@ test_more_SOURCES  = \
 	atan.cpp \
 	atanh.cpp \
 	atan2.cpp \
+	azmul.cpp \
 	base_alloc.cpp \
 	check_simple_vector.cpp \
 	checkpoint.cpp \
@@ -138,11 +139,13 @@ test_more_SOURCES  = \
 	mul_cskip.cpp \
 	mul_eq.cpp \
 	mul_level.cpp \
+	mul_cond_rev.cpp \
 	mul_zdouble.cpp \
 	mul_zero_one.cpp \
 	near_equal_ext.cpp \
 	neg.cpp \
 	ode_err_control.cpp \
+	omp_alloc.cpp \
 	optimize.cpp \
 	parameter.cpp \
 	poly.cpp \

@@ -90,6 +90,7 @@ ADD_EXECUTABLE(example EXCLUDE_FROM_ALL example.cpp
 	atan.cpp
 	atanh.cpp
 	atan2.cpp
+	azmul.cpp
 	base_alloc.hpp
 	base_require.cpp
 	bender_quad.cpp
@@ -163,7 +164,6 @@ ADD_EXECUTABLE(example EXCLUDE_FROM_ALL example.cpp
 	ode_gear_control.cpp
 	ode_stiff.cpp
 	ode_taylor.cpp
-	omp_alloc.cpp
 	opt_val_hes.cpp
 	optimize.cpp
 	par_var.cpp

@@ -24,14 +24,14 @@ $$
 $section The Unary Standard Math Functions$$
 
 $head Syntax$$
-$icode%y% = %fun%(%x%)
-%$$
+$icode%y% = %fun%(%x%)%$$
+
+$head Purpose$$
+Evaluates the standard math function $icode fun$$.
 
 $head Possible Types$$
-Evaluates the standard math function $icode fun$$
-for any of the possible types listed below:
 
-$head Base$$
+$subhead Base$$
 If $icode Base$$ satisfies the
 $cref/base type requirements/base_require/$$
 and argument $icode x$$ has prototype
@@ -43,7 +43,7 @@ $codei%
 	%Base% %y%
 %$$
 
-$head AD<Base>$$
+$subhead AD<Base>$$
 If the argument $icode x$$ has prototype
 $codei%
 	const AD<%Base%>& %x%
@@ -53,7 +53,7 @@ $codei%
 	AD<%Base%> %y%
 %$$
 
-$head VecAD<Base>$$
+$subhead VecAD<Base>$$
 If the argument $icode x$$ has prototype
 $codei%
 	const VecAD<%Base%>::reference& %x%
@@ -116,12 +116,13 @@ $end
 # include <cppad/local/sign.hpp>
 
 /*
-$begin binary_standard_math$$
+$begin binary_math$$
 
-$section The Binary Standard Math Functions$$
+$section The Binary Math Functions$$
 
 $childtable%cppad/local/atan2.hpp
 	%cppad/local/pow.hpp
+	%cppad/local/azmul.hpp
 %$$
 
 $end

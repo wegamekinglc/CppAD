@@ -16,9 +16,9 @@
 # empty, Debug, Release, RelWithDebInfo and MinSizeRel
 SET(CMAKE_BUILD_TYPE DEBUG)
 
-# This directory does not contain any multi-threading tests, so
-# test using CPPAD_MAX_NUM_THREADS equal to one (its smallest value)
-ADD_DEFINITIONS("-DCPPAD_MAX_NUM_THREADS=1")
+# This directory now contains omp_alloc.cpp which uses multi-threading, so
+# so no longer can set CPPAD_MAX_NUM_THREADS equal to one (its smallest value)
+# ADD_DEFINITIONS("-DCPPAD_MAX_NUM_THREADS=1")
 
 # adolc_prefix
 SET(sources base_adolc.cpp)
@@ -77,6 +77,7 @@ ADD_EXECUTABLE(test_more EXCLUDE_FROM_ALL test_more.cpp
 	atan.cpp
 	atanh.cpp
 	atan2.cpp
+	azmul.cpp
 	base_alloc.cpp
 	check_simple_vector.cpp
 	checkpoint.cpp
@@ -112,11 +113,13 @@ ADD_EXECUTABLE(test_more EXCLUDE_FROM_ALL test_more.cpp
 	mul_cskip.cpp
 	mul_eq.cpp
 	mul_level.cpp
+	mul_cond_rev.cpp
 	mul_zdouble.cpp
 	mul_zero_one.cpp
 	near_equal_ext.cpp
 	neg.cpp
 	ode_err_control.cpp
+	omp_alloc.cpp
 	optimize.cpp
 	parameter.cpp
 	poly.cpp

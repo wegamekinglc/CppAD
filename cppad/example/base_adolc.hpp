@@ -14,6 +14,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_adolc.hpp$$
 $spell
+	azmul
 	expm1
 	atanh
 	acosh
@@ -193,6 +194,13 @@ $codep */
 	{    return static_cast<int>( x.getValue() ); }
 /* $$
 
+$head azmul$$
+$codep */
+namespace CppAD {
+	CPPAD_AZMUL( adouble )
+}
+/* $$
+
 $head Ordered$$
 $codep */
 namespace CppAD {
@@ -311,9 +319,6 @@ namespace CppAD {
 		static adouble max(void)
 		{	return adouble( std::numeric_limits<float>::max() ); }
 	};
-	// deprecated machine epsilon
-	template <> inline adouble epsilon<adouble>(void)
-	{	return numeric_limits<adouble>::epsilon(); }
 }
 /* $$
 $end

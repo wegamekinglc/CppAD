@@ -1,10 +1,10 @@
 #! /bin/bash -e
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
-# the terms of the 
+# the terms of the
 #                     Eclipse Public License Version 1.0.
 #
 # A copy of this license is included in the COPYING file of this distribution.
@@ -20,18 +20,18 @@
 # $section Download and Install Eigen in Build Directory$$
 # $index eigen, download and install$$
 # $index download, install eigen$$
-# $index install, eigen$$ 
+# $index install, eigen$$
 #
 # $head Syntax$$
 # $code bin/get_eigen.sh$$
 #
 # $head Purpose$$
-# If you are using Unix, this command will download and install 
+# If you are using Unix, this command will download and install
 # $href%http://eigen.tuxfamily.org%Eigen%$$ in the
 # CppAD $code build$$ directory.
 #
 # $head Distribution Directory$$
-# This command must be executed in the 
+# This command must be executed in the
 # $cref/distribution directory/download/Distribution Directory/$$.
 #
 # $head External Directory$$
@@ -65,7 +65,14 @@ echo_eval() {
 echo 'Download eigen to build/external and install it to build/prefix'
 version='3.2.0'
 web_page='https://bitbucket.org/eigen/eigen/get'
-prefix=`pwd`'/build/prefix'
+cppad_dir=`pwd`
+prefix="$cppad_dir/build/prefix"
+installed_flag="build/external/eigen-${version}.installed"
+if [ -e "$installed_flag" ]
+then
+	echo "$installed_flag exists: Skipping get_eigen.sh"
+	exit 0
+fi
 # -----------------------------------------------------------------------------
 # determine which version of cmake to use
 cmake --version |  sed -n \
@@ -123,7 +130,6 @@ then
 	echo_eval mv $git_name eigen-$version
 fi
 # -----------------------------------------------------------------------------
-#
 echo_eval cd eigen-$version
 if [ ! -e build ]
 then
@@ -133,5 +139,6 @@ echo_eval cd build
 echo_eval $cmake_program .. -DCMAKE_INSTALL_PREFIX=$prefix
 echo_eval make install
 echo_eval ln -s $prefix/include/eigen3/Eigen $prefix/include/Eigen
-#
+# -----------------------------------------------------------------------------
+echo_eval touch $cppad_dir/$installed_flag
 echo "get_eigen.sh: OK"
