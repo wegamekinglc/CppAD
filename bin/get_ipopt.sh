@@ -1,10 +1,10 @@
 #! /bin/bash -e
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
-# the terms of the 
+# the terms of the
 #                     Eclipse Public License Version 1.0.
 #
 # A copy of this license is included in the COPYING file of this distribution.
@@ -20,18 +20,18 @@
 # $section Download and Install Ipopt in Build Directory$$
 # $index ipopt, download and install$$
 # $index download, install ipopt$$
-# $index install, ipopt$$ 
+# $index install, ipopt$$
 #
 # $head Syntax$$
 # $code bin/get_ipopt.sh$$
 #
 # $head Purpose$$
-# If you are using Unix, this command will download and install 
+# If you are using Unix, this command will download and install
 # $href%http://www.coin-or.org/projects/Ipopt.xml%Ipopt%$$ in the
 # CppAD $code build$$ directory.
 #
 # $head Distribution Directory$$
-# This command must be executed in the 
+# This command must be executed in the
 # $cref/distribution directory/download/Distribution Directory/$$.
 #
 # $head External Directory$$
@@ -65,7 +65,14 @@ echo_eval() {
 echo 'Download ipopt to build/external and install it to build/prefix'
 version='3.11.9'
 web_page='http://www.coin-or.org/download/source/Ipopt'
-prefix=`pwd`'/build/prefix'
+cppad_dir=`pwd`
+prefix="$cppad_dir/build/prefix"
+installed_flag="build/external/ipopt-${version}.installed"
+if [ -e "$installed_flag" ]
+then
+	echo "$installed_flag exists: Skipping get_ipopt.sh"
+	exit 0
+fi
 # -----------------------------------------------------------------------------
 if [ ! -d build/external ]
 then
@@ -99,7 +106,7 @@ do
 	then
 		echo_eval cd ThirdParty/$package
 		echo_eval "./get.$package"
-		echo_eval touch "get.$package.done" 
+		echo_eval touch "get.$package.done"
 		echo_eval cd ../..
 	fi
 done
@@ -114,8 +121,8 @@ export PKG_CONFIG_PATH="$prefix/$libdir/pkgconfig"
 echo_eval ./configure \
 	--enable-debug \
 	--prefix="$prefix" \
-	--libdir="$prefix/$libdir" 
+	--libdir="$prefix/$libdir"
+echo_eval make install
 # -----------------------------------------------------------------------------
-echo_eval make install 
-#
+echo_eval touch $cppad_dir/$installed_flag
 echo "get_ipopt.sh: OK"

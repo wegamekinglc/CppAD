@@ -21,6 +21,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_complex.hpp$$
 $spell
+	azmul
 	expm1
 	atanh
 	acosh
@@ -53,9 +54,6 @@ $spell
 	bool
 $$
 
-$index complex, double Base$$
-$index Base, double complex$$
-$index double, complex Base$$
 
 $section Enable use of AD<Base> where Base is std::complex<double>$$
 
@@ -180,6 +178,13 @@ namespace CppAD {
 }
 /* $$
 
+$head azmul$$
+$codep */
+namespace CppAD {
+	CPPAD_AZMUL( std::complex<double> )
+}
+/* $$
+
 $head isnan$$
 The gcc 4.1.1 complier defines the function
 $codei%
@@ -258,36 +263,12 @@ namespace CppAD {
 }
 /*$$
 
-$head limits$$
-The following defines the numeric limits functions
-$code epsilon$$, $code min$$, and $code max$$ for the type
-$code std::complex<double>$$.
-It also defines the deprecated $code epsilon$$ function:
+$head numeric_limits$$
+The following defines the CppAD $cref numeric_limits$$
+for the type $code std::complex<double>$$:
 $codep */
 namespace CppAD {
-	template <>
-	class numeric_limits< std::complex<double> > {
-	public:
-		// machine epsilon
-		static  std::complex<double> epsilon(void)
-		{	double eps = std::numeric_limits<double>::epsilon();
-			return std::complex<double>(eps, 0.0);
-		}
-		// minimum positive normalized value
-		static  std::complex<double> min(void)
-		{	double min = std::numeric_limits<double>::min();
-			return std::complex<double>(min, 0.0);
-		}
-		// maximum finite value
-		static  std::complex<double> max(void)
-		{	double max = std::numeric_limits<double>::max();
-			return std::complex<double>(max, 0.0);
-		}
-	};
-	// deprecated machine epsilon
-	template <>
-	inline std::complex<double> epsilon< std::complex<double> > (void)
-	{	return numeric_limits< std::complex<double> >::epsilon(); }
+	CPPAD_NUMERIC_LIMITS(double, std::complex<double>)
 }
 /* $$
 $end
@@ -381,28 +362,7 @@ namespace CppAD {
 		const std::complex<float> &y )
 	{	return std::pow(x, y); }
 	// numeric_limits -------------------------------------------------
-	template <>
-	class numeric_limits< std::complex<float> > {
-	public:
-		/// machine epsilon
-		static  std::complex<float> epsilon(void)
-		{	float eps = std::numeric_limits<float>::epsilon();
-			return std::complex<float>(eps, 0.0);
-		}
-		/// minimum positive normalized value
-		static  std::complex<float> min(void)
-		{	float min = std::numeric_limits<float>::min();
-			return std::complex<float>(min, 0.0);
-		}
-		/// maximum finite value
-		static  std::complex<float> max(void)
-		{	float max = std::numeric_limits<float>::max();
-			return std::complex<float>(max, 0.0);
-		}
-	};
-	template <>
-	inline std::complex<float> epsilon< std::complex<float> >(void)
-	{	return numeric_limits< std::complex<float> >::epsilon(); }
+	CPPAD_NUMERIC_LIMITS(float, std::complex<float>)
 }
 
 // undefine macros only used by this file

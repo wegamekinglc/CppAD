@@ -16,6 +16,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_require$$
 $spell
+	azmul
 	ostream
 	alloc
 	eps
@@ -52,11 +53,11 @@ $head Purpose$$
 This section lists the requirements for the type
 $icode Base$$ so that the type $codei%AD<%Base%>%$$ can be used.
 
-$head Warning$$
+$head API Warning$$
 Defining a CppAD $icode Base$$ type is an advanced use of CppAD.
 This part of the CppAD API changes with time. The most common change
 is adding more requirements.
-Search for mention `base type' in the
+Search for $code base_require$$ in the
 current $cref whats_new$$ section for these changes.
 
 $head Standard Base Types$$
@@ -117,25 +118,29 @@ For example, see
 $cref/base_float/base_float.hpp/Integer/$$ and
 $cref/base_alloc/base_alloc.hpp/Integer/$$.
 
-$head Absolute Zero$$
-If this base type will be used with
-$cref/multiple levels of AD/mul_level/$$;
-e.g. $codei%AD< AD<%Base%> >%$$,
-and $cref/reverse mode/reverse/$$ calculations will be recorded,
-the type $icode Base$$ must have an
-$cref/absolute zero/zdouble/Absolute Zero/$$.
-
-$subhead Nan$$
-If the type $icode Base$$ has an absolute zero,
-the CppAD $cref nan$$ template function must be specialized
-because it assumes that zero divided by zero is $code nan$$.
-For example, here is the specialization defined by $cref zdouble$$
+$head Absolute Zero, azmul$$
+The type $icode Base$$ must support the syntax
 $codei%
-namespace CppAD {%$$
-$code
-$verbatim%cppad/local/zdouble.hpp%4%// BEGIN nan%// END nan%$$
-$$
-$codei }$$
+	%z% = azmul(%x%, %y%)
+%$$
+see; $cref azmul$$.
+The following preprocessor macro invocation suffices
+(for most $icode Base$$ types):
+$codei%
+namespace CppAD {
+	CPPAD_AZMUL(%Base%)
+}
+%$$
+where the macro is defined by
+$codep */
+# define CPPAD_AZMUL(Base) \
+    inline Base azmul(const Base& x, const Base& y) \
+    {   Base zero(0.0);   \
+        if( x == zero ) \
+            return zero;  \
+        return x * y;     \
+    }
+/* $$
 
 $childtable%
 	omh/base_require/base_member.omh%
@@ -143,6 +148,7 @@ $childtable%
 	omh/base_require/base_identical.omh%
 	omh/base_require/base_ordered.omh%
 	cppad/local/base_std_math.hpp%
+	cppad/local/base_limits.hpp%
 	omh/base_require/base_example.omh
 %$$
 
@@ -158,14 +164,18 @@ $end
 // grouping documentation by feature
 # include <cppad/local/base_cond_exp.hpp>
 # include <cppad/local/base_std_math.hpp>
+# include <cppad/local/base_limits.hpp>
 
 // must define template class numeric_limits before the base cases
-# include <cppad/local/limits.hpp>
+# include <cppad/local/numeric_limits.hpp>
 # include <cppad/local/epsilon.hpp> // deprecated
 
 // base cases that come with CppAD
 # include <cppad/local/base_float.hpp>
 # include <cppad/local/base_double.hpp>
 # include <cppad/local/base_complex.hpp>
+
+// deprecated base type
+# include <cppad/local/zdouble.hpp>
 
 # endif

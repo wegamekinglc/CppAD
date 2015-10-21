@@ -171,6 +171,13 @@ IF( fadbad_prefix )
 	MESSAGE(STATUS "cppad_cxx_flags_fadbad = ${cppad_cxx_flags_fadbad}")
 ENDIF( fadbad_prefix )
 # -----------------------------------------------------------------------------
+# CMAKE_CXX_FLAGS
+# remove Visual Studio C++ warning level if specified in cppad_cxx_flags
+IF ( cppad_cxx_flags MATCHES "/W[0-9]" )
+	STRING( REGEX REPLACE "/W[0-9]" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} )
+ENDIF ( cppad_cxx_flags MATCHES "/W[0-9]" )
+MESSAGE(STATUS "CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
+# -----------------------------------------------------------------------------
 # set cppad_abs_${middle_name} for middle_name equal to:
 #	includedir, liddir, datadir, docdir
 FOREACH(middle_names includedirs libdirs datadir docdir)

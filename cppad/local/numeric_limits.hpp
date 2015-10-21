@@ -1,6 +1,6 @@
 /* $Id$ */
-# ifndef CPPAD_LIMITS_INCLUDED
-# define CPPAD_LIMITS_INCLUDED
+# ifndef CPPAD_NUMERIC_LIMITS_INCLUDED
+# define CPPAD_NUMERIC_LIMITS_INCLUDED
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
@@ -14,7 +14,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 /*
 ------------------------------------------------------------------------------
-$begin limits$$
+$begin numeric_limits$$
 $spell
 	std
 	eps
@@ -22,12 +22,6 @@ $spell
 	namespace
 	const
 $$
-$index limits, AD$$
-$index AD, limits$$
-$index epsilon, AD$$
-$index limit, max$$
-$index limit, min$$
-$index limit, epsilon$$
 
 $section Numeric Limits For an AD and Base Types$$
 
@@ -38,34 +32,40 @@ $icode%min% = numeric_limits<%Float%>::min()
 %$$
 $icode%max% = numeric_limits<%Float%>::max()
 %$$
-
-$head Purpose$$
-Obtain the value of some of the C++ standard numeric limits
-using the CppAD namespace version of $code numeric_limits$$.
-These are all functions and have the prototype
-$codei%
-	%Float% numeric_limits<%Float%>::%fun%(%void%)
+$icode%nan% = numeric_limits<%Float%>::quiet_NaN()
 %$$
-where $icode fun$$ is $code epsilon$$, $code min$$, or $code max$$.
-$pre
 
-$$
-Note that C++ standard specifies that Non-fundamental standard
-types, such as $codei%std::complex<%T%>%$$ shall not have specializations
+$head CppAD::numeric_limits$$
+These functions and have the prototype
+$codei%
+	static %Float% CppAD::numeric_limits<%Float%>::%fun%(%void%)
+%$$
+where $icode fun$$ is
+$code epsilon$$, $code min$$, $code max$$, and $code quiet_NaN$$.
+
+$head std::numeric_limits$$
+CppAD does not use a specialization of $code std::numeric_limits$$
+because this would be to restrictive.
+The C++ standard specifies that Non-fundamental standard
+types, such as
+$cref/std::complex<double>/base_complex.hpp/$$ shall not have specializations
 of $code std::numeric_limits$$; see Section 18.2 of
 ISO/IEC 14882:1998(E).
+In addition, since C++11, a only literal types can have a specialization
+of $code std::numeric_limits$$.
 
 $head Float$$
 These functions are defined for all $codei%AD<%Base%>%$$,
 and for all corresponding $icode Base$$ types;
-see $icode Base$$ type $cref/numeric_limits/base_std_math/numeric_limits/$$.
+see $icode Base$$ type $cref base_limits$$.
 
-$head eps$$
+$head epsilon$$
 The result $icode eps$$ is equal to machine epsilon and has prototype
 $codei%
 	%Float% %eps%
 %$$
-CppAD tests the value $icode eps$$ by checking that the following are true
+The file $cref num_limits.cpp$$
+tests the value $icode eps$$ by checking that the following are true
 $codei%
 	1 != 1 + %eps%
 	1 == 1 + %eps% / 2
@@ -73,17 +73,17 @@ $codei%
 where all the values, and calculations, are done with the precision
 corresponding to $icode Float$$.
 
-
 $head min$$
 The result $icode min$$ is equal to
 the minimum positive normalized value and has prototype
 $codei%
 	%Float% %min%
 %$$
-CppAD tests the value $icode min$$ by checking that the following are true
+The file $cref num_limits.cpp$$
+tests the value $icode min$$ by checking that the following are true
 $codei%
 	abs( ((%min% / 100) * 100) / %min% - 1 ) > 3 * %eps%
-	abs( ((%min% * 100) / (100 * (1 - %eps%)) / %min% - 1 ) < 3 * %eps%
+	abs( ((%min% * 100) / 100) / %min% - 1 ) < 3 * %eps%
 %$$
 where all the values, and calculations, are done with the precision
 corresponding to $icode Float$$.
@@ -94,20 +94,33 @@ the maximum finite value and has prototype
 $codei%
 	%Float% %max%
 %$$
-CppAD tests the value $icode max$$ by checking that the following are true
+The file $cref num_limits.cpp$$
+tests the value $icode max$$ by checking that the following are true
 $codei%
 	abs( ((%max% * 100) / 100) / %max% - 1 ) > 3 * %eps%
-	abs( ((%max% / 100) * (100 * (1 - %eps%)) / %max% - 1 ) < 3 * %eps%
+	abs( ((%max% / 100) * 100) / %max% - 1 ) < 3 * %eps%
 %$$
 where all the values, and calculations, are done with the precision
 corresponding to $icode Float$$.
 
+$head quiet_NaN$$
+The result $icode nan$$ is not a number and has prototype
+$codei%
+	%Float% %nan%
+%$$
+The file $cref num_limits.cpp$$
+tests the value $icode nan$$ by checking that the following is true
+$codei%
+	%nan% != %nan%
+%$$
+
+
 $head Example$$
 $children%
-	example/limits.cpp
+	example/num_limits.cpp
 %$$
 The file
-$cref limits.cpp$$
+$cref num_limits.cpp$$
 contains an example and test of these functions.
 
 $end
@@ -122,7 +135,7 @@ $end
 
 namespace CppAD { // BEGIN_CPPAD_NAMESPACE
 /*!
-\file limits.hpp
+\file numeric_limits.hpp
 File that defines CppAD numeric_limits for AD types
 */
 
@@ -154,6 +167,14 @@ public:
 		);
 		return Float(0);
 	}
+	/// not a number
+	static Float quiet_NaN(void)
+	{	CPPAD_ASSERT_KNOWN(
+		false,
+		"numeric_limits<Float>::quiet_NaN() is not specialized for this Float"
+		);
+		return Float(0);
+	}
 };
 
 /// Partial specialization that defines limits for for all AD types
@@ -169,6 +190,9 @@ public:
 	/// maximum finite value
 	static AD<Base> max(void)
 	{	return AD<Base>( numeric_limits<Base>::max() ); }
+	/// note a number
+	static AD<Base> quiet_NaN(void)
+	{	return AD<Base>( numeric_limits<Base>::quiet_NaN() ); }
 };
 
 } // END_CPPAD_NAMESPACE

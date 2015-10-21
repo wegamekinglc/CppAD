@@ -538,10 +538,12 @@ nobase_myinclude_HEADERS = \
 	cppad/local/atanh.hpp \
 	cppad/local/atanh_op.hpp \
 	cppad/local/atomic_base.hpp \
+	cppad/local/azmul.hpp \
 	cppad/local/base_complex.hpp \
 	cppad/local/base_cond_exp.hpp \
 	cppad/local/base_double.hpp \
 	cppad/local/base_float.hpp \
+	cppad/local/base_limits.hpp \
 	cppad/local/base_std_math.hpp \
 	cppad/local/bender_quad.hpp \
 	cppad/local/bool_fun.hpp \
@@ -595,7 +597,6 @@ nobase_myinclude_HEADERS = \
 	cppad/local/independent.hpp \
 	cppad/local/integer.hpp \
 	cppad/local/jacobian.hpp \
-	cppad/local/limits.hpp \
 	cppad/local/load_op.hpp \
 	cppad/local/log_op.hpp \
 	cppad/local/log1p.hpp \
@@ -605,6 +606,7 @@ nobase_myinclude_HEADERS = \
 	cppad/local/mul.hpp \
 	cppad/local/mul_op.hpp \
 	cppad/local/near_equal_ext.hpp \
+	cppad/local/numeric_limits.hpp \
 	cppad/local/num_skip.hpp \
 	cppad/local/omp_max_thread.hpp \
 	cppad/local/op_code.hpp \
@@ -666,6 +668,7 @@ nobase_myinclude_HEADERS = \
 	cppad/local/var2par.hpp \
 	cppad/local/vec_ad.hpp \
 	cppad/local/zdouble.hpp \
+	cppad/local/zmul_op.hpp \
 	cppad/lu_factor.hpp \
 	cppad/lu_invert.hpp \
 	cppad/lu_solve.hpp \

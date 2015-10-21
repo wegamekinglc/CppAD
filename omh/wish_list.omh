@@ -39,53 +39,31 @@ $spell
 	instantiate
 	instantiation
 	Bool
+	runge
 $$
 
 $section The CppAD Wish List$$
 
-$head Optimize Atomic Operations$$
-Use the current $cref atomic_option$$ setting to determine
-which type of sparsity patterns to use for
-$cref/dependency/dependency.cpp/$$ calculations during
-$cref optimize$$ procedure.
-In addition, use forward mode, instead of reverse, when it is more efficient
-for the dependency calculations.
+$head PrintFor Optimization$$
+Do not remove $cref PrintFor$$ operations during $cref optimize$$ because
+they are very useful when debugging expected calculations on the tape.
+If not this, we at least need to disable optimization of $cref checkpoint$$
+functions.
+
+$head Organize Include Directory$$
+$list number$$
+Remove the deprecated $code cppad/*.h$$ files.
+$lnext
+Move the cppad general purpose include files to
+$code cppad/general/*.hpp$$; e.g.,
+$code cppad/runge_45.hpp$$ would move to $code cppad/general/runge_45.hpp$$.
+$lnext
+Move $code cppad/local$$ to $code cppad/core$$.
+$lend
 
 $head checkpoint$$
 There should be some examples and tests for both speed and memory use
 that demonstrate that checkpointing is useful.
-
-$head abort_op_index$$
-When a known error is detected during $cref forward$$ or $cref reverse$$ mode,
-include the operator index in the output error message. (For example,
-when taking the derivative of the square root function at zero.)
-The syntax
-$codei%
-	Independent(%x%, %abort_op_index%)
-%$$
-could then be used to find the corresponding user source code; see
-$cref/abort_op_index/Independent/abort_op_index/$$.
-
-$head Absolute Zero$$
-Currently, one must use the $cref zdouble$$ class for
-$cref mul_level$$ AD that uses $cref/conditional expressions/CondExp/$$
-and $cref reverse$$ mode.
-Perhaps it would be better to use special functions; e.g.,
-$code abs_zero_mul$$ and $code abs_zero_div$$,
-so that not all multiplies and divides would need to check for zero
-(in the multiple level AD with conditional expressions and reverse mode case).
-
-$head Numeric Limits$$
-Define a specialization for
-$codei%
-	std::numeric_limits< CppAD::AD<%Base%> >
-%$$
-This seems to be OK according to the following paragraph from Section
-17.6.4.2.1 of the C++11 standard (Document number N3336)
-`A program may explicitly instantiate a template defined in the
-standard library only if the declaration depends on the name of a
-user-defined type and the instantiation meets the
-standard library requirements for the original template.'
 
 $head Machine Epsilon in Examples$$
 Use a multiple of $code std::numeric_limits<double>::epsilon()$$ instead
@@ -153,10 +131,6 @@ works even for compiler optimize code.
 This caused a significant slow down in the
 $cref cppad_det_lu.cpp$$ speed test (with no options specified).
 Perhaps there should be an option to skip the comparison taping.
-
-$head Preprocessor Symbols$$
-Make sure all the user API preprocessor symbols are listed in
-the $cref preprocessor$$ section.
 
 $head Software Guidelines$$
 The following is a list of some software guidelines taken from

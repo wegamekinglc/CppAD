@@ -14,7 +14,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 $begin old_reciprocal.cpp$$
 $section Old Atomic Operation Reciprocal: Example and Test$$
 
-$head Deprecated$$
+$head Deprecated 2013-05-27$$
 This example has been deprecated;
 see $cref atomic_reciprocal.cpp$$ instead.
 
@@ -24,7 +24,7 @@ $latex f : \B{R}^n \rightarrow \B{R}^m$$ where
 $latex n = 1$$, $latex m = 1$$, and $latex f(x) = 1 / x$$.
 
 $code
-$verbatim%example/atomic/old_reciprocal.cpp%0%// BEGIN C++%// END C++%1%$$
+$verbatim%test_more/old_reciprocal.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end

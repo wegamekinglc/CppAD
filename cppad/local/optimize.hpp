@@ -16,6 +16,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin optimize$$
 $spell
+	enum
 	jac
 	bool
 	Taylor
@@ -95,10 +96,11 @@ $latex v = g(u)$$:
 $subhead rev_sparse_jac$$
 The $cref atomic_rev_sparse_jac$$ function is be used to determine
 which components of $icode u$$ affect the dependent variables of $icode f$$.
-The current setting of the
-$cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for each
-atomic function is used to determine if the $code bool$$ or
-$code std::set<size_t>$$ version of $cref atomic_rev_sparse_jac$$ is used.
+For each atomic operation, the current
+$cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ setting is used
+to determine if $code pack_sparsity_enum$$, $code bool_sparsity_enum$$,
+or $code set_sparsity_enum$$ is used to determine dependency relations
+between argument and result variables.
 
 $subhead nan$$
 If $icode%u%[%i%]%$$ does not affect the value of
@@ -735,6 +737,7 @@ inline addr_t binary_match(
 		case DivpvOp:
 		case PowpvOp:
 		case SubpvOp:
+		case ZmulpvOp:
 		// arg[0]
 		parameter[0] = true;
 		new_arg[0]   = arg[0];
@@ -749,6 +752,7 @@ inline addr_t binary_match(
 		case DivvpOp:
 		case PowvpOp:
 		case SubvpOp:
+		case ZmulvpOp:
 		// arg[0]
 		parameter[0] = false;
 		new_arg[0]   = tape[arg[0]].new_var;
@@ -765,6 +769,7 @@ inline addr_t binary_match(
 		case DivvvOp:
 		case PowvvOp:
 		case SubvvOp:
+		case ZmulvvOp:
 		// arg[0]
 		parameter[0] = false;
 		new_arg[0]   = tape[arg[0]].new_var;
@@ -895,7 +900,7 @@ is the object that will record the operations.
 
 \param op
 is the operator that we are recording which must be one of the following:
-AddpvOp, DivpvOp, MulpvOp, PowvpOp, SubpvOp.
+AddpvOp, DivpvOp, MulpvOp, PowpvOp, SubpvOp, ZmulpvOp.
 
 \param arg
 is the vector of arguments for this operator.
@@ -921,6 +926,7 @@ struct_size_pair record_pv(
 		case MulpvOp:
 		case PowpvOp:
 		case SubpvOp:
+		case ZmulpvOp:
 		break;
 
 		default:
@@ -997,7 +1003,7 @@ is the object that will record the operations.
 
 \param op
 is the operator that we are recording which must be one of the following:
-DivvpOp, PowvpOp, SubvpOp.
+DivvpOp, PowvpOp, SubvpOp, ZmulvpOp.
 
 \param arg
 is the vector of arguments for this operator.
@@ -1021,6 +1027,7 @@ struct_size_pair record_vp(
 	{	case DivvpOp:
 		case PowvpOp:
 		case SubvpOp:
+		case ZmulvpOp:
 		break;
 
 		default:
@@ -1096,7 +1103,7 @@ is the object that will record the operations.
 
 \param op
 is the operator that we are recording which must be one of the following:
-AddvvOp, DivvvOp, MulvvOp, PowvpOp, SubvvOp.
+AddvvOp, DivvvOp, MulvvOp, PowvvOp, SubvvOp, ZmulvvOp.
 
 \param arg
 is the vector of arguments for this operator.
@@ -1122,6 +1129,7 @@ struct_size_pair record_vv(
 		case MulvvOp:
 		case PowvvOp:
 		case SubvvOp:
+		case ZmulvvOp:
 		break;
 
 		default:
@@ -1416,6 +1424,9 @@ void optimize_run(
 	player<Base>*                play      ,
 	recorder<Base>*              rec       )
 {
+	// nan with type Base
+	Base base_nan = Base( std::numeric_limits<double>::quiet_NaN() );
+
 	// temporary indices
 	size_t i, j, k;
 
@@ -1488,10 +1499,15 @@ void optimize_run(
 
 	// work space used by UserOp.
 	typedef std::set<size_t> size_set;
+	//
 	vector<size_set> user_r_set;   // set sparsity pattern for result
 	vector<size_set> user_s_set;   // set sparisty pattern for argument
+	//
 	vector<bool>     user_r_bool;  // bool sparsity pattern for result
 	vector<bool>     user_s_bool;  // bool sparisty pattern for argument
+	//
+	vectorBool       user_r_pack;  // pack sparsity pattern for result
+	vectorBool       user_s_pack;  // pack sparisty pattern for argument
 	//
 	size_t user_q     = 0;       // column dimension for sparsity patterns
 	size_t user_index = 0;       // indentifier for this user_atomic operation
@@ -1502,7 +1518,9 @@ void optimize_run(
 	size_t user_n     = 0;       // size of arugment vector
 	//
 	atomic_base<Base>* user_atom = CPPAD_NULL; // current user atomic function
-	bool               user_set  = true;       // use set sparsity (or bool)
+	bool               user_pack = false;      // sparsity pattern type is pack
+	bool               user_bool = false;      // sparsity pattern type is bool
+	bool               user_set  = false;      // sparsity pattern type is set
 
 	// next expected operator in a UserOp sequence
 	enum { user_start, user_arg, user_ret, user_end } user_state;
@@ -1565,6 +1583,7 @@ void optimize_run(
 			case SqrtOp:
 			case TanOp:
 			case TanhOp:
+			case ZmulvpOp:
 			switch( connect_type )
 			{	case not_connected:
 				break;
@@ -1599,6 +1618,7 @@ void optimize_run(
 			case DivpvOp:
 			case MulpvOp:
 			case PowpvOp:
+			case ZmulpvOp:
 			switch( connect_type )
 			{	case not_connected:
 				break;
@@ -1747,6 +1767,7 @@ void optimize_run(
 			case DivvvOp:
 			case MulvvOp:
 			case PowvvOp:
+			case ZmulvvOp:
 			for(i = 0; i < 2; i++) switch( connect_type )
 			{	case not_connected:
 				break;
@@ -1921,19 +1942,50 @@ void optimize_run(
 				user_m     = arg[3];
 				user_q     = 1;
 				user_atom  = atomic_base<Base>::class_object(user_index);
+				if( user_atom == CPPAD_NULL )
+				{	std::string msg =
+						atomic_base<Base>::class_name(user_index)
+						+ ": atomic_base function has been deleted";
+					CPPAD_ASSERT_KNOWN(false, msg.c_str() );
+				}
+				user_pack  = user_atom->sparsity() ==
+							atomic_base<Base>::pack_sparsity_enum;
+				user_bool  = user_atom->sparsity() ==
+							atomic_base<Base>::bool_sparsity_enum;
+				user_set   = user_atom->sparsity() ==
+							atomic_base<Base>::set_sparsity_enum;
+				CPPAD_ASSERT_UNKNOWN( user_pack || user_bool || user_set );
+
 				user_set   = user_atom->sparsity() ==
 					atomic_base<Base>::set_sparsity_enum;
 				//
-				if(user_s_set.size() != user_n )
-					user_s_set.resize(user_n);
-				if(user_r_set.size() != user_m )
-					user_r_set.resize(user_m);
-				//
 				// Note user_q is 1, but use it for clarity of code
-				if(user_s_bool.size() != user_n * user_q )
-					user_s_bool.resize(user_n * user_q);
-				if(user_r_bool.size() != user_m * user_q )
-					user_r_bool.resize(user_m * user_q);
+				if( user_pack )
+				{	if( user_r_pack.size() != user_m * user_q )
+						user_r_pack.resize( user_m * user_q );
+					if( user_s_pack.size() != user_n * user_q )
+						user_s_pack.resize( user_n * user_q );
+					for(i = 0; i < user_m; i++)
+						for(j = 0; j < user_q; j++)
+							user_r_pack[ i * user_q + j] = false;
+				}
+				if( user_bool )
+				{	if( user_r_bool.size() != user_m * user_q )
+						user_r_bool.resize( user_m * user_q );
+					if( user_s_bool.size() != user_n * user_q )
+						user_s_bool.resize( user_n * user_q );
+					for(i = 0; i < user_m; i++)
+						for(j = 0; j < user_q; j++)
+							user_r_bool[ i * user_q + j] = false;
+				}
+				if( user_set )
+				{	if(user_s_set.size() != user_n )
+						user_s_set.resize(user_n);
+					if(user_r_set.size() != user_m )
+						user_r_set.resize(user_m);
+						for(i = 0; i < user_m; i++)
+							user_r_set[i].clear();
+				}
 				//
 				user_j     = user_n;
 				user_i     = user_m;
@@ -1983,8 +2035,13 @@ void optimize_run(
 					tape[arg[0]].connect_type =
 						user_info[user_curr].connect_type;
 			}
-			else
+			if( user_bool )
 			{	if( user_s_bool[user_j] )
+					tape[arg[0]].connect_type =
+						user_info[user_curr].connect_type;
+			}
+			if( user_pack )
+			{	if( user_s_pack[user_j] )
 					tape[arg[0]].connect_type =
 						user_info[user_curr].connect_type;
 			}
@@ -1997,8 +2054,6 @@ void optimize_run(
 			CPPAD_ASSERT_UNKNOWN( user_state == user_ret );
 			CPPAD_ASSERT_UNKNOWN( 0 < user_i && user_i <= user_m );
 			--user_i;
-			user_r_set[user_i].clear();
-			user_r_bool[user_i] = false;
 			switch( connect_type )
 			{	case not_connected:
 				break;
@@ -2007,8 +2062,12 @@ void optimize_run(
 				case sum_connected:
 				case csum_connected:
 				user_info[user_curr].connect_type = yes_connected;
-				user_r_set[user_i].insert(0);
-				user_r_bool[user_i] = true;
+				if( user_set )
+					user_r_set[user_i].insert(0);
+				if( user_bool )
+					user_r_bool[user_i] = true;
+				if( user_pack )
+					user_r_pack[user_i] = true;
 				break;
 
 				case cexp_connected:
@@ -2023,8 +2082,12 @@ void optimize_run(
 						user_info[user_curr].connect_type = yes_connected;
 				}
 				else	user_info[user_curr].connect_type = yes_connected;
-				user_r_set[user_i].insert(0);
-				user_r_bool[user_i] = true;
+				if( user_set )
+					user_r_set[user_i].insert(0);
+				if( user_bool )
+					user_r_bool[user_i] = true;
+				if( user_pack )
+					user_r_pack[user_i] = true;
 				break;
 
 				default:
@@ -2041,30 +2104,22 @@ void optimize_run(
 				CPPAD_ASSERT_UNKNOWN( NumArg(op) == 1 );
 				CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < num_par );
 				--user_i;
-				user_r_set[user_i].clear();
-				user_r_bool[user_i] = false;
 			}
 			if( user_i == 0 )
 			{	// call users function for this operation
 				user_atom->set_id(user_id);
-# ifdef NDEBUG
-				if( user_set )
-				{	user_atom->
-						rev_sparse_jac(user_q, user_r_set, user_s_set);
-				}
-				else
-				{	user_atom->
-						rev_sparse_jac(user_q, user_r_bool, user_s_bool);
-				}
-# else
-				bool flag;
+				bool flag = false;
 				if( user_set )
 				{	flag = user_atom->
 						rev_sparse_jac(user_q, user_r_set, user_s_set);
 				}
-				else
+				if( user_bool )
 				{	flag = user_atom->
 						rev_sparse_jac(user_q, user_r_bool, user_s_bool);
+				}
+				if( user_pack )
+				{	flag = user_atom->
+						rev_sparse_jac(user_q, user_r_pack, user_s_pack);
 				}
 				if( ! flag )
 				{	std::string s =
@@ -2074,13 +2129,15 @@ void optimize_run(
 					s += "\nCurrent atomic_sparsity is set to";
 					//
 					if( user_set )
-						s += " std::set\nand std::set";
-					else	s += " bool\nand bool";
+						s += "set_sparsity_enum.\n";
+					if( user_bool )
+						s += "bool_sparsity_enum.\n";
+					if( user_pack )
+						s += "pack_sparsity_enum.\n";
 					//
-					s += " version of rev_sparse_jac returned false";
+					s += "This version of rev_sparse_jac returned false";
 					CPPAD_ASSERT_KNOWN(false, s.c_str() );
 				}
-# endif
 				user_state = user_arg;
 			}
 			break;
@@ -2386,6 +2443,7 @@ void optimize_run(
 			}
 			case DivvpOp:
 			case PowvpOp:
+			case ZmulvpOp:
 			match_var = binary_match(
 				tape                ,  // inputs
 				i_var               ,
@@ -2468,6 +2526,7 @@ void optimize_run(
 			case DivpvOp:
 			case MulpvOp:
 			case PowpvOp:
+			case ZmulpvOp:
 			match_var = binary_match(
 				tape                ,  // inputs
 				i_var               ,
@@ -2522,6 +2581,7 @@ void optimize_run(
 			case DivvvOp:
 			case MulvvOp:
 			case PowvvOp:
+			case ZmulvvOp:
 			match_var = binary_match(
 				tape                ,  // inputs
 				i_var               ,
@@ -2783,7 +2843,7 @@ void optimize_run(
 				else
 				{	// This argument does not affect the result and
 					// has been optimized out so use nan in its place.
-					new_arg[0] = rec->PutPar( nan(Base(0)) );
+					new_arg[0] = rec->PutPar( base_nan );
 					rec->PutArg(new_arg[0]);
 					rec->PutOp(UsrapOp);
 				}

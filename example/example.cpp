@@ -17,8 +17,6 @@ $spell
 $$
 
 $section CppAD Examples and Tests$$
-$index example, CppAD$$
-$index test, CppAD$$
 
 $head Running Tests$$
 To build this program and run its correctness tests see $cref cmake_check$$.
@@ -61,6 +59,7 @@ extern bool asinh(void);
 extern bool atan(void);
 extern bool atanh(void);
 extern bool atan2(void);
+extern bool azmul(void);
 extern bool base_require(void);
 extern bool BenderQuad(void);
 extern bool BoolFun(void);
@@ -111,7 +110,6 @@ extern bool interp_retape(void);
 extern bool JacLuDet(void);
 extern bool JacMinorDet(void);
 extern bool Jacobian(void);
-extern bool limits(void);
 extern bool log(void);
 extern bool log10(void);
 extern bool log1p(void);
@@ -131,18 +129,18 @@ extern bool Near_Equal(void);
 extern bool NearEqualExt(void);
 extern bool number_skip(void);
 extern bool NumericType(void);
+extern bool num_limits(void);
 extern bool OdeErrControl(void);
 extern bool OdeErrMaxabs(void);
 extern bool OdeGear(void);
 extern bool OdeGearControl(void);
 extern bool OdeStiff(void);
 extern bool ode_taylor(void);
-extern bool omp_alloc(void);
 extern bool opt_val_hes(void);
 extern bool optimize(void);
 extern bool ParVar(void);
 extern bool Poly(void);
-extern bool Pow(void);
+extern bool pow(void);
 extern bool pow_int(void);
 extern bool print_for(void);
 extern bool reverse_any(void);
@@ -182,7 +180,6 @@ extern bool Value(void);
 extern bool Var2Par(void);
 extern bool vec_ad(void);
 extern bool vectorBool(void);
-extern bool zdouble(void);
 
 namespace {
 	// function that runs one test
@@ -233,6 +230,7 @@ int main(void)
 	ok &= Run( atan,              "atan"             );
 	ok &= Run( atanh,             "atanh"            );
 	ok &= Run( atan2,             "atan2"            );
+	ok &= Run( azmul,             "azmul"            );
 	ok &= Run( BenderQuad,        "BenderQuad"       );
 	ok &= Run( BoolFun,           "BoolFun"          );
 	ok &= Run( capacity_order,    "capacity_order"   );
@@ -278,7 +276,6 @@ int main(void)
 	ok &= Run( JacLuDet,          "JacLuDet"         );
 	ok &= Run( JacMinorDet,       "JacMinorDet"      );
 	ok &= Run( Jacobian,          "Jacobian"         );
-	ok &= Run( limits,            "limits"           );
 	ok &= Run( log,               "log"              );
 	ok &= Run( log10,             "log10"            );
 	ok &= Run( log1p,             "log1p"            );
@@ -296,18 +293,18 @@ int main(void)
 	ok &= Run( NearEqualExt,      "NearEqualExt"     );
 	ok &= Run( number_skip,       "number_skip"      );
 	ok &= Run( NumericType,       "NumericType"      );
+	ok &= Run( num_limits,        "num_limits"       );
 	ok &= Run( OdeErrControl,     "OdeErrControl"    );
 	ok &= Run( OdeErrMaxabs,      "OdeErrMaxabs"     );
 	ok &= Run( OdeGear,           "OdeGear"          );
 	ok &= Run( OdeGearControl,    "OdeGearControl"   );
 	ok &= Run( OdeStiff,          "OdeStiff"         );
 	ok &= Run( ode_taylor,        "ode_taylor"       );
-	ok &= Run( omp_alloc,         "omp_alloc"        );
 	ok &= Run( opt_val_hes,       "opt_val_hes"      );
 	ok &= Run( optimize,          "optimize"         );
 	ok &= Run( ParVar,            "ParVar"           );
-	ok &= Run( Pow,               "Poly"             );
-	ok &= Run( Pow,               "Pow"              );
+	ok &= Run( Poly,              "Poly"             );
+	ok &= Run( pow,               "pow"              );
 	ok &= Run( pow_int,           "pow_int"          );
 	ok &= Run( reverse_any,       "reverse_any"      );
 	ok &= Run( reverse_one,       "reverse_one"      );
@@ -346,7 +343,6 @@ int main(void)
 	ok &= Run( Var2Par,           "Var2Par"          );
 	ok &= Run( vec_ad,            "vec_ad"           );
 	ok &= Run( vectorBool,        "vectorBool"       );
-	ok &= Run( zdouble,           "zdouble"          );
 # ifdef CPPAD_ADOLC_EXAMPLES
 	ok &= Run( mul_level_adolc,      "mul_level_adolc"     );
 	ok &= Run( mul_level_adolc_ode,  "mul_level_adolc_ode" );

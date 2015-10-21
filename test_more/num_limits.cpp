@@ -1,9 +1,9 @@
 /* $Id$ */
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -11,7 +11,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin limits.cpp$$
+old num_limits.cpp example / test
 $spell
 $$
 
@@ -23,7 +23,7 @@ $index test, limits$$
 $head Assumption$$
 This code assumes that the decimal point is infront of the mantissa.
 Hence dividing the minimum normalized value looses precision,
-while multiplying the maximum normalized value results in infinity. 
+while multiplying the maximum normalized value results in infinity.
 
 $head Externals$$
 This example using external routines to get and set values
@@ -31,7 +31,7 @@ so that the complier does not set the correspdong code and optimize
 it out.
 
 $code
-$verbatim%example/limits.cpp%0%// BEGIN C++%// END C++%1%$$
+$verbatim%example/num_limits.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
@@ -68,10 +68,10 @@ namespace {
 		value two( Type(2) );
 		value tmp( Type(0) );
 		//
-		tmp.set( add_one( eps.get() / two.get() ) ); 
+		tmp.set( add_one( eps.get() / two.get() ) );
 		ok        &= one.get() == tmp.get();
 		//
-		tmp.set( add_one( eps.get() ) ); 
+		tmp.set( add_one( eps.get() ) );
 		ok        &= one.get() != tmp.get();
 		return ok;
 	}
@@ -123,9 +123,22 @@ namespace {
 		ok        &= ! abs_geq(tmp.get() / max2.get() - one.get(), eps3.get() );
 		return ok;
 	}
+	// -----------------------------------------------------------------
+	template <class Type>
+	bool check_quiet_NaN(void)
+	{	bool ok    = true;
+		typedef extern_value<Type> value;
+		value nan( CppAD::numeric_limits<Type>::quiet_NaN() );
+		value same( nan.get() );
+		//
+		ok &= nan.get() != same.get();
+		ok &= ! (nan.get() == same.get() );
+		//
+		return ok;
+	}
 }
 
-bool limits(void)
+bool num_limits(void)
 {	bool ok = true;
 	using CppAD::AD;
 
@@ -136,7 +149,7 @@ bool limits(void)
 	ok &= check_epsilon< std::complex<float> >();
 	ok &= check_epsilon< std::complex<double> >();
 
-	// epsilon for some AD types. 
+	// epsilon for some AD types.
 	ok &= check_epsilon< AD<float> >();
 	ok &= check_epsilon< AD<double> >();
 	ok &= check_epsilon<  AD<std::complex<float> > >();
@@ -149,7 +162,7 @@ bool limits(void)
 	ok &= check_min< std::complex<float> >();
 	ok &= check_min< std::complex<double> >();
 
-	// min for some AD types. 
+	// min for some AD types.
 	ok &= check_min< AD<float> >();
 	ok &= check_min< AD<double> >();
 	ok &= check_min<  AD<std::complex<float> > >();
@@ -162,11 +175,23 @@ bool limits(void)
 	ok &= check_max< std::complex<float> >();
 	ok &= check_max< std::complex<double> >();
 
-	// max for some AD types. 
+	// max for some AD types.
 	ok &= check_max< AD<float> >();
 	ok &= check_max< AD<double> >();
 	ok &= check_max< AD< std::complex<float> > >();
 	ok &= check_max< AD< std::complex<double> > >();
+	// -------------------------------------------------------------------
+	// quiet_NaN for Base types defined by CppAD
+	ok &= check_quiet_NaN<float>();
+	ok &= check_quiet_NaN<double>();
+	ok &= check_quiet_NaN< std::complex<float> >();
+	ok &= check_quiet_NaN< std::complex<double> >();
+
+	// quiet_NaN for some AD types.
+	ok &= check_quiet_NaN< AD<float> >();
+	ok &= check_quiet_NaN< AD<double> >();
+	ok &= check_quiet_NaN< AD< std::complex<float> > >();
+	ok &= check_quiet_NaN< AD< std::complex<double> > >();
 
 	return ok;
 }

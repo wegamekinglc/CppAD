@@ -25,13 +25,9 @@ $spell
 	const
 $$
 
-$index AD, constructor$$
-$index constructor, AD$$
-$index convert, to AD$$
-$index Base, convert to AD$$
-$index VecAD, convert to AD$$
 
 $section AD Constructors $$
+$mindex convert Base VecAD$$
 
 $head Syntax$$
 $codei%AD<%Base%> %y%()
@@ -61,9 +57,7 @@ $codei%
 for any type that has an explicit constructor of the form
 $icode%Base%(%x%)%$$.
 
-$subhead deprecated$$
-$index deprecated, constructor$$
-$index constructor, deprecated$$
+$subhead Deprecated 2013-12-31$$
 If you set
 $cref/cppad_implicit_ctor_from_any_type
 	/cmake

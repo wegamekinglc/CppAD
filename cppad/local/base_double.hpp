@@ -17,6 +17,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_double.hpp$$
 $spell
+	azmul
 	expm1
 	atanh
 	acosh
@@ -45,9 +46,6 @@ $spell
 	const
 $$
 
-$index double, Base$$
-$index Base, double$$
-$index double, Base$$
 
 $section Enable use of AD<Base> where Base is double$$
 
@@ -110,6 +108,13 @@ $codep */
 namespace CppAD {
 	inline int Integer(const double& x)
 	{	return static_cast<int>(x); }
+}
+/* $$
+
+$head azmul$$
+$codep */
+namespace CppAD {
+	CPPAD_AZMUL( double )
 }
 /* $$
 
@@ -193,30 +198,12 @@ namespace CppAD {
 }
 /*$$
 
-$head limits$$
-The following defines the numeric limits functions
-$code epsilon$$, $code min$$, and $code max$$ for the type
-$code double$$.
-It also defines the deprecated $code epsilon$$ function:
+$head numeric_limits$$
+The following defines the CppAD $cref numeric_limits$$
+for the type $code <double$$:
 $codep */
 namespace CppAD {
-	template <>
-	class numeric_limits<double> {
-	public:
-		// machine epsilon
-		static double epsilon(void)
-		{	return std::numeric_limits<double>::epsilon(); }
-		// minimum positive normalized value
-		static double min(void)
-		{	return std::numeric_limits<double>::min(); }
-		// maximum finite value
-		static double max(void)
-		{	return std::numeric_limits<double>::max(); }
-	};
-	// deprecated machine epsilon
-	template <>
-	inline double epsilon<double>(void)
-	{	return numeric_limits<double>::epsilon(); }
+	CPPAD_NUMERIC_LIMITS(double, double)
 }
 /* $$
 $end

@@ -1,7 +1,7 @@
 #! /bin/bash -e
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the
@@ -18,12 +18,15 @@ fi
 echo "bin/check_op_code.sh: checking that op codes are in alphabetical order:"
 # ---------------------------------------------------------------------------
 # check enum list of codes are in alphabetical order
-sed -n -e '/^enum/,/^\tNumberOp$/p' cppad/local/op_code.hpp | \
-	sed -e '/^enum/d' -e '/^\tNumberOp$/d' \
-		-e 's/^[ 	]*//' -e 's/Op[, ].*//' -e '/^\/\//d' > bin/op_code.1.$$
+sed -n -e '/^enum/,/^\tNumberOp  /p' cppad/local/op_code.hpp | sed \
+	-e '/^enum/d' \
+	-e '/^\tNumberOp  /d' \
+	-e 's/^[	]*//' \
+	-e 's/Op[, ].*//' \
+	-e '/^\/\//d' > bin/op_code.1.$$
 #
 sort --ignore-case bin/op_code.1.$$ > bin/op_code.2.$$
-if ! diff bin/op_code.1.$$ bin/op_code.2.$$ 
+if ! diff bin/op_code.1.$$ bin/op_code.2.$$
 then
 	echo "check_op_code.sh: enum list is not in alphabetical order"
 	rm bin/op_code.*.$$
@@ -34,12 +37,13 @@ fi
 sed -n -e '/NumArgTable\[\]/,/^[ \t]*};/p' cppad/local/op_code.hpp | \
 	sed \
 		-e '/NumArgTable\[\]/d' \
+		-e '/NumberOp.*not used/d' \
 		-e '/^[ \t]*};/d' \
 		-e 's|^[ \t]*[0-9],* *// *||' \
 		-e 's|Op.*||' \
 		> bin/op_code.3.$$
 #
-if ! diff bin/op_code.1.$$ bin/op_code.3.$$ 
+if ! diff bin/op_code.1.$$ bin/op_code.3.$$
 then
 	echo "check_op_code.sh: NumArgTable list is not in alphabetical order"
 	rm bin/op_code.*.$$
@@ -51,12 +55,12 @@ sed -n -e '/NumResTable\[\]/,/^[ \t]*};/p' cppad/local/op_code.hpp | \
 	sed \
 		-e '/NumResTable\[\]/d' \
 		-e '/^[ \t]*};/d' \
-		-e '/Last entry not used/d' \
+		-e '/NumberOp.*not used/d' \
 		-e 's|^[ \t]*[0-9],* *// *||' \
 		-e 's|Op.*||' \
 		> bin/op_code.4.$$
 #
-if ! diff bin/op_code.1.$$ bin/op_code.4.$$ 
+if ! diff bin/op_code.1.$$ bin/op_code.4.$$
 then
 	echo "check_op_code.sh: NumResTable list is not in alphabetical order"
 	echo "(or missing last line)"
@@ -68,12 +72,13 @@ fi
 sed -n -e '/const char \*OpNameTable\[\]/,/^[ \t]*};/p' cppad/local/op_code.hpp | \
 	sed \
 		-e '/OpNameTable\[\]/d' \
+		-e '/"Number".*not used/d' \
 		-e '/^[ \t]*};/d' \
 		-e 's|^[ \t]*"||' \
 		-e 's|".*||' \
 		> bin/op_code.5.$$
 #
-if ! diff bin/op_code.1.$$ bin/op_code.5.$$ 
+if ! diff bin/op_code.1.$$ bin/op_code.5.$$
 then
 	echo "check_op_code.sh: OpName list is not in alphabetical order"
 	rm bin/op_code.*.$$

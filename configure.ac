@@ -32,6 +32,11 @@ dnl Note this must come before AC_PROG_CC; see
 dnl http://lists.gnu.org/archive/html/automake/2010-08/msg00113.html
 AM_INIT_AUTOMAKE([nostdinc subdir-objects -Wall])
 
+# check if we have ar program
+have_ar='yes'
+AM_PROG_AR([have_ar='no'])
+AC_MSG_NOTICE([have_ar = $have_ar])
+
 dnl ----------------------------------------------------------------------
 AC_MSG_NOTICE([*** Check command line arguments that are longer used ****])
 
@@ -364,7 +369,7 @@ AC_ARG_VAR(MAX_NUM_THREADS,
 )
 if test "$MAX_NUM_THREADS" != "" ; then
 	AC_MSG_RESULT([$MAX_NUM_THREADS])
-  	if test "$MAX_NUM_THREADS" -lt "4" ; then
+	if test "$MAX_NUM_THREADS" -lt "4" ; then
 		AC_MSG_ERROR(
 			[ MAX_NUM_THREADS=$MAX_NUM_THREADS is less than 4 ]
 		)
@@ -403,7 +408,7 @@ if test "$addr_t" == "unsigned short int" ; then
 	ok="yes"
 fi
 if test "$ok" == "no" ; then
-  	AC_MSG_ERROR(
+	AC_MSG_ERROR(
 		[$addr_t is not a valid choice for TAPE_ADDR_TYPE]
 	)
 fi
@@ -435,7 +440,7 @@ if test "$tape_id_t" == "unsigned short int" ; then
 	ok="yes"
 fi
 if test "$ok" == "no" ; then
-  	AC_MSG_ERROR(
+	AC_MSG_ERROR(
 		[$tape_id_t is not a valid choice for TAPE_ID_TYPE]
 	)
 fi
@@ -474,9 +479,8 @@ AC_CHECK_PROG(have_pkg_config, [pkg-config], [yes], [no])
 AM_CONDITIONAL(CppAD_PKG_CONFIG, test "$have_pkg_config" = "yes")
 
 dnl check if we can build libraries
-AM_PROG_AR()
-AM_CONDITIONAL(CppAD_HAVE_AR, test "$AR" = "ar")
-if test "$AR" != "ar"; then
+AM_CONDITIONAL(CppAD_HAVE_AR, test "$have_ar" = 'yes' )
+if test "$have_ar" = 'no'; then
 	AC_MSG_WARN(
 	[cannot build any libraries because ar is missing; e.g,, speed/* not built]
 	)

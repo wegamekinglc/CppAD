@@ -14,6 +14,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_alloc.hpp$$
 $spell
+	azmul
 	expm1
 	atanh
 	acosh
@@ -248,6 +249,13 @@ namespace CppAD {
 }
 /* $$
 
+$head azmul$$
+$codep */
+namespace CppAD {
+	CPPAD_AZMUL( base_alloc )
+}
+/* $$
+
 $head Ordered$$
 The $code base_alloc$$ type supports ordered comparisons
 $codep */
@@ -347,26 +355,12 @@ namespace CppAD {
 }
 /* $$
 
-$head limits$$
+$head numeric_limits$$
+The following defines the CppAD $cref numeric_limits$$
+for the type $code base_alloc$$:
 $codep */
 namespace CppAD {
-	template <>
-	class numeric_limits<base_alloc> {
-	public:
-		// machine epsilon
-		static base_alloc epsilon(void)
-		{	return base_alloc( std::numeric_limits<double>::epsilon() ); }
-		// minimum positive normalized value
-		static base_alloc min(void)
-		{	return base_alloc( std::numeric_limits<double>::min() ); }
-		// maximum finite value
-		static base_alloc max(void)
-		{	return base_alloc( std::numeric_limits<double>::max() ); }
-	};
-	// deprecated machine epsilon
-	template <>
-	inline base_alloc epsilon<base_alloc>(void)
-	{	return numeric_limits<base_alloc>::epsilon(); }
+	CPPAD_NUMERIC_LIMITS(double, base_alloc)
 }
 /* $$
 

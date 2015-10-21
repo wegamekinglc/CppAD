@@ -31,6 +31,7 @@ extern bool assign(void);
 extern bool atan(void);
 extern bool atanh(void);
 extern bool atan2(void);
+extern bool azmul(void);
 extern bool base_adolc(void);
 extern bool base_alloc_test(void);
 extern bool check_simple_vector(void);
@@ -60,20 +61,26 @@ extern bool FromBase(void);
 extern bool FunCheck(void);
 extern bool ipopt_solve(void);
 extern bool jacobian(void);
-extern bool limits(void);
 extern bool log(void);
 extern bool log10(void);
 extern bool log1p(void);
 extern bool Mul(void);
 extern bool mul_level(void);
-extern bool mul_cond(void);
+extern bool mul_cond_rev(void);
 extern bool mul_cskip(void);
 extern bool MulEq(void);
 extern bool mul_zdouble(void);
 extern bool MulZeroOne(void);
 extern bool NearEqualExt(void);
 extern bool Neg(void);
+extern bool num_limits(void);
 extern bool ode_err_control(void);
+extern bool old_mat_mul(void);
+extern bool old_reciprocal(void);
+extern bool old_tan(void);
+extern bool old_usead_1(void);
+extern bool old_usead_2(void);
+extern bool omp_alloc(void);
 extern bool optimize(void);
 extern bool parameter(void);
 extern bool Poly(void);
@@ -106,6 +113,7 @@ extern bool Value(void);
 extern bool VecAD(void);
 extern bool VecADPar(void);
 extern bool VecUnary(void);
+extern bool zdouble(void);
 
 namespace {
 	// function that runs one test
@@ -153,6 +161,7 @@ int main(void)
 	ok &= Run( atan,            "atan"           );
 	ok &= Run( atanh,           "atanh"          );
 	ok &= Run( atan2,           "atan2"          );
+	ok &= Run( azmul,           "azmul"          );
 	ok &= Run( check_simple_vector, "check_simple_vector" );
 	ok &= Run( checkpoint,      "checkpoint"     );
 	ok &= Run( Compare,         "Compare"        );
@@ -178,19 +187,26 @@ int main(void)
 	ok &= Run( FromBase,        "FromBase"       );
 	ok &= Run( FunCheck,        "FunCheck"       );
 	ok &= Run( jacobian,        "jacobian"       );
-	ok &= Run( limits,          "limits"         );
 	ok &= Run( log,             "log"            );
 	ok &= Run( log10,           "log10"          );
 	ok &= Run( log1p,           "log1p"          );
 	ok &= Run( Mul,             "Mul"            );
 	ok &= Run( mul_level,       "mul_level"      );
+	ok &= Run( mul_cond_rev,    "mul_cond_rev"   );
 	ok &= Run( mul_cskip,       "Mul_cskip"      );
 	ok &= Run( MulEq,           "MulEq"          );
 	ok &= Run( mul_zdouble,     "mul_zdouble"    );
 	ok &= Run( MulZeroOne,      "MulZeroOne"     );
 	ok &= Run( NearEqualExt,    "NearEqualExt"   );
 	ok &= Run( Neg,             "Neg"            );
+	ok &= Run( num_limits,      "num_limits"     );
 	ok &= Run( ode_err_control, "ode_err_control");
+	ok &= Run( old_mat_mul,     "old_mat_mul"    );
+	ok &= Run( old_reciprocal,  "old_reciprocal" );
+	ok &= Run( old_tan,         "old_tan"        );
+	ok &= Run( old_usead_1,     "old_usead_1"    );
+	ok &= Run( old_usead_2,     "old_usead_2"    );
+	ok &= Run( omp_alloc,       "omp_alloc"      );
 	ok &= Run( optimize,        "optimize"       );
 	ok &= Run( parameter,       "parameter"      );
 	ok &= Run( Poly,            "Poly"           );
@@ -222,6 +238,7 @@ int main(void)
 	ok &= Run( VecAD,           "VecAD"          );
 	ok &= Run( VecADPar,        "VecADPar"       );
 	ok &= Run( VecUnary,        "VecUnary"       );
+	ok &= Run( zdouble,         "zdouble"        );
 # ifdef CPPAD_ADOLC_TEST
 	ok &= Run( base_adolc,      "base_adolc"     );
 # endif

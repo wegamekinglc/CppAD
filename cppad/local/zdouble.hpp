@@ -22,6 +22,9 @@ $spell
 $$
 $section zdouble: An AD Base Type With Absolute Zero$$
 
+$head Deprecated 2015-09-26$$
+Use the function $cref azmul$$ instead.
+
 $head Absolute Zero$$
 The $code zdouble$$ class acts like the $code double$$ type
 with the added property that zero times any value is zero.
@@ -118,9 +121,8 @@ $head Base Type Requirements$$
 The type $code zdouble$$ satisfies all of the CppAD
 $cref/base type requirements/base_require/$$.
 
-
 $children%
-	example/zdouble.cpp
+	test_more/zdouble.cpp
 %$$
 $head Example$$
 The file $cref zdouble.cpp$$
@@ -440,6 +442,10 @@ inline std::ostream& operator << (std::ostream &os, const zdouble& z)
 /// Base type requirement: Integer
 inline int Integer(const zdouble& x)
 {	return static_cast<int>(x.dbl_); }
+
+/// Base type requirement: azmul
+inline zdouble azmul(const zdouble& x, const zdouble& y)
+{	return x * y; }
 
 /// Base type requirement: Ordered
 inline bool GreaterThanZero(const zdouble& x)

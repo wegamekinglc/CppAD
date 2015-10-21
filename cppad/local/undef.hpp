@@ -25,16 +25,18 @@ Preprecessor definitions that presist after cppad/cppad.hpp is included:
 
 # undef CPPAD_BOOL_BINARY         in user api
 # undef CPPAD_BOOL_UNARY          in user api
-# undef CPPAD_USE_CPLUSPLUS_2011  in user api
 # undef CPPAD_DISCRETE_FUNCTION   in user api
 # undef CPPAD_EIGENVECTOR         in user api
 # undef CPPAD_INTERNAL_SPARSE_SET in user api
 # undef CPPAD_MAX_NUM_THREADS     in user api
+# undef CPPAD_NUMERIC_LIMITS      in user api
 # undef CPPAD_NULL                in user api
 # undef CPPAD_PACKAGE_STRING      in user api
+# undef CPPAD_STANDARD_MATH_UNARY in user api
 # undef CPPAD_TAPE_ADDR_TYPE      in user api
 # undef CPPAD_TAPE_ID_TYPE        in user api
 # undef CPPAD_TESTVECTOR          in user api
+# undef CPPAD_USE_CPLUSPLUS_2011  in user api
 
 # undef CPPAD_TRACK_COUNT    in deprecated api
 # undef CPPAD_TRACK_DEL_VEC  in deprecated api
@@ -60,6 +62,7 @@ Preprecessor definitions that presist after cppad/cppad.hpp is included:
 # undef CPPAD_ASSERT_NARG_NRES
 # undef CPPAD_ASSERT_NOT_PARALLEL
 # undef CPPAD_ASSERT_ARG_BEFORE_RESULT
+# undef CPPAD_AZMUL
 # undef CPPAD_BOOSTVECTOR
 # undef CPPAD_COND_EXP
 # undef CPPAD_COND_EXP_BASE_REL
@@ -79,7 +82,6 @@ Preprecessor definitions that presist after cppad/cppad.hpp is included:
 # undef CPPAD_REV_HES_SWEEP_TRACE
 # undef CPPAD_REV_JAC_SWEEP_TRACE
 # undef CPPAD_SIZE_T_NOT_UNSIGNED_INT
-# undef CPPAD_STANDARD_MATH_UNARY
 # undef CPPAD_STANDARD_MATH_UNARY_AD
 # undef CPPAD_STDVECTOR
 # undef CPPAD_TRACE_CAPACITY

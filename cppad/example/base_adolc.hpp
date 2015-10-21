@@ -14,6 +14,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_adolc.hpp$$
 $spell
+	azmul
 	expm1
 	atanh
 	acosh
@@ -57,9 +58,6 @@ $spell
 	sqrt
 $$
 
-$index Adolc, adouble as Base$$
-$index Base, Adolc's adouble$$
-$index adouble, as Base$$
 
 $section Enable use of AD<Base> where Base is Adolc's adouble Type$$
 
@@ -193,6 +191,13 @@ $codep */
 	{    return static_cast<int>( x.getValue() ); }
 /* $$
 
+$head azmul$$
+$codep */
+namespace CppAD {
+	CPPAD_AZMUL( adouble )
+}
+/* $$
+
 $head Ordered$$
 $codep */
 namespace CppAD {
@@ -291,29 +296,12 @@ $head pow$$
 This $cref/required/base_require/$$ function
 is defined by the Adolc package for the $code adouble$$ base case.
 
-$head limits$$
-The following defines the numeric limits functions
-$code epsilon$$, $code min$$, and $code max$$ for the type
-$code adouble$$.
-It also defines the deprecated $code epsilon$$ function:
+$head numeric_limits$$
+The following defines the CppAD $cref numeric_limits$$
+for the type $code adouble$$:
 $codep */
 namespace CppAD {
-	template <>
-	class numeric_limits<adouble> {
-	public:
-		// machine epsilon
-		static adouble epsilon(void)
-		{	return adouble( std::numeric_limits<double>::epsilon() ); }
-		// minimum positive normalized value
-		static adouble min(void)
-		{	return adouble( std::numeric_limits<float>::min() ); }
-		// maximum finite value
-		static adouble max(void)
-		{	return adouble( std::numeric_limits<float>::max() ); }
-	};
-	// deprecated machine epsilon
-	template <> inline adouble epsilon<adouble>(void)
-	{	return numeric_limits<adouble>::epsilon(); }
+	CPPAD_NUMERIC_LIMITS(double, adouble)
 }
 /* $$
 $end

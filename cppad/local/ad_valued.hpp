@@ -18,8 +18,6 @@ $begin ADValued$$
 $spell
 $$
 
-$index operation, AD valued$$
-$index function, AD valued$$
 
 $section AD Valued Operations and Functions$$
 
@@ -29,6 +27,7 @@ $childtable%
 	cppad/local/standard_math.hpp%
 	cppad/local/cond_exp.hpp%
 	cppad/local/discrete.hpp%
+	cppad/local/numeric_limits.hpp%
 	omh/atomic.omh
 %$$
 
@@ -40,6 +39,7 @@ $end
 
 # include <cppad/local/arithmetic.hpp>
 # include <cppad/local/standard_math.hpp>
+# include <cppad/local/azmul.hpp>
 # include <cppad/local/cond_exp.hpp>
 # include <cppad/local/discrete.hpp>
 # include <cppad/local/atomic_base.hpp>

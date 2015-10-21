@@ -3,10 +3,10 @@
 # define CPPAD_INDEX_SORT_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -31,28 +31,29 @@ $codei%# include <cppad/near_equal.hpp>
 index_sort(%keys%, %ind%)%$$
 
 $head keys$$
-The argument $icode keys$$ has prototype 
+The argument $icode keys$$ has prototype
 $codei%
 	const %VectorKey%& %keys%
 %$$
-where $icode VectorKey$$ is 
+where $icode VectorKey$$ is
 a $cref SimpleVector$$ class with elements that support the $code <$$
 operation.
 
 $head ind$$
-The argument $icode ind$$ has prototype 
+The argument $icode ind$$ has prototype
 $codei%
-	const %VectorSize%& %ind%
+	%VectorSize%& %ind%
 %$$
-where $icode VectorSize$$ is 
+where $icode VectorSize$$ is
 a $cref SimpleVector$$ class with elements of type $code size_t$$.
 The routine $cref CheckSimpleVector$$ will generate an error message
 if this is not the case.
+
+$subhead Input$$
 The size of $icode ind$$ must be the same as the size of $icode keys$$
 and the value of its input elements does not matter.
-$pre
 
-$$
+$subhead Return$$
 Upon return, $icode ind$$ is a permutation of the set of indices
 that yields increasing order for $icode keys$$.
 In other words, for all $icode%i% != %j%$$,
@@ -94,7 +95,7 @@ class index_sort_element {
 private:
 	/// key used to determine position of this element
 	Compare key_;
-	/// index vlaue corresponding to this key 
+	/// index vlaue corresponding to this key
 	size_t  index_;
 public:
 	/// operator requried by std::sort
@@ -122,7 +123,7 @@ Simple vector type that deterimene the sorting order by \c < operator
 on its elements.
 
 \tparam VectorSize
-Simple vector type with elements of \c size_t 
+Simple vector type with elements of \c size_t
 that is used to return index values.
 
 \param keys [in]
@@ -133,7 +134,7 @@ must have the same size as \c keys.
 The input value of its elements does not matter.
 The output value of its elements satisfy
 \code
-( keys[ ind[i] ] < keys[ ind[i+1] ] ) == false 
+( keys[ ind[i] ] < keys[ ind[i+1] ] ) == false
 \endcode
 */
 template <class VectorKey, class VectorSize>
@@ -150,18 +151,18 @@ void index_sort(const VectorKey& keys, VectorSize& ind)
 
 	size_t size_work = size_t(keys.size());
 	size_t size_out;
-	element* work = 
+	element* work =
 		thread_alloc::create_array<element>(size_work, size_out);
 
 	// copy initial order into work
 	size_t i;
 	for(i = 0; i < size_work; i++)
-	{	work[i].set_key( keys[i] ); 
+	{	work[i].set_key( keys[i] );
 		work[i].set_index( i );
 	}
- 
- 	// sort the work array
- 	std::sort(work, work+size_work);
+
+	// sort the work array
+	std::sort(work, work+size_work);
 
 	// copy the indices to the output vector
 	for(i = 0; i < size_work; i++)

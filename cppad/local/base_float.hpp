@@ -17,6 +17,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_float.hpp$$
 $spell
+	azmul
 	expm1
 	atanh
 	acosh
@@ -45,9 +46,6 @@ $spell
 	const
 $$
 
-$index float, Base$$
-$index Base, float$$
-$index float, Base$$
 
 $section Enable use of AD<Base> where Base is float$$
 
@@ -110,6 +108,13 @@ $codep */
 namespace CppAD {
 	inline int Integer(const float& x)
 	{	return static_cast<int>(x); }
+}
+/* $$
+
+$head azmul$$
+$codep */
+namespace CppAD {
+	CPPAD_AZMUL( float )
 }
 /* $$
 
@@ -194,29 +199,12 @@ namespace CppAD {
 }
 /*$$
 
-$head limits$$
-The following defines the numeric limits functions
-$code epsilon$$, $code min$$, and $code max$$ for the type
-$code float$$:
+$head numeric_limits$$
+The following defines the CppAD $cref numeric_limits$$
+for the type $code float$$:
 $codep */
 namespace CppAD {
-	template <>
-	class numeric_limits<float> {
-	public:
-		// machine epsilon
-		static float epsilon(void)
-		{	return std::numeric_limits<float>::epsilon(); }
-		// minimum positive normalized value
-		static float min(void)
-		{	return std::numeric_limits<float>::min(); }
-		// maximum finite value
-		static float max(void)
-		{	return std::numeric_limits<float>::max(); }
-	};
-	// deprecated machine epsilon
-	template <>
-	inline float epsilon<float>(void)
-	{	return numeric_limits<float>::epsilon(); }
+	CPPAD_NUMERIC_LIMITS(float, float)
 }
 /* $$
 $end
