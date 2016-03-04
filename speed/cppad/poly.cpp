@@ -1,9 +1,9 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -36,41 +36,37 @@ $spell
 $$
 
 $section CppAD Speed: Second Derivative of a Polynomial$$
+$mindex link_poly speed$$
 
-$index link_poly, cppad$$
-$index cppad, link_poly$$
-$index speed, cppad$$
-$index cppad, speed$$
-$index polynomial, speed cppad$$
 
 $head Specifications$$
 See $cref link_poly$$.
 
 $head Implementation$$
 
-$codep */
+$srccode%cpp% */
 # include <cppad/cppad.hpp>
 # include <cppad/speed/uniform_01.hpp>
 
-// Note that CppAD uses global_memory at the main program level
-extern bool
-	global_onetape, global_atomic, global_optimize;
+// Note that CppAD uses global_option["memory"] at the main program level
+# include <map>
+extern std::map<std::string, bool> global_option;
 
 bool link_poly(
-	size_t                     size     , 
-	size_t                     repeat   , 
+	size_t                     size     ,
+	size_t                     repeat   ,
 	CppAD::vector<double>     &a        ,  // coefficients of polynomial
 	CppAD::vector<double>     &z        ,  // polynomial argument value
-	CppAD::vector<double>     &ddp      )  // second derivative w.r.t z  
+	CppAD::vector<double>     &ddp      )  // second derivative w.r.t z
 {
 	// speed test global option values
-	if( global_atomic )
+	if( global_option["atomic"] )
 		return false;
 
 	// -----------------------------------------------------
 	// setup
-	typedef CppAD::AD<double>     ADScalar; 
-	typedef CppAD::vector<ADScalar> ADVector; 
+	typedef CppAD::AD<double>     ADScalar;
+	typedef CppAD::vector<ADScalar> ADVector;
 
 	size_t i;      // temporary index
 	size_t m = 1;  // number of dependent variables
@@ -95,7 +91,7 @@ bool link_poly(
 	CppAD::ADFun<double> f;
 
 	// --------------------------------------------------------------------
-	if( ! global_onetape ) while(repeat--)
+	if( ! global_option["onetape"] ) while(repeat--)
 	{
 		// choose an argument value
 		CppAD::uniform_01(1, z);
@@ -104,13 +100,13 @@ bool link_poly(
 		// declare independent variables
 		Independent(Z);
 
-		// AD computation of the function value 
+		// AD computation of the function value
 		P[0] = CppAD::Poly(0, A, Z[0]);
 
 		// create function object f : A -> detA
 		f.Dependent(Z, P);
 
-		if( global_optimize )
+		if( global_option["optimize"] )
 			f.optimize();
 
 		// skip comparison operators
@@ -119,7 +115,7 @@ bool link_poly(
 		// pre-allocate memory for three forward mode calculations
 		f.capacity_order(3);
 
-		// evaluate the polynomial 
+		// evaluate the polynomial
 		p = f.Forward(0, z);
 
 		// evaluate first order Taylor coefficient
@@ -138,13 +134,13 @@ bool link_poly(
 		// declare independent variables
 		Independent(Z);
 
-		// AD computation of the function value 
+		// AD computation of the function value
 		P[0] = CppAD::Poly(0, A, Z[0]);
 
 		// create function object f : A -> detA
 		f.Dependent(Z, P);
 
-		if( global_optimize )
+		if( global_option["optimize"] )
 			f.optimize();
 
 		// skip comparison operators
@@ -169,6 +165,6 @@ bool link_poly(
 	}
 	return true;
 }
-/* $$
+/* %$$
 $end
 */

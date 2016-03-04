@@ -1,9 +1,9 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -26,27 +26,24 @@ $spell
 $$
 
 $section Adolc Speed: Ode$$
+$mindex link_ode speed$$
 
-$index link_ode, adolc$$
-$index adolc, link_ode$$
-$index speed, adolc$$
-$index adolc, speed$$
-$index ode, speed adolc$$
 
 $head Specifications$$
 See $cref link_ode$$.
 
 $head Implementation$$
 
-$codep */
+$srccode%cpp% */
 # include <adolc/adolc.h>
 
-# include <cppad/vector.hpp>
+# include <cppad/utility/vector.hpp>
 # include <cppad/speed/ode_evaluate.hpp>
 # include <cppad/speed/uniform_01.hpp>
 
 // list of possible options
-extern bool global_memory, global_onetape, global_atomic, global_optimize;
+# include <map>
+extern std::map<std::string, bool> global_option;
 
 bool link_ode(
 	size_t                     size       ,
@@ -56,9 +53,9 @@ bool link_ode(
 )
 {
 	// speed test global option values
-	if( global_atomic )
+	if( global_option["atomic"] )
 		return false;
-	if( global_memory || global_optimize )
+	if( global_option["memory"] || global_option["optimize"] )
 		return false;
 	// -------------------------------------------------------------
 	// setup
@@ -93,8 +90,8 @@ bool link_ode(
 		jac_ptr[i] = jac_raw + i * n;
 
 	// -------------------------------------------------------------
-	if( ! global_onetape ) while(repeat--)
-	{ 	// choose next x value
+	if( ! global_option["onetape"] ) while(repeat--)
+	{	// choose next x value
 		uniform_01(n, x);
 
 		// declare independent variables
@@ -116,7 +113,7 @@ bool link_ode(
 		jacobian(tag, m, n, x_raw, jac_ptr);
 	}
 	else
-	{ 	// choose next x value
+	{	// choose next x value
 		uniform_01(n, x);
 
 		// declare independent variables
@@ -155,6 +152,6 @@ bool link_ode(
 
 	return true;
 }
-/* $$
+/* %$$
 $end
 */

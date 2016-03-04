@@ -1,6 +1,6 @@
 // $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -18,10 +18,8 @@ $spell
 $$
 
 $section A Simple OpenMP AD: Example and Test$$
+$mindex AD$$
 
-$index openmp, simple AD$$
-$index AD, simple openmp$$
-$index simple, openmp AD$$
 
 $head Purpose$$
 This example demonstrates how CppAD can be used in a
@@ -29,7 +27,7 @@ OpenMP multi-threading environment.
 
 $head Source Code$$
 $code
-$verbatim%multi_thread/openmp/simple_ad_openmp.cpp%0%// BEGIN C++%// END C++%1%$$
+$srcfile%multi_thread/openmp/simple_ad_openmp.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end

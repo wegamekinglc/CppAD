@@ -50,6 +50,8 @@ INPUT                   = \
 	./cppad/local \
 	./cppad/ipopt \
 	./cppad_ipopt/src \
+	./cppad_lib \
+	./cppad/utility \
 	./speed/src
 LATEX_BATCHMODE         = YES
 MACRO_EXPANSION         = YES
@@ -90,3 +92,6 @@ sed -f bin/doxyfile.$$ -i doxyfile
 #
 echo "rm bin/doxyfile.$$"
 rm bin/doxyfile.$$
+# ----------------------------------------------------------------------------
+echo "$0: OK"
+exit 0

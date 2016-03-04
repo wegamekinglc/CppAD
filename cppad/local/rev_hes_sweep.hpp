@@ -1,9 +1,9 @@
-/* $Id$ */
-# ifndef CPPAD_REV_HES_SWEEP_INCLUDED
-# define CPPAD_REV_HES_SWEEP_INCLUDED
+// $Id$
+# ifndef CPPAD_REV_HES_SWEEP_HPP
+# define CPPAD_REV_HES_SWEEP_HPP
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -40,7 +40,7 @@ using AD< \a Base > and computations by this routine are done using type
 
 \tparam Vector_set
 is the type used for vectors of sets. It can be either
-\c sparse_pack, \c sparse_set, or \c sparse_list.
+sparse_pack or sparse_list.
 
 \param n
 is the number of independent variables on the tape.
@@ -61,7 +61,7 @@ where \f$ n \f$ is the number of independent variables
 and \f$ m \f$ is the number of dependent variables.
 The object \a play is effectly constant.
 It is not declared const because while playing back the tape
-the object \a play holds information about the currentl location
+the object \a play holds information about the current location
 with in the tape and this changes during playback.
 
 \param for_jac_sparse
@@ -120,7 +120,7 @@ void RevHesSweep(
 	size_t             i, j, k;
 
 	// check numvar argument
-	CPPAD_ASSERT_UNKNOWN( play->num_var_rec()     == numvar );
+	CPPAD_ASSERT_UNKNOWN( play->num_var_rec()    == numvar );
 	CPPAD_ASSERT_UNKNOWN( for_jac_sparse.n_set() == numvar );
 	CPPAD_ASSERT_UNKNOWN( rev_hes_sparse.n_set() == numvar );
 	CPPAD_ASSERT_UNKNOWN( numvar > 0 );
@@ -392,7 +392,7 @@ void RevHesSweep(
 
 			case ErfOp:
 			// arg[1] is always the parameter 0
-			// arg[0] is always the parameter 2 / sqrt(pi)
+			// arg[2] is always the parameter 2 / sqrt(pi)
 			CPPAD_ASSERT_NARG_NRES(op, 3, 5);
 			reverse_sparse_hessian_nonlinear_unary_op(
 			i_var, arg[0], RevJac, for_jac_sparse, rev_hes_sparse
@@ -526,7 +526,7 @@ void RevHesSweep(
 
 			case PowvvOp:
 			CPPAD_ASSERT_NARG_NRES(op, 2, 3)
-                        reverse_sparse_hessian_pow_op(
+			reverse_sparse_hessian_pow_op(
 			i_var, arg, RevJac, for_jac_sparse, rev_hes_sparse
 			);
 			break;

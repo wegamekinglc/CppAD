@@ -1,4 +1,4 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
@@ -31,7 +31,7 @@ so that the complier does not set the correspdong code and optimize
 it out.
 
 $code
-$verbatim%example/num_limits.cpp%0%// BEGIN C++%// END C++%1%$$
+old verbatim%example/num_limits.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end

@@ -1,9 +1,9 @@
-/* $Id$ */
-# ifndef CPPAD_SPARSE_HESSIAN_INCLUDED
-# define CPPAD_SPARSE_HESSIAN_INCLUDED
+// $Id$
+# ifndef CPPAD_SPARSE_HESSIAN_HPP
+# define CPPAD_SPARSE_HESSIAN_HPP
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -31,8 +31,7 @@ $spell
 $$
 
 $section Sparse Hessian: Easy Driver$$
-$index SparseHessian$$
-$index hessian, sparse$$
+$mindex SparseHessian$$
 
 $head Syntax$$
 $icode%hes% = %f%.SparseHessian(%x%, %w%)
@@ -356,7 +355,7 @@ is a simple vector class with elements of type
 \c bool or \c std::set<size_t>.
 
 \tparam VectorSize
-is \c sparse_pack, \c sparse_set or \c sparse_list.
+is sparse_pack or sparse_list.
 
 \param x [in]
 is a vector specifing the point at which to compute the Hessian.
@@ -646,7 +645,9 @@ size_t ADFun<Base>::SparseHessian(
 	Pattern_type s;
 	if( work.color.size() == 0 )
 	{	bool transpose = false;
-		sparsity_user2internal(s, p, n, n, transpose);
+		const char* error_msg = "SparseHessian: sparsity pattern"
+		" does not have proper row or column dimension";
+		sparsity_user2internal(s, p, n, n, transpose, error_msg);
 	}
 	n_sweep = SparseHessianCompute(x, w, s, row, col, hes, work);
 	return n_sweep;
@@ -718,7 +719,9 @@ VectorBase ADFun<Base>::SparseHessian(
 	CppAD::vector<size_t> col;
 	sparse_hessian_work   work;
 	bool transpose = false;
-	sparsity_user2internal(s, p, n, n, transpose);
+	const char* error_msg = "SparseHessian: sparsity pattern"
+	" does not have proper row or column dimension";
+	sparsity_user2internal(s, p, n, n, transpose, error_msg);
 	k = 0;
 	for(i = 0; i < n; i++)
 	{	s.begin(i);

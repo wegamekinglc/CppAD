@@ -1,9 +1,9 @@
-/* $Id$ */
-# ifndef CPPAD_LOAD_OP_INCLUDED
-# define CPPAD_LOAD_OP_INCLUDED
+// $Id$
+# ifndef CPPAD_LOAD_OP_HPP
+# define CPPAD_LOAD_OP_HPP
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -69,7 +69,7 @@ is the AD variable index corresponding to the variable z.
 \n
 arg[0]
 is the offset of this VecAD vector relative to the beginning
-of the isvar_by_ind and index)_by_ind arrays.
+of the isvar_by_ind and index_by_ind arrays.
 \n
 \n
 arg[1]
@@ -176,7 +176,7 @@ where i_vec is defined under the heading arg[1] below:
 
 \tparam Vector_set
 is the type used for vectors of sets. It can be either
-\c sparse_pack, \c sparse_set, or \c sparse_list.
+sparse_pack or sparse_list.
 
 \param op
 is the code corresponding to this operator;

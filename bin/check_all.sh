@@ -1,7 +1,7 @@
 #! /bin/bash -e
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the
@@ -28,7 +28,7 @@ echo_log_eval() {
 	if [ "$msg" != '' ]
 	then
 		echo "$msg"
-		echo 'Warning: see check_all.err' 
+		echo 'Warning: see check_all.err'
 		exit 1
 	fi
 	rm $top_srcdir/check_all.err
@@ -47,12 +47,26 @@ then
 	rm check_all.log
 fi
 top_srcdir=`pwd`
+echo "top_srcdir = $top_srcdir"
+#
+if ! random_zero_one=`expr $RANDOM % 2`
+then
+	# expr exit status is 1 when the expression result is zero
+	# supress shell exit in this case
+	:
+fi
+echo "random_zero_one = $random_zero_one"
 # ---------------------------------------------------------------------------
 # circular shift program list and set program to first entry in list
 next_program() {
 	program_list=`echo "$program_list" | sed -e 's| *\([^ ]*\) *\(.*\)|\2 \1|'`
 	program=`echo "$program_list" | sed -e 's| *\([^ ]*\).*|\1|'`
 }
+# ---------------------------------------------------------------------------
+if [ -e "$HOME/prefix/cppad" ]
+then
+	echo_log_eval rm -r $HOME/prefix/cppad
+fi
 # ---------------------------------------------------------------------------
 # Create package to run test in
 echo "bin/package.sh"
@@ -68,28 +82,21 @@ then
 	tarball="${list[0]}"
 	skip="$skip other_tarball"
 else
-	choice=`echo $RANDOM % 2 | bc`
-	tarball="${list[$choice]}"
+	tarball="${list[$random_zero_one]}"
 fi
-echo_log_eval rm -r cppad-$version
+echo_log_eval rm -rf cppad-$version
 echo_log_eval tar -xzf $tarball
 echo_log_eval cd cppad-$version
 # -----------------------------------------------------------------------------
-list="
-	$HOME/prefix/cppad
-	build
-"
-for name in $list
-do
-	if [ -e "$name" ]
-	then
-		echo_log_eval rm -r $name
-	fi
-done
-echo_log_eval bin/run_cmake.sh --boost_vector
+if [ "$random_zero_one" == '0' ]
+then
+	echo_log_eval bin/run_cmake.sh --boost_vector
+else
+	echo_log_eval bin/run_cmake.sh --deprecated
+fi
 echo_log_eval cd build
 # -----------------------------------------------------------------------------
-echo_log_eval make check 
+echo_log_eval make check
 # -----------------------------------------------------------------------------
 for package in adolc eigen ipopt fadbad sacado
 do
@@ -132,7 +139,7 @@ then
 	# test_time=1,max_thread=4,mega_sum=1
 	next_program
 	echo_log_eval ./$program harmonic 1 4 1
-	# 
+	#
 	# test_time=2,max_thread=4,num_zero=20,num_sub=30,num_sum=500,use_ad=true
 	next_program
 	echo_log_eval ./$program multi_newton 2 4 20 30 500 true
@@ -146,31 +153,31 @@ then
 	echo_log_eval ./$program multi_newton 1 2 3 12 1 true
 fi
 #
-# print_for test 
+# print_for test
 if [ ! -e 'print_for/print_for' ]
 then
 	skip="$skip print_for/print_for"
 else
-	echo_log_eval print_for/print_for 
+	echo_log_eval print_for/print_for
 	print_for/print_for | sed -e '/^Test passes/,$d' > junk.1.$$
 	print_for/print_for | sed -e '1,/^Test passes/d' > junk.2.$$
 	if diff junk.1.$$ junk.2.$$
 	then
 		rm junk.1.$$ junk.2.$$
-		echo_log_eval echo "print_for: OK"  
+		echo_log_eval echo "print_for: OK"
 	else
 		echo_log_eval echo "print_for: Error"
 		exit 1
 	fi
 fi
 #
-echo_log_eval make install 
+echo_log_eval make install
 #
 if [ "$skip" != '' ]
 then
 	echo_log_eval echo "check_all.sh: skip = $skip"
 	exit 1
 fi
-#
-echo_log_eval echo 'check_all.sh: OK'
+# ----------------------------------------------------------------------------
+echo "$0: OK"
 exit 0

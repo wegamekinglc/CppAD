@@ -1,6 +1,6 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -47,7 +47,7 @@ $code OdeErrControl$$ that its is taking to large a step.
 
 
 $code
-$verbatim%example/ode_err_control.cpp%0%// BEGIN C++%// END C++%1%$$
+$srcfile%example/ode_err_control.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
@@ -57,10 +57,10 @@ $end
 # include <limits>                      // for quiet_NaN
 # include <cstddef>                     // for size_t
 # include <cmath>                       // for exp
-# include <cppad/ode_err_control.hpp>   // CppAD::OdeErrControl
-# include <cppad/near_equal.hpp>        // CppAD::NearEqual
-# include <cppad/vector.hpp>            // CppAD::vector
-# include <cppad/runge_45.hpp>          // CppAD::Runge45
+# include <cppad/utility/ode_err_control.hpp>   // CppAD::OdeErrControl
+# include <cppad/utility/near_equal.hpp>        // CppAD::NearEqual
+# include <cppad/utility/vector.hpp>            // CppAD::vector
+# include <cppad/utility/runge_45.hpp>          // CppAD::Runge45
 
 namespace {
 	// --------------------------------------------------------------

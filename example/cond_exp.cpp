@@ -1,6 +1,6 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -19,10 +19,8 @@ $spell
 $$
 
 $section Conditional Expressions: Example and Test$$
+$mindex CondExp$$
 
-$index CondExp$$
-$index example, CondExp$$
-$index test, CondExp$$
 
 $head Description$$
 Use $code CondExp$$ to compute
@@ -39,7 +37,7 @@ we need to handle the case $latex x_j = 0$$
 in a special way to avoid multiplying zero by infinity.
 
 $code
-$verbatim%example/cond_exp.cpp%0%// BEGIN C++%// END C++%1%$$
+$srcfile%example/cond_exp.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end

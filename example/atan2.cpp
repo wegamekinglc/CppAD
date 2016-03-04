@@ -1,6 +1,6 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -19,12 +19,9 @@ $$
 
 $section The AD atan2 Function: Example and Test$$
 
-$index atan2, AD example$$
-$index example, AD atan2$$
-$index test, AD atan2$$
 
 $code
-$verbatim%example/atan2.cpp%0%// BEGIN C++%// END C++%1%$$
+$srcfile%example/atan2.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end

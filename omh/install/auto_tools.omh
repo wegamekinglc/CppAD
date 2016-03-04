@@ -1,6 +1,6 @@
 $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -89,7 +89,7 @@ $head Distribution Directory$$
 You must first obtain a copy of the CppAD distribution directory
 using the $cref download$$ instructions.
 The install instructions below correspond to the
-$cref/current version/download/Compressed Archives/Current Version/$$
+$cref/current version/download/Current Version/$$
 which has distribution directory $code cppad-20121230$$.
 
 $head Work Directory$$
@@ -100,11 +100,10 @@ $head Configure$$
 Execute the following command in the build directory:
 $codei%
 ./configure                                  \
-	--prefix=%prefix_dir%                     \
-	--with-Documentation                    \
-	--with-%test%vector                       \
-	--with-sparse_%option%                    \
-	--with-implicit_ctor                    \
+	--prefix=%prefix_dir%                    \
+	--with-Documentation                     \
+	--with-%test%vector                      \
+	--with-deprecated                        \
 	MAX_NUM_THREADS=%max_num_threads%         \
 	CXX_FLAGS=%cxx_flags%                     \
 	OPENMP_FLAGS=%openmp_flags%               \
@@ -287,25 +286,10 @@ $cref/boost_dir/auto_tools/boost_dir/$$
 and
 $cref/eigen_dir/auto_tools/eigen_dir/$$.
 
-
-$head --with-sparse_option$$
-There are two options for the preprocessor symbol
-$code CPPAD_INTERNAL_SPARSE_SET$$.
-If $code --with-sparse_set$$
-($code --with-sparse_list$$) is specified,
-this symbol is $code sparse_set$$ ($code sparse_list$$).
-This should affect the speed and memory required by the
-$cref sparse_jacobian$$, $cref sparse_hessian$$, and the
-$cref/sparse drivers/sparse/$$.
-
-$head --with-implicit_ctor$$
-If this configure argument is present, there is a
-$cref/deprecated/ad_ctor/x/Deprecated 2013-12-31/$$
-implicit type constructor (type conversion)
-from any type to $codei%AD<%Base%>%$$.
-Otherwise this constructor is
-$cref/explicit/ad_ctor/x/explicit/$$.
-
+$head --with-deprecated$$
+If this configure argument is present, then all the
+$cref deprecated$$ features are included in the install.
+Otherwise, they are not included.
 
 $head max_num_threads$$
 this specifies the value for the default value for the preprocessor symbol

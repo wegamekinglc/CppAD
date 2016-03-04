@@ -1,9 +1,9 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -21,12 +21,11 @@ $spell
 $$
 
 $section exp_2: Verify Second Order Reverse Sweep$$
-
-$index reverse, exp_2$$
-$index exp_2, reverse mode$$
+$mindex exp_2 mode$$
 
 
-$codep */
+
+$srccode%cpp% */
 # include <cstddef>                 // define size_t
 # include <cmath>                   // prototype for fabs
 extern bool exp_2_for0(double *v0); // computes zero order forward sweep
@@ -82,6 +81,6 @@ bool exp_2_rev2(void)
 
 	return ok;
 }
-/* $$
+/* %$$
 $end
 */

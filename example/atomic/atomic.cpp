@@ -1,6 +1,6 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -17,15 +17,18 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # include <cassert>
 
 // for thread_alloc
-# include <cppad/thread_alloc.hpp>
+# include <cppad/utility/thread_alloc.hpp>
 
 // external complied tests
 extern bool checkpoint(void);
+extern bool for_sparse_hes(void);
+extern bool for_sparse_jac(void);
 extern bool get_started(void);
-extern bool hes_sparse(void);
 extern bool mat_mul(void);
 extern bool norm_sq(void);
 extern bool reciprocal(void);
+extern bool rev_sparse_hes(void);
+extern bool rev_sparse_jac(void);
 extern bool sparsity(void);
 extern bool tangent(void);
 
@@ -56,11 +59,13 @@ int main(void)
 
 	// external compiled tests
 	ok &= Run( checkpoint,          "checkpoint"     );
+	ok &= Run( for_sparse_jac,      "for_sparse_jac" );
 	ok &= Run( get_started,         "get_started"    );
-	ok &= Run( hes_sparse,          "hes_sparse"     );
 	ok &= Run( mat_mul,             "mat_mul"        );
 	ok &= Run( norm_sq,             "norm_sq"        );
 	ok &= Run( reciprocal,          "reciprocal"     );
+	ok &= Run( rev_sparse_hes,      "rev_sparse_hes" );
+	ok &= Run( rev_sparse_jac,      "rev_sparse_jac" );
 	ok &= Run( sparsity,            "sparsity"       );
 	ok &= Run( tangent,             "tangent"        );
 

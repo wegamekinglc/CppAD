@@ -1,9 +1,9 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -28,38 +28,34 @@ $spell
 $$
 
 $section Adolc Speed: Matrix Multiplication$$
+$mindex link_mat_mul speed multiply$$
 
-$index link_mat_mul, adolc$$
-$index adolc, link_mat_mul$$
-$index speed, adolc$$
-$index adolc, speed$$
-$index matrix, speed adolc$$
-$index multiply, speed adolc$$
 
 $head Specifications$$
 See $cref link_mat_mul$$.
 
 $head Implementation$$
 
-$codep */
+$srccode%cpp% */
 # include <adolc/adolc.h>
-# include <cppad/vector.hpp>
+# include <cppad/utility/vector.hpp>
 # include <cppad/speed/mat_sum_sq.hpp>
 # include <cppad/speed/uniform_01.hpp>
-# include <cppad/vector.hpp>
+# include <cppad/utility/vector.hpp>
 
 // list of possible options
-extern bool global_memory, global_onetape, global_atomic, global_optimize;
+# include <map>
+extern std::map<std::string, bool> global_option;
 
 bool link_mat_mul(
-	size_t                           size     , 
-	size_t                           repeat   , 
+	size_t                           size     ,
+	size_t                           repeat   ,
 	CppAD::vector<double>&           x        ,
 	CppAD::vector<double>&           z        ,
 	CppAD::vector<double>&           dz       )
 {
 	// speed test global option values
-	if( global_memory || global_atomic || global_optimize )
+	if( global_option["memory"] || global_option["atomic"] || global_option["optimize"] )
 		return false;
 	// -----------------------------------------------------
 	// setup
@@ -96,7 +92,7 @@ bool link_mat_mul(
 	double* grad = thread_alloc::create_array<double>(size_t(n), capacity);
 
 	// ----------------------------------------------------------------------
-	if( ! global_onetape ) while(repeat--)
+	if( ! global_option["onetape"] ) while(repeat--)
 	{	// choose a matrix
 		CppAD::uniform_01(n, mat);
 
@@ -139,7 +135,7 @@ bool link_mat_mul(
 
 			// evaluate the determinant at the new matrix value
 			keep = 1; // keep this forward mode result
-			zos_forward(tag, m, n, keep, mat, &f); 
+			zos_forward(tag, m, n, keep, mat, &f);
 
 			// evaluate and return gradient using reverse mode
 			fos_reverse(tag, m, n, u, grad);
@@ -164,6 +160,6 @@ bool link_mat_mul(
 }
 
 
-/* $$
+/* %$$
 $end
 */

@@ -1,9 +1,9 @@
-/* $Id$ */
-# ifndef CPPAD_AD_INCLUDED
-# define CPPAD_AD_INCLUDED
+// $Id$
+# ifndef CPPAD_AD_HPP
+# define CPPAD_AD_HPP
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -165,7 +165,7 @@ public:
 	inline AD(const VecAD_reference<Base> &x);
 	inline AD& operator=(const VecAD_reference<Base> &x);
 
-# if CPPAD_IMPLICIT_CTOR_FROM_ANY_TYPE
+# if CPPAD_DEPRECATED
 	// implicit construction from some other type (depricated)
 	template <class T> inline AD(const T &t);
 # else
@@ -194,28 +194,28 @@ public:
 	{ }
 
 	// interface so these functions need not be friends
-	inline AD Abs(void) const;
-	inline AD acos(void) const;
-	inline AD asin(void) const;
-	inline AD atan(void) const;
-	inline AD cos(void) const;
-	inline AD cosh(void) const;
-	inline AD exp(void) const;
-	inline AD fabs(void) const;
-	inline AD log(void) const;
-	inline AD sin(void) const;
-	inline AD Sign(void) const;
-	inline AD sinh(void) const;
-	inline AD sqrt(void) const;
-	inline AD tan(void) const;
-	inline AD tanh(void) const;
+	inline AD abs_me(void) const;
+	inline AD acos_me(void) const;
+	inline AD asin_me(void) const;
+	inline AD atan_me(void) const;
+	inline AD cos_me(void) const;
+	inline AD cosh_me(void) const;
+	inline AD exp_me(void) const;
+	inline AD fabs_me(void) const;
+	inline AD log_me(void) const;
+	inline AD sin_me(void) const;
+	inline AD sign_me(void) const;
+	inline AD sinh_me(void) const;
+	inline AD sqrt_me(void) const;
+	inline AD tan_me(void) const;
+	inline AD tanh_me(void) const;
 # if CPPAD_USE_CPLUSPLUS_2011
-	inline AD erf(void) const;
-	inline AD asinh(void) const;
-	inline AD acosh(void) const;
-	inline AD atanh(void) const;
-	inline AD expm1(void) const;
-	inline AD log1p(void) const;
+	inline AD erf_me(void) const;
+	inline AD asinh_me(void) const;
+	inline AD acosh_me(void) const;
+	inline AD atanh_me(void) const;
+	inline AD expm1_me(void) const;
+	inline AD log1p_me(void) const;
 # endif
 
 	// ----------------------------------------------------------

@@ -1,7 +1,7 @@
 #! /bin/python
 # $Id
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the
@@ -10,8 +10,19 @@
 # A copy of this license is included in the COPYING file of this distribution.
 # Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # -----------------------------------------------------------------------------
-# imports
 from __future__ import print_function
+# -----------------------------------------------------------------------------
+# list of svn commands to execute in the svn directory before make changes
+# indicated by git directory; some example commands are included below
+svn_commands = [
+	# 'svn mkdir  cppad/utility',
+	# 'svn move cppad/*.hpp                    cppad/utility',
+	# 'svn move cppad/utility/cppad.hpp        cppad/cppad.hpp',
+	# 'svn move cppad/utility/base_require.hpp cppad/base_require.hpp',
+	# 'svn move omh/library.omh                omh/utility.omh'
+]
+# -----------------------------------------------------------------------------
+# imports
 import sys
 import os
 import re
@@ -74,12 +85,8 @@ def print_system(cmd) :
 	return output
 
 id_pattern    = re.compile(r'^.*\$Id.*$',      re.MULTILINE)
-white_pattern = re.compile(r'[ \t]+$',         re.MULTILINE)
-date_pattern  = re.compile(r'2003-[0-9][0-9]', re.MULTILINE)
 def ignore_data(data) :
 	data = re.sub(id_pattern,    '', data)
-	data = re.sub(white_pattern, '', data)
-	data = re.sub(date_pattern,  '', data)
 	return data
 # -----------------------------------------------------------------------------
 # determine git_branch_name
@@ -133,6 +140,13 @@ else :
 	cmd  = 'svn checkout '
 	cmd +=  svn_repository + '/' + svn_branch_path + ' ' + svn_directory
 	print_system(cmd)
+# ----------------------------------------------------------------------------
+tmp = os.getcwd()
+os.chdir( svn_directory )
+for cmd in svn_commands :
+	assert cmd.startswith('svn')
+	print_system(cmd)
+os.chdir( tmp )
 # ----------------------------------------------------------------------------
 # git hash code corresponding to verison in svn directory
 cmd           = 'svn info ' + svn_directory

@@ -1,9 +1,9 @@
-/* $Id$ */
-# ifndef CPPAD_BASE_LIMITS_INCLUDED
-# define CPPAD_BASE_LIMITS_INCLUDED
+// $Id$
+# ifndef CPPAD_BASE_LIMITS_HPP
+# define CPPAD_BASE_LIMITS_HPP
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -34,7 +34,7 @@ $codei%std::numeric_limits<%Base%>%$$
 would require that $icode Base$$ be a literal type.
 
 $head CPPAD_NUMERIC_LIMITS$$
-In most cases, this macro can be used to the specialization where
+In most cases, this macro can be used to define the specialization where
 the numeric limits for the type $icode Base$$
 are the same as the standard numeric limits for the type $icode Other$$.
 For most $icode Base$$ types,
@@ -46,7 +46,7 @@ $codei%
 	}
 %$$
 where the macro is defined by
-$codep */
+$srccode%cpp% */
 # define CPPAD_NUMERIC_LIMITS(Other, Base) \
 template <> class numeric_limits<Base>\
 {\
@@ -60,7 +60,7 @@ template <> class numeric_limits<Base>\
 	static Base quiet_NaN(void) \
 	{	return static_cast<Base>( std::numeric_limits<Other>::quiet_NaN() ); }\
 };
-/* $$
+/* %$$
 $end
 */
 

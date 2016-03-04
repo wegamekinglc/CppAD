@@ -1,9 +1,9 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -35,41 +35,38 @@ $spell
 $$
 
 $section Adolc Speed: Second Derivative of a Polynomial$$
+$mindex link_poly speed$$
 
-$index link_poly, adolc$$
-$index adolc, link_poly$$
-$index speed, adolc$$
-$index adolc, speed$$
-$index polynomial, speed adolc$$
 
 $head Specifications$$
 See $cref link_poly$$.
 
 $head Implementation$$
 
-$codep */
+$srccode%cpp% */
 # include <vector>
 # include <adolc/adolc.h>
 
 # include <cppad/speed/uniform_01.hpp>
-# include <cppad/poly.hpp>
-# include <cppad/vector.hpp>
-# include <cppad/thread_alloc.hpp>
+# include <cppad/utility/poly.hpp>
+# include <cppad/utility/vector.hpp>
+# include <cppad/utility/thread_alloc.hpp>
 # include "adolc_alloc_mat.hpp"
 
 // list of possible options
-extern bool global_memory, global_onetape, global_atomic, global_optimize;
+# include <map>
+extern std::map<std::string, bool> global_option;
 
 bool link_poly(
-	size_t                     size     , 
-	size_t                     repeat   , 
+	size_t                     size     ,
+	size_t                     repeat   ,
 	CppAD::vector<double>     &a        ,  // coefficients of polynomial
 	CppAD::vector<double>     &z        ,  // polynomial argument value
-	CppAD::vector<double>     &ddp      )  // second derivative w.r.t z  
+	CppAD::vector<double>     &ddp      )  // second derivative w.r.t z
 {
-	if( global_atomic )
+	if( global_option["atomic"] )
 		return false;
-	if( global_memory || global_optimize )
+	if( global_option["memory"] || global_option["optimize"] )
 		return false;
 	// -----------------------------------------------------
 	// setup
@@ -78,7 +75,7 @@ bool link_poly(
 	int keep = 0;  // do not keep forward mode results in buffer
 	int m    = 1;  // number of dependent variables
 	int n    = 1;  // number of independent variables
-	int d    = 2;  // highest derivative degree 
+	int d    = 2;  // highest derivative degree
 	double f;      // function value
 
 	// set up for thread_alloc memory allocator (fast and checks for leaks)
@@ -107,15 +104,15 @@ bool link_poly(
 	x[0][1] = 0.;  // second order
 
 	// ----------------------------------------------------------------------
-	if( ! global_onetape ) while(repeat--)
+	if( ! global_option["onetape"] ) while(repeat--)
 	{	// choose an argument value
 		CppAD::uniform_01(1, z);
 
 		// declare independent variables
 		trace_on(tag, keep);
-		Z <<= z[0]; 
+		Z <<= z[0];
 
-		// AD computation of the function value 
+		// AD computation of the function value
 		P = CppAD::Poly(0, A, Z);
 
 		// create function object f : Z -> P
@@ -138,9 +135,9 @@ bool link_poly(
 
 		// declare independent variables
 		trace_on(tag, keep);
-		Z <<= z[0]; 
+		Z <<= z[0];
 
-		// AD computation of the function value 
+		// AD computation of the function value
 		P = CppAD::Poly(0, A, Z);
 
 		// create function object f : Z -> P
@@ -168,6 +165,6 @@ bool link_poly(
 
 	return true;
 }
-/* $$
+/* %$$
 $end
 */

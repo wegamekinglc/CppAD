@@ -1,9 +1,9 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -30,39 +30,34 @@ $spell
 $$
 
 $section Adolc Speed: Gradient of Determinant Using Lu Factorization$$
+$mindex link_det_lu speed matrix factor$$
 
-$index link_det_lu, adolc$$
-$index adolc, link_det_lu$$
-$index speed, adolc$$
-$index adolc, speed$$
-$index lu, speed adolc$$
-$index matrix, factor speed adolc$$
-$index factor, matrix speed adolc$$
 
 $head Specifications$$
 See $cref link_det_lu$$.
 
 $head Implementation$$
-$codep */
+$srccode%cpp% */
 # include <adolc/adolc.h>
 
 # include <cppad/speed/det_by_lu.hpp>
 # include <cppad/speed/uniform_01.hpp>
-# include <cppad/track_new_del.hpp>
+# include <cppad/utility/track_new_del.hpp>
 
 // list of possible options
-extern bool global_memory, global_onetape, global_atomic, global_optimize;
+# include <map>
+extern std::map<std::string, bool> global_option;
 
 bool link_det_lu(
-	size_t                     size     , 
-	size_t                     repeat   , 
+	size_t                     size     ,
+	size_t                     repeat   ,
 	CppAD::vector<double>     &matrix   ,
 	CppAD::vector<double>     &gradient )
 {
 	// speed test global option values
-	if( global_onetape || global_atomic )
+	if( global_option["onetape"] || global_option["atomic"] )
 		return false;
-	if( global_memory || global_optimize )
+	if( global_option["memory"] || global_option["optimize"] )
 		return false;
 	// -----------------------------------------------------
 	// setup
@@ -89,8 +84,8 @@ bool link_det_lu(
 	// AD version of matrix
 	size_min    = n;
 	ADVector A  = thread_alloc::create_array<ADScalar>(size_min, size_out);
-	
-	// vectors of reverse mode weights 
+
+	// vectors of reverse mode weights
 	size_min    = m;
 	double* u   = thread_alloc::create_array<double>(size_min, size_out);
 	u[0] = 1.;
@@ -137,6 +132,6 @@ bool link_det_lu(
 
 	return true;
 }
-/* $$
+/* %$$
 $end
 */

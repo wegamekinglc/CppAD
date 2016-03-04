@@ -1,7 +1,7 @@
 #! /bin/bash -e
-# $Id$
+# $Id: jenkins.sh 3758 2015-11-30 15:29:22Z bradbell $
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the
@@ -17,7 +17,7 @@ then
 fi
 if [ "$1" != '' ]
 then
-	echo 'bin/junk.sh no longer has any arguments'
+	echo 'bin/jenkins.sh no longer has any arguments'
 	exit 1
 fi
 # -----------------------------------------------------------------------------
@@ -99,7 +99,7 @@ else
 	export LD_LIBRARY_PATH="$trunk_dir/build/prefix/$libdir"
 fi
 # -----------------------------------------------------------------------
-# Use trunk_dir/../build to build and test CppAD (no reuse)
+# Use trunk_dir/build/auto_tools to build and test CppAD (no reuse)
 echo_eval cd build
 echo_eval rm -rf auto_tools
 echo_eval mkdir auto_tools
@@ -118,7 +118,6 @@ cat << EOF
 $trunk_dir/configure \\
 	$build_type \\
 	--disable-silent-rules \\
-	--with-implicit_ctor \\
 	ADOLC_DIR="$trunk_dir/build/prefix" \\
 	SACADO_DIR="$trunk_dir/build/prefix" \\
 	EIGEN_DIR="$trunk_dir/build/prefix" \\
@@ -128,7 +127,6 @@ $trunk_dir/configure \\
 EOF
 if ! $trunk_dir/configure $build_type \
 	--disable-silent-rules \
-	--with-implicit_ctor \
 	ADOLC_DIR="$trunk_dir/build/prefix" \
 	SACADO_DIR="$trunk_dir/build/prefix" \
 	EIGEN_DIR="$trunk_dir/build/prefix" \

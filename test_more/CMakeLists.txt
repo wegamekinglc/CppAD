@@ -1,6 +1,6 @@
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the
@@ -23,10 +23,6 @@ SET(CMAKE_BUILD_TYPE DEBUG)
 # adolc_prefix
 SET(sources base_adolc.cpp)
 sources_libs_define(adolc "${sources}" adolc ADOLC_TEST)
-
-# colpack_prefix
-SET(sources ../cppad/local/cppad_colpack.cpp)
-sources_libs_define(colpack "${sources}" ColPack COLPACK_TEST)
 
 # ipopt_prefix
 SET(sources ipopt_solve.cpp)
@@ -67,7 +63,6 @@ ADD_EXECUTABLE(test_more EXCLUDE_FROM_ALL test_more.cpp
 	old_reciprocal.cpp
 	old_mat_mul.cpp
 	${adolc_sources}
-	${colpack_sources}
 	${ipopt_sources}
 	abs.cpp
 	acos.cpp
@@ -103,12 +98,14 @@ ADD_EXECUTABLE(test_more EXCLUDE_FROM_ALL test_more.cpp
 	expm1.cpp
 	extern_value.cpp
 	for_hess.cpp
+	for_sparse_hes.cpp
 	for_sparse_jac.cpp
 	forward.cpp
 	forward_dir.cpp
 	forward_order.cpp
 	from_base.cpp
 	fun_check.cpp
+	hes_sparsity.cpp
 	jacobian.cpp
 	num_limits.cpp
 	log.cpp
@@ -135,7 +132,6 @@ ADD_EXECUTABLE(test_more EXCLUDE_FROM_ALL test_more.cpp
 	rosen_34.cpp
 	runge_45.cpp
 	reverse.cpp
-	rev_sparse_hes.cpp
 	rev_sparse_jac.cpp
 	rev_two.cpp
 	simple_vector.cpp
@@ -152,12 +148,15 @@ ADD_EXECUTABLE(test_more EXCLUDE_FROM_ALL test_more.cpp
 	sub_zero.cpp
 	tan.cpp
 	test_vector.cpp
+	to_string.cpp
 	track_new_del.cpp
 	value.cpp
 	vec_ad.cpp
 	vec_ad_par.cpp
 	vec_unary.cpp
 	zdouble.cpp
+
+	local/vector_set.cpp
 )
 
 # Compiler flags for cppad source
@@ -165,10 +164,11 @@ add_cppad_cxx_flags(test_more)
 
 # List of libraries to be linked into the specified target
 TARGET_LINK_LIBRARIES(test_more
-	${colpack_libs}
+	${cppad_lib}
 	${adolc_libs}
 	${ipopt_libs}
 	${eigen_libs}
+	${colpack_libs}
 )
 
 # Add the check_test_more target

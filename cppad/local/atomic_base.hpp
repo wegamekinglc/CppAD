@@ -1,9 +1,9 @@
-/* $Id$ */
-# ifndef CPPAD_ATOMIC_BASE_INCLUDED
-# define CPPAD_ATOMIC_BASE_INCLUDED
+// $Id$
+# ifndef CPPAD_ATOMIC_BASE_HPP
+# define CPPAD_ATOMIC_BASE_HPP
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -16,7 +16,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # include <set>
 # include <cppad/local/cppad_assert.hpp>
 // needed before one can use CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL
-# include <cppad/thread_alloc.hpp>
+# include <cppad/utility/thread_alloc.hpp>
 
 namespace CppAD { // BEGIN_CPPAD_NAMESPACE
 /*!
@@ -343,7 +343,6 @@ $spell
 $$
 
 $section Using AD Version of Atomic Function$$
-$index atomic, use function$$
 
 $head Syntax$$
 $icode%afun%(%ax%, %ay%)%$$
@@ -576,9 +575,7 @@ $spell
 $$
 
 $section Atomic Forward Mode$$
-$index atomic, forward callback$$
-$index forward, atomic callback$$
-$index forward, atomic virtual$$
+$mindex callback virtual$$
 
 
 $head Syntax$$
@@ -629,7 +626,7 @@ $icode%vx%[%j%]%$$ is true if and only if
 $icode%ax%[%j%]%$$ is a $cref/variable/glossary/Variable/$$
 in the corresponding call to
 $codei%
-	%afun%(%ax%, %ay%, %id%)
+	%afun%(%ax%, %ay%)
 %$$
 If $icode%vx%.size() == 0%$$,
 then $icode%vy%.size() == 0%$$ and neither of these vectors
@@ -809,9 +806,6 @@ $spell
 $$
 
 $section Atomic Reverse Mode$$
-$index atomic, reverse callback$$
-$index reverse, atomic callback$$
-$index reverse, atomic virtual$$
 $spell
 	bool
 $$
@@ -1025,9 +1019,6 @@ $spell
 $$
 
 $section Atomic Forward Jacobian Sparsity Patterns$$
-$index atomic, for_sparse_jac callback$$
-$index for_sparse_jac, atomic callback$$
-$index for_sparse_jac, atomic virtual$$
 
 $head Syntax$$
 $icode%ok% = %afun%.for_sparse_jac(%q%, %r%, %s%)%$$
@@ -1044,7 +1035,10 @@ Given a $cref/sparsity pattern/glossary/Sparsity Pattern/$$ for $latex R$$,
 $code for_sparse_jac$$ computes a sparsity pattern for $latex S(x)$$.
 
 $head Implementation$$
-If you are using $cref ForSparseJac$$,
+If you are using
+$cref ForSparseJac$$,
+$cref ForSparseHes$$, or
+$cref RevSparseHes$$,
 this virtual function must be defined by the
 $cref/atomic_user/atomic_ctor/atomic_user/$$ class.
 
@@ -1084,23 +1078,13 @@ $codei%
 If it is $code true$$, the corresponding evaluation succeeded,
 otherwise it failed.
 
+$children%
+	example/atomic/for_sparse_jac.cpp
+%$$
 $head Examples$$
-
-$subhead Define for_sparse_jac$$
-The following files contain example atomic $code for_sparse_jac$$ functions:
-$cref%norm_sq.cpp%atomic_norm_sq.cpp%for_sparse_jac%$$,
-$cref%reciprocal.cpp%atomic_reciprocal.cpp%for_sparse_jac%$$,
-$cref%tangent.cpp%atomic_tangent.cpp%for_sparse_jac%$$,
-$cref%matrix_mul.hpp%atomic_matrix_mul.hpp%for_sparse_jac%$$.
-
-$subhead Use for_sparse_jac$$
-The following are links to user atomic function constructor uses:
-$cref%norm_sq.cpp%
-	atomic_norm_sq.cpp%Use Atomic Function%for_sparse_jac%$$,
-$cref%reciprocal.cpp%
-	atomic_reciprocal.cpp%Use Atomic Function%for_sparse_jac%$$,
-$cref%tangent.cpp%atomic_tangent.cpp%Use Atomic Function%for_sparse_jac%$$,
-$cref%mat_mul.cpp%atomic_mat_mul.cpp%Use Atomic Function%for_sparse_jac%$$.
+The file $cref atomic_for_sparse_jac.cpp$$ contains an example and test
+that uses this routine.
+It returns true if the test passes and false if it fails.
 
 $end
 -----------------------------------------------------------------------------
@@ -1150,9 +1134,6 @@ $spell
 $$
 
 $section Atomic Reverse Jacobian Sparsity Patterns$$
-$index atomic, rev_sparse_jac callback$$
-$index rev_sparse_jac, atomic callback$$
-$index rev_sparse_jac, atomic virtual$$
 
 $head Syntax$$
 $icode%ok% = %afun%.rev_sparse_jac(%q%, %rt%, %st%)%$$
@@ -1169,7 +1150,8 @@ Given a $cref/sparsity pattern/glossary/Sparsity Pattern/$$ for $latex R$$,
 $code rev_sparse_jac$$ computes a sparsity pattern for $latex S(x)$$.
 
 $head Implementation$$
-If you are using $cref RevSparseJac$$,
+If you are using
+$cref RevSparseJac$$ or $cref ForSparseHes$$,
 this virtual function must be defined by the
 $cref/atomic_user/atomic_ctor/atomic_user/$$ class.
 
@@ -1210,23 +1192,13 @@ $codei%
 If it is $code true$$, the corresponding evaluation succeeded,
 otherwise it failed.
 
+$children%
+	example/atomic/rev_sparse_jac.cpp
+%$$
 $head Examples$$
-
-$subhead Define rev_sparse_jac$$
-The following files contain example atomic $code rev_sparse_jac$$ functions:
-$cref%norm_sq.cpp%atomic_norm_sq.cpp%rev_sparse_jac%$$,
-$cref%reciprocal.cpp%atomic_reciprocal.cpp%rev_sparse_jac%$$,
-$cref%tangent.cpp%atomic_tangent.cpp%rev_sparse_jac%$$,
-$cref%matrix_mul.hpp%atomic_matrix_mul.hpp%rev_sparse_jac%$$.
-
-$subhead Use rev_sparse_jac$$
-The following are links to user atomic function constructor uses:
-$cref%norm_sq.cpp%
-	atomic_norm_sq.cpp%Use Atomic Function%rev_sparse_jac%$$,
-$cref%reciprocal.cpp%
-	atomic_reciprocal.cpp%Use Atomic Function%rev_sparse_jac%$$,
-$cref%tangent.cpp%atomic_tangent.cpp%Use Atomic Function%rev_sparse_jac%$$,
-$cref%mat_mul.cpp%atomic_mat_mul.cpp%Use Atomic Function%rev_sparse_jac%$$.
+The file $cref atomic_rev_sparse_jac.cpp$$ contains an example and test
+that uses this routine.
+It returns true if the test passes and false if it fails.
 
 $end
 -----------------------------------------------------------------------------
@@ -1260,6 +1232,129 @@ virtual bool rev_sparse_jac(
 {	return false; }
 /*
 -------------------------------------- ---------------------------------------
+$begin atomic_for_sparse_hes$$
+$spell
+	sq
+	mul.hpp
+	vx
+	afun
+	Jacobian
+	jac
+	CppAD
+	std
+	bool
+	hes
+	const
+$$
+
+$section Atomic Forward Hessian Sparsity Patterns$$
+
+$head Syntax$$
+$icode%ok% = %afun%.for_sparse_hes(%vx%, %r%, %s%, %h%)%$$
+
+$head Purpose$$
+This function is used by $cref ForSparseHes$$ to compute
+Hessian sparsity patterns.
+Given a $cref/sparsity pattern/glossary/Sparsity Pattern/$$ for
+a diagonal matrix $latex R \in B^{n \times n}$$, and
+a row vector $latex S \in B^{1 \times m}$$,
+this routine computes the sparsity pattern for
+$latex \[
+	H(x) = R^\R{T} \cdot (S \cdot f)^{(2)}( x ) \cdot R
+\] $$
+
+$head Implementation$$
+If you are using and $cref ForSparseHes$$,
+this virtual function must be defined by the
+$cref/atomic_user/atomic_ctor/atomic_user/$$ class.
+
+$subhead vx$$
+The argument $icode vx$$ has prototype
+$codei%
+     const CppAD:vector<bool>& %vx%
+%$$
+$icode%vx%.size() == %n%$$, and
+for $latex j = 0 , \ldots , n-1$$,
+$icode%vx%[%j%]%$$ is true if and only if
+$icode%ax%[%j%]%$$ is a $cref/variable/glossary/Variable/$$
+in the corresponding call to
+$codei%
+	%afun%(%ax%, %ay%)
+%$$
+
+$subhead r$$
+This argument has prototype
+$codei%
+     const CppAD:vector<bool>& %r%
+%$$
+and is a $cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for
+the diagonal of $latex R \in B^{n \times n}$$.
+
+$subhead s$$
+The argument $icode s$$ has prototype
+$codei%
+     const CppAD:vector<bool>& %s%
+%$$
+and its size is $icode m$$.
+It is a sparsity pattern for $latex S \in B^{1 \times m}$$.
+
+$subhead h$$
+This argument has prototype
+$codei%
+     %atomic_sparsity%& %h%
+%$$
+The input value of its elements
+are not specified (must not matter).
+Upon return, $icode v$$ is a
+$cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for
+$latex H(x) \in B^{n \times n}$$ which is defined above.
+
+$children%
+	example/atomic/for_sparse_hes.cpp
+%$$
+$head Examples$$
+The file $cref atomic_for_sparse_hes.cpp$$ contains an example and test
+that uses this routine.
+It returns true if the test passes and false if it fails.
+
+$end
+-----------------------------------------------------------------------------
+*/
+/*!
+Link from forward Hessian sparsity sweep to base_atomic
+
+\param vx [in]
+which componens of x are variables.
+
+\param r [in]
+is the forward Jacobian sparsity pattern w.r.t the argument vector x.
+
+\param s [in]
+is the reverse Jacobian sparsity pattern w.r.t the result vector y.
+
+\param h [out]
+is the Hessian sparsity pattern w.r.t the argument vector x.
+*/
+virtual bool for_sparse_hes(
+	const vector<bool>&             vx ,
+	const vector<bool>&             r  ,
+	const vector<bool>&             s  ,
+	vector< std::set<size_t> >&     h  )
+{	return false; }
+virtual bool for_sparse_hes(
+	const vector<bool>&             vx ,
+	const vector<bool>&             r  ,
+	const vector<bool>&             s  ,
+	vector<bool>&                   h  )
+{	return false; }
+virtual bool for_sparse_hes(
+	const vector<bool>&             vx ,
+	const vector<bool>&             r  ,
+	const vector<bool>&             s  ,
+	vectorBool&                     h  )
+{	return false; }
+/*
+-------------------------------------- ---------------------------------------
 $begin atomic_rev_sparse_hes$$
 $spell
 	sq
@@ -1276,9 +1371,6 @@ $spell
 $$
 
 $section Atomic Reverse Hessian Sparsity Patterns$$
-$index atomic, rev_sparse_hes callback$$
-$index rev_sparse_hes, atomic callback$$
-$index rev_sparse_hes, atomic virtual$$
 
 $head Syntax$$
 $icode%ok% = %afun%.rev_sparse_hes(%vx%, %s%, %t%, %q%, %r%, %u%, %v%)%$$
@@ -1312,7 +1404,7 @@ $icode%vx%[%j%]%$$ is true if and only if
 $icode%ax%[%j%]%$$ is a $cref/variable/glossary/Variable/$$
 in the corresponding call to
 $codei%
-	%afun%(%ax%, %ay%, %id%)
+	%afun%(%ax%, %ay%)
 %$$
 
 $subhead s$$
@@ -1412,23 +1504,13 @@ f^{(1)} (x)^\R{T} U(x)
 \end{array}
 \] $$
 
+$children%
+	example/atomic/rev_sparse_hes.cpp
+%$$
 $head Examples$$
-
-$subhead Define rev_sparse_hes$$
-The following files contain example atomic $code rev_sparse_hes$$ functions:
-$cref%norm_sq.cpp%atomic_norm_sq.cpp%rev_sparse_hes%$$,
-$cref%reciprocal.cpp%atomic_reciprocal.cpp%rev_sparse_hes%$$,
-$cref%tangent.cpp%atomic_tangent.cpp%rev_sparse_hes%$$,
-$cref%matrix_mul.hpp%atomic_matrix_mul.hpp%rev_sparse_hes%$$.
-
-$subhead Use rev_sparse_hes$$
-The following are links to user atomic function constructor uses:
-$cref%norm_sq.cpp%
-	atomic_norm_sq.cpp%Use Atomic Function%rev_sparse_hes%$$,
-$cref%reciprocal.cpp%
-	atomic_reciprocal.cpp%Use Atomic Function%rev_sparse_hes%$$,
-$cref%tangent.cpp%atomic_tangent.cpp%Use Atomic Function%rev_sparse_hes%$$,
-$cref%mat_mul.cpp%atomic_mat_mul.cpp%Use Atomic Function%rev_sparse_hes%$$.
+The file $cref atomic_rev_sparse_hes.cpp$$ contains an example and test
+that uses this routine.
+It returns true if the test passes and false if it fails.
 
 $end
 -----------------------------------------------------------------------------
@@ -1493,10 +1575,7 @@ $spell
 $$
 
 $section Free Static Variables$$
-$index free, atomic static$$
-$index atomic, free static$$
-$index static, free atomic$$
-$index clear, atomic static$$
+$mindex clear$$
 
 $head Syntax$$
 $codei%atomic_base<%Base%>::clear()%$$

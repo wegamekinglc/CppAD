@@ -1,6 +1,6 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -25,14 +25,14 @@ This example is only intended to help convert calls to $cref omp_alloc$$
 to calls to $cref thread_alloc$$.
 
 $code
-$verbatim%test_more/omp_alloc.cpp%0%// BEGIN C++%// END C++%1%$$
+$srcfile%test_more/omp_alloc.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
 */
 // BEGIN C++
-# include <cppad/omp_alloc.hpp>
-# include <cppad/memory_leak.hpp>
+# include <cppad/utility/omp_alloc.hpp>
+# include <cppad/utility/memory_leak.hpp>
 # include <vector>
 
 namespace { // Begin empty namespace

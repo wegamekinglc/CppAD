@@ -1,9 +1,9 @@
 // $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -17,9 +17,7 @@ $spell
 $$
 
 $section User Atomic Matrix Multiply: Example and Test$$
-$index atomic, matrix multiply example$$
-$index matrix, atomic multiply example$$
-$index multiply, matrix atomic$$
+$mindex multiply$$
 
 $children%
 	cppad/example/matrix_mul.hpp
@@ -32,7 +30,7 @@ which defines matrix multiply as a $cref atomic_base$$ operation.
 $nospell
 
 $head Use Atomic Function$$
-$codep */
+$srccode%cpp% */
 # include <cppad/cppad.hpp>
 # include <cppad/example/matrix_mul.hpp>
 
@@ -41,18 +39,18 @@ bool mat_mul(void)
 	using CppAD::AD;
 	using CppAD::vector;
 	size_t i, j;
-/* $$
+/* %$$
 $subhead Constructor$$
-$codep */
+$srccode%cpp% */
 	// -------------------------------------------------------------------
 	// object that multiplies  2 x 2  matrices
 	size_t nr_result = 2;
 	size_t n_middle  = 2;
 	size_t nc_result = 2;
 	matrix_mul afun(nr_result, n_middle, nc_result);
-/* $$
+/* %$$
 $subhead Recording$$
-$codep */
+$srccode%cpp% */
 	// start recording with four independent varables
 	size_t n = 4;
 	vector<double> x(n);
@@ -92,9 +90,9 @@ $codep */
 	// define the function g : x -> atom_y
 	// g(x) = [ x0*x2 + x1*x3 , x0*7 + x1*8 , 5*x2  + 6*x3  , 5*7 + 6*8 ]^T
 	CppAD::ADFun<double> g(ax, atom_y);
-/* $$
+/* %$$
 $subhead forward$$
-$codep */
+$srccode%cpp% */
 	// Test zero order forward mode evaluation of g(x)
 	size_t m = atom_y.size();
 	vector<double> y(m);
@@ -107,11 +105,11 @@ $codep */
 	ok &= y[3] == 5. * 7.     + 6. * 8.;
 
 	//----------------------------------------------------------------------
-	// Test first order forward mode evaluation of g'(x) * [1, 2, 3, 4]^T 
+	// Test first order forward mode evaluation of g'(x) * [1, 2, 3, 4]^T
 	// g'(x) = [ x2, x3, x0, x1 ]
 	//         [ 7 ,  8,  0, 0  ]
 	//         [ 0 ,  0,  5, 6  ]
-	//         [ 0 ,  0,  0, 0  ] 
+	//         [ 0 ,  0,  0, 0  ]
 	CppAD::vector<double> dx(n), dy(m);
 	for(j = 0; j <  n; j++)
 		dx[j] = j + 1;
@@ -122,7 +120,7 @@ $codep */
 	ok &= dy[3] == 1. * 0.   + 2. * 0.   + 3. * 0.   + 4. * 0.;
 
 	//----------------------------------------------------------------------
-	// Test second order forward mode 
+	// Test second order forward mode
 	// g_0^2 (x) = [ 0, 0, 1, 0 ], g_0^2 (x) * [1] = [3]
 	//             [ 0, 0, 0, 1 ]              [2]   [4]
 	//             [ 1, 0, 0, 0 ]              [3]   [1]
@@ -133,16 +131,16 @@ $codep */
 	ddy = g.Forward(2, ddx);
 
 	// [1, 2, 3, 4] * g_0^2 (x) * [1, 2, 3, 4]^T = 1*3 + 2*4 + 3*1 + 4*2
-	ok &= 2. * ddy[0] == 1. * 3. + 2. * 4. + 3. * 1. + 4. * 2.; 
+	ok &= 2. * ddy[0] == 1. * 3. + 2. * 4. + 3. * 1. + 4. * 2.;
 
 	// for i > 0, [1, 2, 3, 4] * g_i^2 (x) * [1, 2, 3, 4]^T = 0
 	ok &= ddy[1] == 0.;
 	ok &= ddy[2] == 0.;
 	ok &= ddy[3] == 0.;
-/* $$
+/* %$$
 $subhead reverse$$
-$codep */
-	// Test second order reverse mode 
+$srccode%cpp% */
+	// Test second order reverse mode
 	CppAD::vector<double> w(m), dw(2 * n);
 	for(i = 0; i < m; i++)
 		w[i] = 0.;
@@ -161,18 +159,18 @@ $codep */
 	ok &= dw[1*2 + 1] == 4.;
 	ok &= dw[2*2 + 1] == 1.;
 	ok &= dw[3*2 + 1] == 2.;
-/* $$
+/* %$$
 $subhead option$$
-$codep */
+$srccode%cpp% */
 	//----------------------------------------------------------------------
 	// Test both the boolean and set sparsity at the atomic level
 	for(size_t sparse_index = 0; sparse_index < 2; sparse_index++)
 	{	if( sparse_index == 0 )
 			afun.option( CppAD::atomic_base<double>::bool_sparsity_enum );
 		else	afun.option( CppAD::atomic_base<double>::set_sparsity_enum );
-/* $$
+/* %$$
 $subhead for_sparse_jac$$
-$codep */
+$srccode%cpp% */
 	// Test forward Jacobian sparsity pattern
 	/*
 	g(x) = [ x0*x2 + x1*x3 , x0*7 + x1*8 , 5*x2  + 6*x3  , 5*7 + 6*8 ]^T
@@ -202,9 +200,9 @@ $codep */
 	}
 	// s[3] == {}
 	ok &= s[3].empty();
-/* $$
+/* %$$
 $subhead rev_sparse_jac$$
-$codep */
+$srccode%cpp% */
 	// Test reverse Jacobian sparsity pattern
 	for(i = 0; i <  m; i++)
 	{	s[i].clear();
@@ -225,9 +223,9 @@ $codep */
 	}
 	// r[3] == {}
 	ok &= r[3].empty();
-/* $$
+/* %$$
 $subhead rev_sparse_hes$$
-$codep */
+$srccode%cpp% */
 	/* Test reverse Hessian sparsity pattern
 	g_0^2 (x) = [ 0, 0, 1, 0 ] and for i > 0, g_i^2 = 0
 	            [ 0, 0, 0, 1 ]
@@ -246,7 +244,7 @@ $codep */
 	size_t check[] = {2, 3, 0, 1};
 	for(j = 0; j <  n; j++)
 	{	// h[j] = { check[j] }
-		for(i = 0; i < n; i++) 
+		for(i = 0; i < n; i++)
 		{	if( i == check[j] )
 				ok &= h[j].find(i) != h[j].end();
 			else	ok &= h[j].find(i) == h[j].end();
@@ -258,17 +256,17 @@ $codep */
 	h = g.RevSparseHes(n, t);
 	for(j = 0; j <  n; j++)
 	{	// h[j] = { }
-		for(i = 0; i < n; i++) 
+		for(i = 0; i < n; i++)
 			ok &= h[j].find(i) == h[j].end();
 	}
 
 	//-----------------------------------------------------------------
 	} // end for(size_t sparse_index  ...
 	//-----------------------------------------------------------------
-	
+
 	return ok;
 }
-/* $$
+/* %$$
 $$ $comment end nospell$$
 $end
 */

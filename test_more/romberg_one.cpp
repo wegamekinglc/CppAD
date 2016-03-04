@@ -1,4 +1,4 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
@@ -23,7 +23,7 @@ $index example, Romberg$$
 $index test, Romberg$$
 
 $code
-$verbatim%example/romberg_one.cpp%0%// BEGIN C++%// END C++%1%$$
+old verbatim%example/romberg_one.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end

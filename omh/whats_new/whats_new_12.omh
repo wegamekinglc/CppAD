@@ -1,6 +1,6 @@
 $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -183,11 +183,11 @@ $lnext
 The $cref cmake$$ installation was putting the $code cppad.pc$$
 $cref pkgconfig$$ file in
 $codei%
-	cmake_install_prefix%/cmake_install_datadir%/cppad.pc
+	cppad_prefix%/cmake_install_datadir%/cppad.pc
 %$$
 This has been fixed and is now
 $codei%
-	cmake_install_prefix%/cmake_install_datadir%/pkgconfig/cppad.pc
+	cppad_prefix%/cmake_install_datadir%/pkgconfig/cppad.pc
 %$$
 $lnext
 The $cref pkgconfig$$ documentation has been improved.
@@ -223,12 +223,12 @@ $lend
 
 
 $head 11-28$$
-Update the $cref WishList$$:
+Update the $cref wish_list$$:
 $list number$$
 Remove Microsoft compiler warning item that has been fixed.
 $lnext
 Remove faster sparse set operations item that was completed using
-$cref/cppad_sparse_list/cmake/cppad_sparse_list/$$.
+$code cppad_sparse_list$$ (not part of user API).
 $lnext
 Remove $cref cmake$$ items that have been completed.
 $lnext
@@ -247,17 +247,17 @@ Add new $code cppad_ipopt_sum$$ item to the wish list.
 (This has been removed because $cref/checkpointing/checkpoint/$$
 can now be used for this purpose.)
 $lnext
-Add new $code old_atomic$$ $cref WishList$$ item (since removed).
+Add new $code old_atomic$$ $cref wish_list$$ item (since removed).
 
 $lend
 
 $head 11-21$$
 $list number$$
 Fix the version number in link to the
-$cref/current download files/download/Compressed Archives/Current Version/$$.
+$cref/current download files/download/Current Version/$$.
 $lnext
 Change the
-$cref/subversion/download/Subversion/$$ download instructions to use
+$code subversion$$ download instructions to use
 the $code export$$ instead of $code checkout$$ command.
 This avoids downloading the source code control files.
 $lend
@@ -398,7 +398,7 @@ $lend
 
 $head 10-03$$
 Change the $code hold_memory$$ speed to option to just
-$cref/memory/speed_main/option_list/memory/$$.
+$cref/memory/speed_main/Global Options/memory/$$.
 In addition, in the speed test output, include all of the options
 that are present in the output variable name;
 see $cref/speed results/speed_main/Speed Results/$$.
@@ -425,7 +425,7 @@ $list number$$
 A new type was added for the internal representation of
 $cref/vector of sets/glossary/Sparsity Pattern/Vector of Sets/$$
 sparsity patterns; see the configure
-$cref/--with-sparse_option/auto_tools/--with-sparse_option/$$.
+$code --with-sparse_option$$ (since removed).
 $lnext
 A new speed test, $cref compare_c$$, compares the speed of the same
 source code compiled with C and C++.
@@ -548,7 +548,7 @@ $cref/sparse Jacobian speed tests/link_sparse_jacobian/$$.
 
 $head 06-10$$
 $list number$$
-Add the $cref/hold_memory/speed_main/option_list/memory/$$ option
+Add the $cref/hold_memory/speed_main/Global Options/memory/$$ option
 to the speed test main program.
 This was changed to just $code memory$$; see
 $cref/10-03/whats_new_12/10-03/$$.
@@ -669,7 +669,7 @@ $code retape$$ speed test option
 during sparse Hessian speed tests.
 
 $head 05-29$$
-Add $cref index_sort$$ to the general purpose template $cref library$$
+Add $cref index_sort$$ to the general purpose template $cref/utilities/utility/$$
 so that it can be used by the implementations of
 $cref link_sparse_jacobian$$ and $cref link_sparse_hessian$$.
 

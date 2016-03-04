@@ -1,6 +1,6 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -18,12 +18,9 @@ $$
 
 $section The AD log10 Function: Example and Test$$
 
-$index log10, AD example$$
-$index example, AD log10$$
-$index test, AD log10$$
 
 $code
-$verbatim%example/log10.cpp%0%// BEGIN C++%// END C++%1%$$
+$srcfile%example/log10.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end

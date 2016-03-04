@@ -1,6 +1,6 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -18,19 +18,16 @@ $spell
 	CppAD
 	const
 $$
-$index OpenMP, example A.1.1c$$
-$index example, OpenMP A.1.1c$$
-$index A.1.1c, OpenMP example$$
-$index thread, OpenMP example$$
 
 $section A Simple Parallel Pthread Example and Test$$
+$mindex OpenMP A.1.1c thread$$
 
 $head Purpose$$
 This example just demonstrates pthreads and does not use CppAD at all.
 
 $head Source Code$$
 $code
-$verbatim%multi_thread/pthread/a11c_pthread.cpp%0%// BEGIN C++%// END C++%1%$$
+$srcfile%multi_thread/pthread/a11c_pthread.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 $end
 ----------------------------------------------------------------------------
@@ -93,7 +90,7 @@ bool a11c(void)
 	int n_thread = NUMBER_THREADS;
 	// the threads
 	pthread_t thread[NUMBER_THREADS];
- 	// arguments to start_routine
+	// arguments to start_routine
 	struct start_arg arg[NUMBER_THREADS];
 	// attr
 	pthread_attr_t attr;

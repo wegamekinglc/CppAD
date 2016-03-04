@@ -1,9 +1,9 @@
-/* $Id$ */
-# ifndef CPPAD_COND_EXP_INCLUDED
-# define CPPAD_COND_EXP_INCLUDED
+// $Id$
+# ifndef CPPAD_COND_EXP_HPP
+# define CPPAD_COND_EXP_HPP
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -35,11 +35,9 @@ $spell
 	Gt
 $$
 
-$index conditional, expression$$
-$index expression, conditional$$
-$index assign, conditional$$
 
 $section AD Conditional Expressions$$
+$mindex assign$$
 
 $head Syntax$$
 $icode%result% = CondExp%Rel%(%left%, %right%, %if_true%, %if_false%)%$$
@@ -130,7 +128,7 @@ This optimization is done for the rest of zero order forward mode
 as well as forward and reverse derivatives calculations.
 There is one exception to this optimization; see
 $cref/optimizing nested conditional expressions
-	/WishList
+	/wish_list
 	/Optimizing Nested Conditional Expressions
 /$$.
 
@@ -169,7 +167,7 @@ The following implementation of the
 AD $cref atan2$$ function is a more complex
 example of using conditional expressions:
 $code
-$verbatim%cppad/local/atan2.hpp%0%BEGIN CondExp%// END CondExp%$$
+$srcfile%cppad/local/atan2.hpp%0%BEGIN CondExp%// END CondExp%$$
 $$
 
 

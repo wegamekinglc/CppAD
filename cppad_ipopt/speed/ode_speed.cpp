@@ -1,9 +1,9 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -15,7 +15,7 @@ $begin ipopt_ode_speed.cpp$$
 $section Speed Test for Both Simple and Fast Representations$$
 
 $code
-$verbatim%cppad_ipopt/speed/ode_speed.cpp%0%// BEGIN C++%// END C++%1%$$
+$srcfile%cppad_ipopt/speed/ode_speed.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end

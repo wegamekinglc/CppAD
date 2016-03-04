@@ -1,6 +1,6 @@
 # $Id:$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the
@@ -34,9 +34,12 @@ command_line_arg(cppad_max_num_threads 48 STRING
 	"maximum number of threads that CppAD can use use"
 )
 # cppad_sparse_list
-command_line_arg(cppad_sparse_list YES BOOL
-	"use sparse list for internal sparse set representation"
-)
+IF( cppad_sparse_list )
+	MESSAGE(FATAL_ERROR
+		"cppad_sparse_list = ${cppad_sparse_list}"
+		": this command line argument has been removed"
+	)
+ENDIF( cppad_sparse_list )
 #
 # cppad_tape_id_type
 command_line_arg(cppad_tape_id_type "unsigned int" STRING
@@ -48,27 +51,17 @@ command_line_arg(cppad_tape_addr_type "unsigned int" STRING
 "type used to identify variables on one tape, size must be <= sizeof(size_t)"
 )
 #
-# cppad_implicit_ctor_from_any_type
-command_line_arg(cppad_implicit_ctor_from_any_type NO BOOL
+# cppad_deprecated
+command_line_arg(cppad_deprecated NO BOOL
 	"implicit (instead of explicit) conversion from any type to AD<Base>"
 )
 # -----------------------------------------------------------------------------
-# cppad_explicit_ctor
-IF( cppad_implicit_ctor_from_any_type )
-	SET(cppad_implicit_ctor_from_any_type 1)
-ELSE( cppad_implicit_ctor_from_any_type )
-	SET(cppad_implicit_ctor_from_any_type 0)
-ENDIF( cppad_implicit_ctor_from_any_type )
-# -----------------------------------------------------------------------------
-# cppad_internal_sparse_set
-#
-IF( cppad_sparse_list )
-	SET(cppad_internal_sparse_set  sparse_list )
-ELSE( cppad_sparse_list )
-	SET(cppad_internal_sparse_set  sparse_set )
-ENDIF( cppad_sparse_list )
-MESSAGE(STATUS "cppad_internal_sparse_set = ${cppad_internal_sparse_set}" )
-#
+# cppad_deprecated
+IF( cppad_deprecated )
+	SET(cppad_deprecated 1)
+ELSE( cppad_deprecated )
+	SET(cppad_deprecated 0)
+ENDIF( cppad_deprecated )
 # -----------------------------------------------------------------------------
 # cppad_boostvector, cppad_cppadvector, cppad_eigenvector, cppad_stdvector
 #
@@ -109,6 +102,19 @@ ENDIF( cppad_eigenvector )
 # Begin C++11 features
 #
 SET(cppad_cplusplus_201100_ok 1)
+# -----------------------------------------------------------------------------
+# cppad_has_signed_long_long
+#
+SET(source "
+int main(void)
+{	signed long long value = 0;
+	return int(value);
+}"
+)
+check_source_runs("${source}" cppad_has_signed_long_long )
+IF( NOT cppad_has_signed_long_long )
+	SET(cppad_cplusplus_201100_ok 0)
+ENDIF( NOT cppad_has_signed_long_long )
 # -----------------------------------------------------------------------------
 # cppad_has_rvalue
 #
@@ -248,7 +254,7 @@ int main(void)
 	ENDIF( ${cmake_var}_is_unsigned STREQUAL 0  )
 ENDFOREACH( cmake_var )
 # -----------------------------------------------------------------------------
-# cppad_max_num_threads
+# check that cppad_max_num_threads is >= 4
 #
 SET(CMAKE_REQUIRED_INCLUDES  "")
 SET(CMAKE_REQUIRED_LIBRARIES "")
@@ -272,6 +278,7 @@ int main(void)
 	return 0;
 }
 " )
+# Using CHECK_CXX_SOURCE_RUNS directly (instead of check_source_runs).
 CHECK_CXX_SOURCE_RUNS("${source}" cppad_max_num_threads_is_integer_ge_4)
 IF( NOT cppad_max_num_threads_is_integer_ge_4 )
 	MESSAGE(FATAL_ERROR
@@ -281,11 +288,9 @@ ENDIF( NOT cppad_max_num_threads_is_integer_ge_4 )
 # -----------------------------------------------------------------------------
 # cppad_has_mkstemp
 #
-SET(CMAKE_REQUIRED_INCLUDES  "")
-SET(CMAKE_REQUIRED_LIBRARIES "")
-SET(CMAKE_REQUIRED_FLAGS     )
 SET(source "
 # include <stdlib.h>
+# include <unistd.h>
 int main(void)
 {
 	char pattern[] = \"/tmp/fileXXXXXX\";
@@ -293,7 +298,20 @@ int main(void)
 	return 0;
 }
 " )
-CHECK_CXX_SOURCE_RUNS("${source}" cppad_has_mkstemp )
+check_source_runs("${source}" cppad_has_mkstemp )
+# -----------------------------------------------------------------------------
+# cppad_has_tmpname_s
+#
+SET(source "
+# include <stdio.h>
+int main(void)
+{	char filename[L_tmpnam_s ];
+	if( tmpnam_s(filename, L_tmpnam_s ) != 0 )
+		return 1;
+	return 0;
+}
+" )
+check_source_runs("${source}" cppad_has_tmpnam_s )
 # -----------------------------------------------------------------------------
 # Copy a file to another location and modify its contents.
 # configure_file(InputFile OutputFile [COPYONLY] [ESCAPE_QUOTES] [@ONLY])

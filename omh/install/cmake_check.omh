@@ -1,4 +1,4 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 
@@ -45,7 +45,6 @@ to use $code nmake$$ instead of $code make$$ in the commands
 above and below; see
 $cref/windows file extraction and testing
 	/download
-	/Compressed Archives
 	/Windows File Extraction and Testing
 /$$.
 

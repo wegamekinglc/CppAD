@@ -1,7 +1,7 @@
 #! /bin/bash -e
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the
@@ -19,7 +19,7 @@ fi
 echo "Checking for \$Id.*\$ in beginning of source code"
 echo "-------------------------------------------------------"
 ok="yes"
-list=`bin/list_files.sh | sed -n \
+list=`bin/ls_files.sh | sed -n \
 	-e '/^gpl-3.0.txt$/d' \
 	-e '/^epl-v10.txt$/d' \
 	-e '/cppad\/local\/config.h.in$/d' \
@@ -37,10 +37,15 @@ list=`bin/list_files.sh | sed -n \
 #
 for file in $list
 do
-	if ! head -2 $file | grep '$Id.*\$' > /dev/null
+	# deprecated link files have just one line
+	lines=`cat $file | wc -l`
+	if [ "$lines" != 1 ]
 	then
-		echo "$file does not have '\$Id.*\$' in first two lines"
-		ok="no"
+		if ! head -2 $file | grep '$Id.*\$' > /dev/null
+		then
+			echo "$file does not have '\$Id.*\$' in first two lines"
+			ok="no"
+		fi
 	fi
 done
 echo "-------------------------------------------------------"

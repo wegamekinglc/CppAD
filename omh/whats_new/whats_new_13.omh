@@ -74,7 +74,8 @@ $lnext
 There was a problem with deprecated $cref auto_tools$$
 (created when optional implicit constructor from any type was added).
 This has been fixed by adding the
-$cref/--with-implicit_ctor/auto_tools/--with-implicit_ctor/$$ option.
+$code --with-implicit_ctor$$ option
+(later changed to $cref/--with-deprecated/auto_tools/--with-deprecated/$$).
 $lend
 
 $head 12-27$$
@@ -99,15 +100,12 @@ $codei%
 	AD<%Base%>( %y% )
 %$$
 A deprecated alternative is to make this constructor implicit using the
-$cref/cppad_implicit_ctor_from_any_type
-	/cmake
-	/cppad_implicit_ctor_from_any_type
-/$$
+$cref/cppad_deprecated/cmake/cppad_deprecated/$$
 option during the install procedure.
 
 $head 12-26$$
 Document fact that
-$cref/monthly versions/download/Compressed Archives/Monthly Versions/$$
+$cref/monthly versions/download/Monthly Versions/$$
 of the CppAD compressed tar file last till the end of the year.
 
 $head 12-24$$
@@ -155,8 +153,10 @@ $$
 only two of the conditional expressions will be evaluated
 (one will be skipped depending on the result of $code left_z == right_z$$).
 For more details, see
-$cref/nesting conditional expressions/
-WishList/Optimizing Nested Conditional Expressions/$$.
+$cref/nesting conditional expressions
+	/wish_list
+	/Optimizing Nested Conditional Expressions
+/$$.
 
 $head 10-23$$
 $list number$$
@@ -186,7 +186,7 @@ of the conditional expressions there is.
 $lend
 
 $head 10-16$$
-Fix bug in $cref/Tracing/WishList/Tracing/$$ $cref atomic$$ functions.
+Fix bug in $cref/Tracing/wish_list/Tracing/$$ $cref atomic$$ functions.
 
 $head 10-15$$
 The documentation for the class

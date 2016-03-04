@@ -1,6 +1,6 @@
 $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -13,6 +13,9 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 $begin whats_new_15$$
 $dollar @$$
 $spell
+	addon
+	runge
+	lcppad
 	ind
 	const
 	enum
@@ -75,6 +78,123 @@ This section contains a list of the changes to CppAD during 2015
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 12-31$$
+The $cref download$$ instructions were modified to have more mention of
+using $cref/git/download/Current Version/Git/$$ and less mention of
+$cref/subversion/download/Current Version/Subversion/$$.
+
+$head 12-29$$
+Separate $cref to_string$$ from $cref ad_to_string$$ so that it
+can be used without the rest of CppAD; i.e.,
+by including
+$codei%
+	# include <cppad/utility/to_string.hpp>
+%$$
+
+
+$head 12-28$$
+$list number$$
+Add the $cref to_string$$ utility.
+$lnext
+Add $cref base_to_string$$ to the Base type requirements.
+$lnext
+A $cref/Base requirements/wish_list/Base Requirements/$$ item
+was added to the wish list.
+$lnext
+The $cref wish_list$$ item to
+reorganize the include directory has been removed.
+It was completed when the utilities was moved to $code cppad/utility$$; see
+$cref/11-30/whats_new_15/11-30/$$.
+$lend
+
+$head 12-08$$
+$list number$$
+A convention was included for addon
+$cref/library files/addon/Library Files/$$.
+$lnext
+Change new $cref utility$$ specifications to allow for individual file
+includes; e.g., $code <cppad/utility/vector.hpp>$$.
+$lend
+
+$head 12-01$$
+Fix problem with $cref auto_tools$$ install handling of the
+deprecated files.
+This included changing the auto-tools
+$code --with-implicit_ctor$$ option to
+$cref/--with-deprecated/auto_tools/--with-deprecated/$$.
+
+$head 11-30$$
+$list number$$
+The $code library$$ section has been moved to the
+$cref/utilities/utility/$$ section.
+In addition, the corresponding source code files in $code cppad$$
+have been moved to $code cppad/utility$$.
+$lnext
+The individual $cref utility$$ include files have been deprecated; see
+$cref include_deprecated$$.
+For example,
+$codep
+	# include <cppad/runge_45.hpp>
+$$
+You should us the utility include instead; i.e.,
+$codep
+	# include <cppad/utility.hpp>
+$$
+$lnext
+The $cref numeric_ad$$ routines where moved from the $code library$$
+the a separate documentation section.
+$lnext
+Change $code cmake_install_prefix$$ to
+$cref/cppad_prefix/cmake/cppad_prefix/$$ and
+Change $code cmake_install_postfix$$ to
+$cref/cppad_postfix/cmake/cppad_postfix/$$.
+$lnext
+Change $code cppad_implicit_ctor_from_any_type$$ to
+$cref/cppad_deprecated/cmake/cppad_deprecated/$$ and
+change its specifications to refer to all deprecated features.
+$lend
+
+$head 11-25$$
+$list number$$
+CppAD now installs the object library
+$codep
+	-lcppad_lib
+$$
+to be included when linking.
+Currently, it is only required when
+$cref colpack_prefix$$ is specified on the
+$cref/cmake command/cmake/CMake Command/$$.
+$lnext
+It is no longer necessary to compile and link the file
+$codep
+	cppad_colpack.cpp
+$$
+when $cref colpack_prefix$$
+is specified during the install process; see
+$cref/cmake command/cmake/CMake Command/$$.
+(It is included in $code cppad_lib$$).
+$lend
+
+$head 11-24$$
+$list number$$
+The $code check_for_nan$$ output now includes the first dependent
+variable
+$cref/index/check_for_nan/Error Message/index/$$
+that is $code nan$$ in its error message.
+$lnext
+Change the
+$cref/deprecated include/include_deprecated/$$ reference $code pow_int.h$$
+to $code pow_int.hpp$$ in $cref pow_int$$.
+$lend
+
+$head 11-14$$
+There was a bug in the new
+$cref/get_check_for_nan/check_for_nan/get_check_for_nan/$$
+feature that writes independent variable values to a temporary file;
+see $cref/11-06/whats_new_15/11-06/$$ below.
+This has been fixed.
+
+
 $head 11-08$$
 $list number$$
 Fixed a bug in the $cref RevSparseJac$$ routine.
@@ -107,7 +227,7 @@ There was a mistake in the documentation for $cref index_sort$$,
 the argument $cref/ind/index_sort/ind/$$ is not $code const$$.
 
 $head 10-16$$
-Add a $cref/PrintFor optimization/WishList/PrintFor Optimization/$$
+Add a $cref/PrintFor optimization/wish_list/PrintFor Optimization/$$
 item to the wish list.
 
 $head 10-06$$
@@ -122,7 +242,7 @@ $code CPPAD_NUMERIC_LIMITS$$, and
 $code CPPAD_STANDARD_MATH_UNARY$$, to
 the $cref preprocessor$$ section.
 In addition, remove checking that all user API preprocessor symbols
-are in this section form the $cref WishList$$.
+are in this section form the $cref wish_list$$.
 $lnext
 Alphabetize and make some corrections to
 $cref/list of examples/ListAllExamples/$$.
@@ -150,7 +270,7 @@ $lnext
 The $cref/nan(zero)/nan/nan(zero)/$$ function computes a $code nan$$ by
 dividing zero by zero which results in a warning when using some compilers.
 This function has been deprecated and the corresponding
-$cref WishList$$ item has been removed.
+$cref wish_list$$ item has been removed.
 $lnext
 Move documentation for $cref zdouble$$ to $cref deprecated$$ section
 and documentation for $cref numeric_limits$$ to $cref ADValued$$.
@@ -184,7 +304,7 @@ It is not longer an error to take the derivative of the square root function,
 because the result may be the part of a
 $cref/conditional expression/CondExp/$$ that is not used.
 $lnext
-Update the $cref WishList$$ section.
+Update the $cref wish_list$$ section.
 $lend
 
 
@@ -236,7 +356,6 @@ $head 09-21$$
 Improve discussion of
 $cref/windows download and testing
 	/download
-	/Compressed Archives
 	/Windows File Extraction and Testing
 /$$.
 
@@ -735,7 +854,7 @@ $codei%
 %$$
 and was not even defined when $code NDEBUG$$ was defined.
 There was a resulting speed effect for this; see the wish list
-$cref/compare change/WishList/Comparison Changes and Optimization/$$ entry.
+$cref/compare change/wish_list/Comparison Changes and Optimization/$$ entry.
 
 $lnext
 The date when some features where deprecated has been added to the
@@ -756,7 +875,7 @@ $cref/sparse_hessian/link_sparse_hessian/$$ tests,
 the sparse function is only chosen once
 (it used to be different for every repeat).
 This reduced the amount of computation not connected what is being tested.
-It also make the $cref/onetape/speed_main/option_list/onetape/$$ a valid
+It also make the $cref/onetape/speed_main/Global Options/onetape/$$ a valid
 option for these tests.
 $lnext
 There was a bug in the

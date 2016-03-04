@@ -1,9 +1,9 @@
 // $Id$
-# ifndef CPPAD_BASE_REQUIRE_INCLUDED
-# define CPPAD_BASE_REQUIRE_INCLUDED
+# ifndef CPPAD_BASE_REQUIRE_HPP
+# define CPPAD_BASE_REQUIRE_HPP
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -132,7 +132,7 @@ namespace CppAD {
 }
 %$$
 where the macro is defined by
-$codep */
+$srccode%cpp% */
 # define CPPAD_AZMUL(Base) \
     inline Base azmul(const Base& x, const Base& y) \
     {   Base zero(0.0);   \
@@ -140,7 +140,7 @@ $codep */
             return zero;  \
         return x * y;     \
     }
-/* $$
+/* %$$
 
 $childtable%
 	omh/base_require/base_member.omh%
@@ -149,6 +149,8 @@ $childtable%
 	omh/base_require/base_ordered.omh%
 	cppad/local/base_std_math.hpp%
 	cppad/local/base_limits.hpp%
+	cppad/local/base_to_string.hpp%
+	cppad/local/base_hash.hpp%
 	omh/base_require/base_example.omh
 %$$
 
@@ -156,7 +158,7 @@ $end
 */
 
 // definitions that must come before base implementations
-# include <cppad/error_handler.hpp>
+# include <cppad/utility/error_handler.hpp>
 # include <cppad/local/define.hpp>
 # include <cppad/local/cppad_assert.hpp>
 # include <cppad/local/declare_ad.hpp>
@@ -165,6 +167,8 @@ $end
 # include <cppad/local/base_cond_exp.hpp>
 # include <cppad/local/base_std_math.hpp>
 # include <cppad/local/base_limits.hpp>
+# include <cppad/local/base_to_string.hpp>
+# include <cppad/local/base_hash.hpp>
 
 // must define template class numeric_limits before the base cases
 # include <cppad/local/numeric_limits.hpp>

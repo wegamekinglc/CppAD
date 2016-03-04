@@ -1,6 +1,6 @@
 dnl $Id$
 dnl ---------------------------------------------------------------------------
-dnl CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+dnl CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 dnl
 dnl CppAD is distributed under multiple licenses. This distribution is under
 dnl the terms of the
@@ -12,7 +12,7 @@ dnl ---------------------------------------------------------------------------
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl   package   version              bug-report
-AC_INIT([cppad], [20150601], [cppad@list.coin-or.org])
+AC_INIT([cppad], [20160301], [cppad@list.coin-or.org])
 AM_SILENT_RULES([yes])
 
 dnl By defalut disable maintainer mode when running configure;
@@ -98,6 +98,22 @@ AC_ARG_WITH(PrintFor, AC_HELP_STRING(
 )
 if test "$PrintFor" = "yes" ; then
     AC_MSG_ERROR([--with-PrintFor not necessary, see install instructions.])
+fi
+AC_ARG_WITH(sparse_set,
+	AC_HELP_STRING([--with-sparse_set], [no longer available]),
+	[sparse_set="yes"],
+	[sparse_set="no"]
+)
+if test "$sparse_set" = "yes" ; then
+	AC_MSG_ERROR([--with-sparse_set is no longer available])
+fi
+AC_ARG_WITH(sparse_list,
+	AC_HELP_STRING([--with-sparse_list], [no longer necessary]),
+	[sparse_set="yes"],
+	[sparse_set="no"]
+)
+if test "$sparse_set" = "yes" ; then
+	AC_MSG_ERROR([--with-sparse_set is no longer necessary])
 fi
 dnl --------------------------------------------------------------------------
 AC_MSG_NOTICE([******  Check command line arguments that are used ***********])
@@ -187,47 +203,22 @@ else
 	AC_SUBST(cppad_eigenvector, 0)
 fi
 
-dnl Are we using sparse_set or sparse_list ----------------------------
-AC_MSG_CHECKING([--with-sparse_set])
-AC_ARG_WITH(sparse_set,
-	AC_HELP_STRING([--with-sparse_set], [default is not specified]),
-	[sparse_set="yes"],
-	[sparse_set="no"]
-)
-AC_MSG_RESULT([$sparse_set])
-dnl
-AC_MSG_CHECKING([--with-sparse_list])
-AC_ARG_WITH(sparse_list,
-	AC_HELP_STRING([--with-sparse_list], [default is not specified]),
-	[sparse_list="yes"],
-	[sparse_list="no"]
-)
-AC_MSG_RESULT([$sparse_list])
-if test "$sparse_set" = "yes" ; then
-	if test "$sparse_list" == "yes" ; then
-		AC_MSG_ERROR([cannot --with both sparse_set and sparse_list])
-	fi
-	AC_SUBST(cppad_internal_sparse_set, sparse_set)
-else
-	AC_SUBST(cppad_internal_sparse_set, sparse_list)
-fi
-
-
-dnl Are we including an implicit constructor from any type -----------
-AC_MSG_CHECKING([--with-implicit_ctor])
-AC_ARG_WITH(implicit_ctor,
+dnl Are we including deprecated features in the install-----------
+AC_MSG_CHECKING([--with-deprecated])
+AC_ARG_WITH(deprecated,
 	AC_HELP_STRING(
-		[--with-implicit_ctor],
+		[--with-deprecated],
 		[include an implicit AD<Base> constructor from any type]
 	),
-	[implicit_ctor="yes"],
-	[implicit_ctor="no"]
+	[deprecated="yes"],
+	[deprecated="no"]
 )
-AC_MSG_RESULT([$implicit_ctor])
-if test "$implicit_ctor" = "yes" ; then
-	AC_SUBST(cppad_implicit_ctor_from_any_type, "1")
+AC_MSG_RESULT([$deprecated])
+AM_CONDITIONAL(CppAD_DEPRECATED, test "$deprecated" = 'yes' )
+if test "$deprecated" = "yes" ; then
+	AC_SUBST(cppad_deprecated, "1")
 else
-	AC_SUBST(cppad_implicit_ctor_from_any_type, "0")
+	AC_SUBST(cppad_deprecated, "0")
 fi
 
 dnl The postfix directiory corresponding to CppAD ------------------------
@@ -486,10 +477,10 @@ if test "$have_ar" = 'no'; then
 	)
 fi
 
-dnl test_one.sh.in uses cppad_cxx_flags and cppad_has_colpack
+dnl test_one.sh.in settings for cppad_cxx_flags
 AC_SUBST(cppad_cxx_flags, "-g -O0")
 
-dnl auto-tools version does not use ../cppad/local/cppad_colpack.cpp
+dnl auto-tools version does not colpack
 AC_SUBST(cppad_has_colpack, 0)
 
 dnl auto-tools version will assumes mkstemp is available.
@@ -547,8 +538,8 @@ fi
 
 
 
-dnl Have configure check source directory to see if cppad/CppAD.h is there
-AC_CONFIG_SRCDIR(cppad/CppAD.h)
+dnl Have configure check source directory to see if cppad/cppad.hpp is there
+AC_CONFIG_SRCDIR(cppad/cppad.hpp)
 
 dnl AC_PROG_CP outputs CPP as command to run C preprocessor
 AC_PROG_CPP

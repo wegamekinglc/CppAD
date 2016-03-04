@@ -1,6 +1,6 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -18,23 +18,18 @@ $spell
 $$
 
 $section Fast Multi-Threading Memory Allocator: Example and Test$$
+$mindex openmp allocation pthread boost multi-thread$$
 
-$index openmp, memory allocation$$
-$index pthread, memory allocation$$
-$index boost, multi-thread memory allocation$$
-$index multi-thread, memory allocation$$
-$index example, memory allocation$$
-$index test, memory allocation$$
 
 $code
-$verbatim%example/thread_alloc.cpp%0%// BEGIN C++%// END C++%1%$$
+$srcfile%example/thread_alloc.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
 */
 // BEGIN C++
-# include <cppad/thread_alloc.hpp>
-# include <cppad/memory_leak.hpp>
+# include <cppad/utility/thread_alloc.hpp>
+# include <cppad/utility/memory_leak.hpp>
 # include <vector>
 # include <limits>
 

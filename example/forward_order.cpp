@@ -1,6 +1,6 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -17,12 +17,9 @@ $spell
 $$
 
 $section Forward Mode: Example and Test of Multiple Orders$$
-$index forward, multiple orders$$
-$index multiple, forward orders$$
-$index order, multiple forward$$
 
 $code
-$verbatim%example/forward_order.cpp%0%// BEGIN C++%// END C++%1%$$
+$srcfile%example/forward_order.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end

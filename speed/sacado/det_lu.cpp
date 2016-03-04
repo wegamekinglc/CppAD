@@ -1,9 +1,9 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -30,52 +30,47 @@ $spell
 $$
 
 $section Sacado Speed: Gradient of Determinant Using Lu Factorization$$
+$mindex link_det_lu speed matrix factor$$
 
-$index link_det_lu, sacado$$
-$index sacado, link_det_lu$$
-$index speed, sacado$$
-$index sacado, speed$$
-$index lu, speed sacado$$
-$index matrix, factor speed sacado$$
-$index factor, matrix speed sacado$$
 
 $head Specifications$$
 See $cref link_det_lu$$.
 
 $head Implementation$$
-$codep */
+$srccode%cpp% */
 # include <Sacado.hpp>
 # include <cppad/speed/det_by_lu.hpp>
 # include <cppad/speed/uniform_01.hpp>
-# include <cppad/vector.hpp>
+# include <cppad/utility/vector.hpp>
 
 // list of possible options
-extern bool global_memory, global_onetape, global_atomic, global_optimize;
+# include <map>
+extern std::map<std::string, bool> global_option;
 
 bool link_det_lu(
-	size_t                     size     , 
-	size_t                     repeat   , 
+	size_t                     size     ,
+	size_t                     repeat   ,
 	CppAD::vector<double>     &matrix   ,
 	CppAD::vector<double>     &gradient )
 {
 	// speed test global option values
-	if( global_onetape || global_atomic )
+	if( global_option["onetape"] || global_option["atomic"] )
 		return false;
-	if( global_memory || global_optimize )
+	if( global_option["memory"] || global_option["optimize"] )
 		return false;
 	// -----------------------------------------------------
 	// setup
 	//
 	// object for computing determinant
-	typedef Sacado::Rad::ADvar<double>   ADScalar; 
-	typedef CppAD::vector<ADScalar>      ADVector; 
+	typedef Sacado::Rad::ADvar<double>   ADScalar;
+	typedef CppAD::vector<ADScalar>      ADVector;
 	CppAD::det_by_lu<ADScalar>           Det(size);
 
 	size_t i;                // temporary index
 	size_t n = size * size;  // number of independent variables
 	ADScalar   detA;         // AD value of the determinant
-	ADVector   A(n);         // AD version of matrix 
-	
+	ADVector   A(n);         // AD version of matrix
+
 	// ------------------------------------------------------
 	while(repeat--)
 	{	// get the next matrix
@@ -98,6 +93,6 @@ bool link_det_lu(
 	// ---------------------------------------------------------
 	return true;
 }
-/* $$
+/* %$$
 $end
 */

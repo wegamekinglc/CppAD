@@ -1,6 +1,6 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -14,7 +14,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # include <iostream>
 
 // memory leak checker
-# include <cppad/thread_alloc.hpp>
+# include <cppad/utility/thread_alloc.hpp>
 
 // prototype external compiled tests (this line expected by bin/new_test.sh)
 extern bool abs(void);
@@ -53,12 +53,14 @@ extern bool erf(void);
 extern bool Exp(void);
 extern bool expm1(void);
 extern bool ForHess(void);
+extern bool for_sparse_hes(void);
 extern bool for_sparse_jac(void);
 extern bool Forward(void);
 extern bool forward_dir(void);
 extern bool forward_order(void);
 extern bool FromBase(void);
 extern bool FunCheck(void);
+extern bool hes_sparsity(void);
 extern bool ipopt_solve(void);
 extern bool jacobian(void);
 extern bool log(void);
@@ -88,7 +90,6 @@ extern bool Pow(void);
 extern bool PowInt(void);
 extern bool print_for(void);
 extern bool reverse(void);
-extern bool rev_sparse_hes(void);
 extern bool rev_sparse_jac(void);
 extern bool RevTwo(void);
 extern bool RombergOne(void);
@@ -107,6 +108,7 @@ extern bool Sub(void);
 extern bool SubEq(void);
 extern bool SubZero(void);
 extern bool tan(void);
+extern bool to_string(void);
 extern bool test_vector(void);
 extern bool track_new_del(void);
 extern bool Value(void);
@@ -114,6 +116,9 @@ extern bool VecAD(void);
 extern bool VecADPar(void);
 extern bool VecUnary(void);
 extern bool zdouble(void);
+
+// tests in local subdirectory
+extern bool vector_set(void);
 
 namespace {
 	// function that runs one test
@@ -180,12 +185,14 @@ int main(void)
 	ok &= Run( Exp,             "Exp"            );
 	ok &= Run( expm1,           "expm1"          );
 	ok &= Run( ForHess,         "ForHess"        );
+	ok &= Run( for_sparse_hes,  "for_sparse_hes" );
 	ok &= Run( for_sparse_jac,  "for_sparse_jac" );
 	ok &= Run( Forward,         "Forward"        );
 	ok &= Run( forward_dir,     "forward_dir"    );
 	ok &= Run( forward_order,   "forward_order"  );
 	ok &= Run( FromBase,        "FromBase"       );
 	ok &= Run( FunCheck,        "FunCheck"       );
+	ok &= Run( hes_sparsity,    "hes_sparsity"   );
 	ok &= Run( jacobian,        "jacobian"       );
 	ok &= Run( log,             "log"            );
 	ok &= Run( log10,           "log10"          );
@@ -214,7 +221,6 @@ int main(void)
 	ok &= Run( PowInt,          "PowInt"         );
 	ok &= Run( print_for,       "print_for"      );
 	ok &= Run( reverse,         "reverse"        );
-	ok &= Run( rev_sparse_hes,  "rev_sparse_hes" );
 	ok &= Run( rev_sparse_jac,  "rev_sparse_jac" );
 	ok &= Run( RevTwo,          "RevTwo"         );
 	ok &= Run( RombergOne,      "RombergOne"     );
@@ -233,6 +239,7 @@ int main(void)
 	ok &= Run( SubEq,           "SubEq"          );
 	ok &= Run( SubZero,         "SubZero"        );
 	ok &= Run( tan,             "tan"            );
+	ok &= Run( to_string,       "to_string"      );
 	ok &= Run( track_new_del,   "track_new_del"  );
 	ok &= Run( Value,           "Value"          );
 	ok &= Run( VecAD,           "VecAD"          );
@@ -254,6 +261,9 @@ int main(void)
 # if ! CPPAD_EIGENVECTOR
 	ok &= Run( test_vector, "test_vector" );
 # endif
+
+	// local sub-directory
+	ok &= Run( test_vector,      "test_vector"   );
 
 	// check for errors
 	using std::cout;

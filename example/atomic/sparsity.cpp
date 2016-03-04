@@ -1,6 +1,6 @@
 // $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -33,16 +33,16 @@ This example only uses pack sparsity patterns.
 $nospell
 
 $head Start Class Definition$$
-$codep */
+$srccode%cpp% */
 # include <cppad/cppad.hpp>
 namespace {                 // isolate items below to this file
 using CppAD::vector;        // abbreviate as vector
 using CppAD::vectorBool;    // abbreviate as vectorBool
 //
 class atomic_sparsity : public CppAD::atomic_base<double> {
-/* $$
+/* %$$
 $head Constructor $$
-$codep */
+$srccode%cpp% */
 	public:
 	// constructor
 	atomic_sparsity(const std::string& name) :
@@ -50,9 +50,9 @@ $codep */
 	CppAD::atomic_base<double>(name, pack_sparsity_enum )
 	{ }
 	private:
-/* $$
+/* %$$
 $head forward$$
-$codep */
+$srccode%cpp% */
 	// forward
 	virtual bool forward(
 		size_t                    p ,
@@ -87,9 +87,9 @@ $codep */
 		}
 		return ok;
 	}
-/* $$
+/* %$$
 $head for_sparse_jac$$
-$codep */
+$srccode%cpp% */
 	// for_sparse_jac
 	virtual bool for_sparse_jac(
 		size_t                          p ,
@@ -109,9 +109,9 @@ $codep */
 		}
 		return true;
 	}
-/* $$
+/* %$$
 $head rev_sparse_jac$$
-$codep */
+$srccode%cpp% */
 	virtual bool rev_sparse_jac(
 		size_t                                p  ,
 		const vectorBool&                     rt ,
@@ -126,15 +126,45 @@ $codep */
 		// sparsity for S(x)^T = f'(x)^T * R^T = [ 0, x0 ] * R^T
 		//                                       [ 1, 0  ]
 		for(size_t j = 0; j < p; j++)
-		{	st[ 0 * p + j ] = rt[ 1 * m + j ];
-			st[ 1 * p + j ] = rt[ 1 * m + j ];
-			st[ 2 * p + j ] = rt[ 0 * m + j ];
+		{	st[ 0 * p + j ] = rt[ 1 * p + j ];
+			st[ 1 * p + j ] = rt[ 1 * p + j ];
+			st[ 2 * p + j ] = rt[ 0 * p + j ];
 		}
 		return true;
 	}
-/* $$
+/* %$$
+$srccode%cpp% */
+	virtual bool for_sparse_hes(
+		const vector<bool>&                   vx,
+		const vector<bool>&                   r ,
+		const vector<bool>&                   s ,
+		vectorBool&                           h )
+	{	size_t n = r.size();
+		size_t m = s.size();
+		assert( h.size() == n * n );
+		assert( n == 3 );
+		assert( m == 2 );
+
+		// iniialize h as empty
+		for(size_t i = 0; i < n * n; i++)
+			h[i] = false;
+
+		// only f_1 has a non-zero hessian
+		if( ! s[1] )
+			return true;
+
+		// only the cross term between x[0] and x[1] is non-zero
+		if( ! ( r[0] & r[1] ) )
+			return true;
+
+		// set the possibly non-zero terms in the hessian
+		h[ 0 * n + 1 ] = h[ 1 * n + 0 ] = true;
+
+		return true;
+	}
+/* %$$
 $head rev_sparse_hes$$
-$codep */
+$srccode%cpp% */
 	virtual bool rev_sparse_hes(
 		const vector<bool>&                   vx,
 		const vector<bool>&                   s ,
@@ -184,28 +214,28 @@ $codep */
 		}
 		return true;
 	}
-/* $$
+/* %$$
 $head End Class Definition$$
-$codep */
+$srccode%cpp% */
 }; // End of atomic_sparsity class
 }  // End empty namespace
 
-/* $$
+/* %$$
 $head Use Atomic Function$$
-$codep */
+$srccode%cpp% */
 bool sparsity(void)
 {	bool ok = true;
 	using CppAD::AD;
 	using CppAD::NearEqual;
 	double eps = 10. * std::numeric_limits<double>::epsilon();
-/* $$
+/* %$$
 $subhead Constructor$$
-$codep */
+$srccode%cpp% */
 	// Create the atomic get_started object
 	atomic_sparsity afun("atomic_sparsity");
-/* $$
+/* %$$
 $subhead Recording$$
-$codep */
+$srccode%cpp% */
 	size_t n = 3;
 	size_t m = 2;
 	vector< AD<double> > ax(n), ay(m);
@@ -226,9 +256,9 @@ $codep */
 	ok &= NearEqual(ay[0] , ax[2],  eps, eps);
 	ok &= NearEqual(ay[1] , ax[0] * ax[1],  eps, eps);
 
-/* $$
+/* %$$
 $subhead forsparse_jac and rev_sparse_jac$$
-$codep */
+$srccode%cpp% */
 	for(size_t dir = 0; dir < 2; dir++)
 	{	size_t ell;
 		if( dir == 0 )
@@ -257,9 +287,25 @@ $codep */
 		ok  &= s[1 * n + 1] == true;
 		ok  &= s[1 * n + 2] == false;
 	}
-/* $$
+/* %$$
+$subhead for_sparse_hes$$
+$srccode%cpp% */
+	{	vectorBool s(m), r(n), h(n * n);
+		s[0] = s[1] = true;
+		r[0] = r[1] = r[2] = true;
+		h    = f.ForSparseHes(r, s);
+		for(size_t i = 0; i < n; i++)
+		{	for(size_t j = 0; j < n; j++)
+			{	bool check = false;
+				check     |= (i == 0) && (j == 1);
+				check     |= (j == 0) && (i == 1);
+				ok        &= h[ i * n + j] == check;
+			}
+		}
+	}
+/* %$$
 $subhead rev_sparse_hes$$
-$codep */
+$srccode%cpp% */
 	vectorBool s(m), h(n * n);
 	s[0] = true;
 	s[1] = true;
@@ -275,7 +321,7 @@ $codep */
 	//
 	return ok;
 }
-/* $$
+/* %$$
 $$ $comment end nospell$$
 $end
 */

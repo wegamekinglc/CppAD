@@ -188,10 +188,10 @@ CYGPATH_W = @CYGPATH_W@
 
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
-# the terms of the 
+# the terms of the
 #                     Eclipse Public License Version 1.0.
 #
 # A copy of this license is included in the COPYING file of this distribution.
@@ -274,6 +274,7 @@ cppad_SOURCE_DIR = @cppad_SOURCE_DIR@
 cppad_boostvector = @cppad_boostvector@
 cppad_cppadvector = @cppad_cppadvector@
 cppad_cxx_flags = @cppad_cxx_flags@
+cppad_deprecated = @cppad_deprecated@
 cppad_description = @cppad_description@
 cppad_eigenvector = @cppad_eigenvector@
 cppad_has_colpack = @cppad_has_colpack@
@@ -283,8 +284,6 @@ cppad_has_high_resolution_clock = @cppad_has_high_resolution_clock@
 cppad_has_mkstemp = @cppad_has_mkstemp@
 cppad_has_nullptr = @cppad_has_nullptr@
 cppad_has_rvalue = @cppad_has_rvalue@
-cppad_implicit_ctor_from_any_type = @cppad_implicit_ctor_from_any_type@
-cppad_internal_sparse_set = @cppad_internal_sparse_set@
 cppad_max_num_threads = @cppad_max_num_threads@
 cppad_pkgconfig_cflags = @cppad_pkgconfig_cflags@
 cppad_pkgconfig_libs = @cppad_pkgconfig_libs@
@@ -342,7 +341,7 @@ top_srcdir = @top_srcdir@
 
 #
 # Microsoft project files
-EXTRA_DIST = test.sh 
+EXTRA_DIST = test.sh
 #
 AM_CPPFLAGS = -I. $(CPPAD_INCLUDE) $(BOOST_INCLUDE) $(EIGEN_INCLUDE)
 #

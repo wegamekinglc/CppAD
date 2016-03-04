@@ -1,6 +1,6 @@
 // $Id$
-# ifndef CPPAD_CHECK_FOR_NAN_INCLUDED
-# define CPPAD_CHECK_FOR_NAN_INCLUDED
+# ifndef CPPAD_CHECK_FOR_NAN_HPP
+# define CPPAD_CHECK_FOR_NAN_HPP
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
@@ -32,8 +32,8 @@ $icode%b% = %f%.check_for_nan()
 $codei%get_check_for_nan(%vec%, %file%)
 %$$
 
-$head Purpose$$
-If $code NDEBUG$$ is not defined and
+$head Debugging$$
+If $code NDEBUG$$ is not defined, and
 the result of a $cref/forward/forward_order/$$ or $cref/reverse/reverse_any/$$
 calculation contains a  $cref nan$$,
 CppAD can halt with an error message.
@@ -64,7 +64,7 @@ The value for this setting after construction of $icode f$$) is true.
 The value of this setting is not affected by calling
 $cref Dependent$$ for this function object.
 
-$head Debugging$$
+$head Error Message$$
 If this error is detected during zero order forward mode,
 the values of the independent variables that resulted in the $code nan$$
 are written to a temporary binary file.
@@ -85,6 +85,12 @@ $code '\n'$$.
 The value of $icode file_name$$ is the name of the temporary file
 that contains the dependent variable values.
 
+$subhead index$$
+The error message will contain the text
+$codei%index = %index%$$ followed by the newline character $code '\n'$$.
+The value of $icode index$$ is the lowest dependent variable index
+that has the value $code nan$$.
+
 $head get_check_for_nan$$
 This routine can be used to get the independent variable
 values that result in a $code nan$$.
@@ -95,7 +101,7 @@ $codei%
 	CppAD::vector<%Base%>& %vec%
 %$$
 It size must be equal to the corresponding value of
-$cref/vector_size/check_for_nan/Debugging/vector_size/$$
+$cref/vector_size/check_for_nan/Error Message/vector_size/$$
 in the corresponding error message.
 The input value of its elements does not matter.
 Upon return, it will contain the values for the independent variables,
@@ -111,9 +117,8 @@ $codei%
 	const std::string& %file%
 %$$
 It must be the value of
-$cref/file_name/check_for_nan/Debugging/file_name/$$
+$cref/file_name/check_for_nan/Error Message/file_name/$$
 in the corresponding error message.
-
 
 $head Example$$
 $children%
@@ -127,11 +132,21 @@ It returns true if it succeeds and false otherwise.
 $end
 */
 
-# include <cppad/vector.hpp>
+# include <cppad/utility/vector.hpp>
 # include <cppad/configure.hpp>
 # include <fstream>
+
+# if CPPAD_HAS_MKSTEMP
 # include <stdlib.h>
 # include <unistd.h>
+# else
+# if CPPAD_HAS_TMPNAM_S
+# include <stdio.h>
+# else
+# include <stdlib.h>
+# endif
+# endif
+
 
 namespace CppAD { // BEGIN_CPPAD_NAMESPACE
 
@@ -147,7 +162,18 @@ void put_check_for_nan(const CppAD::vector<Base>& vec, std::string& file_name)
 	write(fd, char_ptr, char_size);
 	close(fd);
 # else
-	file_name = tmpnam( CPPAD_NULL );
+# if CPPAD_HAS_TMPNAM_S
+		std::vector<char> name(L_tmpnam_s);
+		if( tmpnam_s( name.data(), L_tmpnam_s ) != 0 )
+		{	CPPAD_ASSERT_KNOWN(
+				false,
+				"Cannot create a temporary file name"
+			);
+		}
+		file_name = name.data();
+# else
+		file_name = tmpnam( CPPAD_NULL );
+# endif
 	std::fstream file_out(file_name.c_str(), std::ios::out|std::ios::binary );
 	file_out.write(char_ptr, char_size);
 	file_out.close();

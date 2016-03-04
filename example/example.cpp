@@ -1,6 +1,6 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -22,7 +22,7 @@ $head Running Tests$$
 To build this program and run its correctness tests see $cref cmake_check$$.
 
 $code
-$verbatim%example/example.cpp%0%// BEGIN C++%// END C++%1%$$
+$srcfile%example/example.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
@@ -39,7 +39,7 @@ $end
 # include <string>
 
 // memory utility
-# include <cppad/thread_alloc.hpp>
+# include <cppad/utility/thread_alloc.hpp>
 
 // prototype external compiled tests (this line expected by bin/new_test.sh)
 extern bool abort_recording(void);
@@ -91,6 +91,7 @@ extern bool exp(void);
 extern bool expm1(void);
 extern bool ForOne(void);
 extern bool ForTwo(void);
+extern bool for_sparse_hes(void);
 extern bool ForSparseJac(void);
 extern bool Forward(void);
 extern bool forward_dir(void);
@@ -149,7 +150,7 @@ extern bool reverse_one(void);
 extern bool reverse_three(void);
 extern bool reverse_two(void);
 extern bool RevOne(void);
-extern bool RevSparseHes(void);
+extern bool rev_sparse_hes(void);
 extern bool RevSparseJac(void);
 extern bool RevTwo(void);
 extern bool RombergMul(void);
@@ -175,6 +176,7 @@ extern bool Tan(void);
 extern bool Tanh(void);
 extern bool TapeIndex(void);
 extern bool thread_alloc(void);
+extern bool to_string(void);
 extern bool UnaryMinus(void);
 extern bool UnaryPlus(void);
 extern bool Value(void);
@@ -261,6 +263,7 @@ int main(void)
 	ok &= Run( Forward,           "Forward"          );
 	ok &= Run( forward_dir,       "forward_dir"      );
 	ok &= Run( forward_order,     "forward_order"    );
+	ok &= Run( for_sparse_hes,    "for_sparse_hes"   );
 	ok &= Run( ForSparseJac,      "ForSparseJac"     );
 	ok &= Run( fun_assign,        "fun_assign"       );
 	ok &= Run( FunCheck,          "FunCheck"         );
@@ -313,7 +316,7 @@ int main(void)
 	ok &= Run( reverse_three,     "reverse_three"    );
 	ok &= Run( reverse_two,       "reverse_two"      );
 	ok &= Run( RevOne,            "RevOne"           );
-	ok &= Run( RevSparseHes,      "RevSparseHes"     );
+	ok &= Run( rev_sparse_hes,    "rev_sparse_hes"   );
 	ok &= Run( RevSparseJac,      "RevSparseJac"     );
 	ok &= Run( RevTwo,            "RevTwo"           );
 	ok &= Run( RombergMul,        "RombergMul"       );
@@ -339,6 +342,7 @@ int main(void)
 	ok &= Run( Tanh,              "Tanh"             );
 	ok &= Run( TapeIndex,         "TapeIndex"        );
 	ok &= Run( thread_alloc,      "thread_alloc"     );
+	ok &= Run( to_string,         "to_string"        );
 	ok &= Run( UnaryMinus,        "UnaryMinus"       );
 	ok &= Run( UnaryPlus,         "UnaryPlus"        );
 	ok &= Run( Value,             "Value"            );

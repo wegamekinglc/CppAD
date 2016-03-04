@@ -1,9 +1,9 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -26,44 +26,40 @@ $spell
 $$
 
 $section Sacado Speed: Matrix Multiplication$$
+$mindex link_mat_mul speed multiply$$
 
-$index link_mat_mul, sacado$$
-$index sacado, link_mat_mul$$
-$index speed, sacado$$
-$index sacado, speed$$
-$index matrix, speed sacado$$
-$index multiply, speed sacado$$
 
 $head Specifications$$
 See $cref link_mat_mul$$.
 
 $head Implementation$$
 
-$codep */
+$srccode%cpp% */
 # include <Sacado.hpp>
-# include <cppad/vector.hpp>
+# include <cppad/utility/vector.hpp>
 # include <cppad/speed/mat_sum_sq.hpp>
 # include <cppad/speed/uniform_01.hpp>
 
 // list of possible options
-extern bool global_memory, global_onetape, global_atomic, global_optimize;
+# include <map>
+extern std::map<std::string, bool> global_option;
 
 bool link_mat_mul(
-	size_t                           size     , 
-	size_t                           repeat   , 
+	size_t                           size     ,
+	size_t                           repeat   ,
 	CppAD::vector<double>&           x        ,
 	CppAD::vector<double>&           z        ,
 	CppAD::vector<double>&           dz       )
 {
 	// speed test global option values
-	if( global_memory || global_onetape || global_atomic || global_optimize )
+	if( global_option["memory"] || global_option["onetape"] || global_option["atomic"] || global_option["optimize"] )
 		return false;
 	// -----------------------------------------------------
 	// setup
 
 	// object for computing determinant
-	typedef Sacado::Rad::ADvar<double>    ADScalar; 
-	typedef CppAD::vector<ADScalar>       ADVector; 
+	typedef Sacado::Rad::ADvar<double>    ADScalar;
+	typedef CppAD::vector<ADScalar>       ADVector;
 
 	size_t j;                // temporary index
 	size_t m = 1;            // number of dependent variables
@@ -72,7 +68,7 @@ bool link_mat_mul(
 	ADVector   Y(n);         // Store product matrix
 	ADVector   Z(m);         // AD range space vector
 	ADScalar   f;
-	
+
 	// ------------------------------------------------------
 	while(repeat--)
 	{	// get the next matrix
@@ -101,6 +97,6 @@ bool link_mat_mul(
 	// ---------------------------------------------------------
 	return true;
 }
-/* $$
+/* %$$
 $end
 */

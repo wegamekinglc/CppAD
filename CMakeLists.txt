@@ -1,6 +1,6 @@
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the
@@ -17,7 +17,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 # cppad_version is used by set_version.sh to get the version number.
-SET(cppad_version      "20150601" )
+SET(cppad_version      "20160301" )
 SET(cppad_url          "http://www.coin-or.org/CppAD" )
 SET(cppad_description  "Differentiation of C++ Algorithms" )
 
@@ -90,18 +90,28 @@ command_line_arg(cmake_install_libdirs lib STRING
 	"directories, below prefix, where cmake installs library files"
 )
 # -----------------------------------------------------------------------------
-# cmake_install_prefix
-command_line_arg(cmake_install_prefix /usr PATH
+# cppad_prefix
+command_line_arg(cppad_prefix /usr PATH
 	"cppad install prefix"
 )
-SET(CMAKE_INSTALL_PREFIX "${cmake_install_prefix}"
-	CACHE PATH "value copied from cmake_install_prefix" FORCE
+SET(CMAKE_INSTALL_PREFIX "${cppad_prefix}"
+	CACHE PATH "value copied from cppad_prefix" FORCE
 )
+IF( cmake_install_prefix )
+	MESSAGE(FATAL_ERROR
+		"cmake_install_prefix has been changed to cppad_prefix"
+	)
+ENDIF( cmake_install_prefix )
 # -----------------------------------------------------------------------------
-# cmake_install_postfix
-command_line_arg(cmake_install_postfix NOTFOUND STRING
+# cppad_postfix
+command_line_arg(cppad_postfix NOTFOUND STRING
 	"cppad install postfix"
 )
+IF( cmake_install_postfix )
+	MESSAGE(FATAL_ERROR
+		"cmake_install_postfix has been changed to cppad_postfix"
+	)
+ENDIF( cmake_install_postfix )
 # -----------------------------------------------------------------------------
 # cppad_cxx_flags
 command_line_arg(cppad_cxx_flags NOTFOUND STRING
@@ -110,7 +120,7 @@ command_line_arg(cppad_cxx_flags NOTFOUND STRING
 # -----------------------------------------------------------------------------
 # cppad_profile_flag
 command_line_arg(cppad_profile_flag NOTFOUND STRING
-	"compile flag used to compoile and link a profile version of a program"
+	"compile flag used to compile and link a profile version of a program"
 )
 # -----------------------------------------------------------------------------
 # External package prefixes
@@ -133,12 +143,16 @@ optional_package(ipopt_prefix "ipopt install prefix")
 # sacado_prefix
 optional_package(sacado_prefix "sacado install prefix")
 # -----------------------------------------------------------------------------
-# cppad_has_colpack
+# cppad_has_colpack, colpack_libs, cppad_lib
 #
 IF( colpack_prefix )
 	SET(cppad_has_colpack 1)
+	SET( colpack_libs "ColPack" )
+	SET( cppad_lib "cppad_lib" )
 ELSE( colpack_prefix )
 	SET(cppad_has_colpack 0)
+	SET( colpack_libs "" )
+	SET( cppad_lib "" )
 ENDIF( colpack_prefix )
 # =============================================================================
 # automated system configuration
@@ -189,12 +203,12 @@ FOREACH(middle_names includedirs libdirs datadir docdir)
 		ENDIF( NOT middle_value )
 	ENDFOREACH(dir ${cmake_install_${middle_names}})
 	#
-	SET(tmp "${cmake_install_prefix}/${middle_value}" )
-	IF ( cmake_install_postfix )
-		SET(cppad_abs_${middle_name} ${tmp}/${cmake_install_postfix})
-	ELSE ( cmake_install_postfix )
+	SET(tmp "${cppad_prefix}/${middle_value}" )
+	IF ( cppad_postfix )
+		SET(cppad_abs_${middle_name} ${tmp}/${cppad_postfix})
+	ELSE ( cppad_postfix )
 		SET(cppad_abs_${middle_name} ${tmp})
-	ENDIF ( cmake_install_postfix )
+	ENDIF ( cppad_postfix )
 ENDFOREACH(middle_names includedirs libdirs datadir docdir)
 # -----------------------------------------------------------------------------
 # boost_prefix
@@ -276,6 +290,9 @@ SET(check_depends "")
 #
 ADD_SUBDIRECTORY(cppad)
 ADD_SUBDIRECTORY(pkgconfig)
+IF( colpack_prefix )
+	ADD_SUBDIRECTORY(cppad_lib)
+ENDIF( colpack_prefix)
 #
 ADD_SUBDIRECTORY(compare_c)
 add_to_list(check_depends check_compare_c)
@@ -323,23 +340,20 @@ ADD_CUSTOM_TARGET(check DEPENDS ${check_depends})
 # During install copy all the cppad include files to
 # ${cppad_abs_includedir}/cppad
 INSTALL(
-	DIRECTORY "cppad/"
-	DESTINATION ${cppad_abs_includedir}/cppad
-	FILES_MATCHING PATTERN "*.h"
-)
-INSTALL(
-	DIRECTORY "cppad/"
+	DIRECTORY "${CMAKE_SOURCE_DIR}/cppad/"
 	DESTINATION ${cppad_abs_includedir}/cppad
 	FILES_MATCHING PATTERN "*.hpp"
 )
-IF( colpack_prefix )
-	INSTALL(
-		FILES "cppad/local/cppad_colpack.cpp"
-		DESTINATION ${cppad_abs_datadir}/cppad
-	)
-ENDIF( colpack_prefix )
 #
 # During install copy doc direcrory to cppad_abs_docdir/cppad
 IF ( cmake_install_docdir )
 	INSTALL( DIRECTORY "doc/" DESTINATION ${cppad_abs_docdir}/cppad )
 ENDIF ( cmake_install_docdir )
+#
+IF( ${cppad_deprecated} )
+	# During install copy deprecated include files
+	INSTALL(
+		DIRECTORY "${CMAKE_SOURCE_DIR}/cppad/deprecated/"
+		DESTINATION ${cppad_abs_includedir}/cppad
+	)
+ENDIF( ${cppad_deprecated} )

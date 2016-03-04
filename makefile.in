@@ -346,6 +346,7 @@ cppad_SOURCE_DIR = @cppad_SOURCE_DIR@
 cppad_boostvector = @cppad_boostvector@
 cppad_cppadvector = @cppad_cppadvector@
 cppad_cxx_flags = @cppad_cxx_flags@
+cppad_deprecated = @cppad_deprecated@
 cppad_description = @cppad_description@
 cppad_eigenvector = @cppad_eigenvector@
 cppad_has_colpack = @cppad_has_colpack@
@@ -355,8 +356,6 @@ cppad_has_high_resolution_clock = @cppad_has_high_resolution_clock@
 cppad_has_mkstemp = @cppad_has_mkstemp@
 cppad_has_nullptr = @cppad_has_nullptr@
 cppad_has_rvalue = @cppad_has_rvalue@
-cppad_implicit_ctor_from_any_type = @cppad_implicit_ctor_from_any_type@
-cppad_internal_sparse_set = @cppad_internal_sparse_set@
 cppad_max_num_threads = @cppad_max_num_threads@
 cppad_pkgconfig_cflags = @cppad_pkgconfig_cflags@
 cppad_pkgconfig_libs = @cppad_pkgconfig_libs@
@@ -407,7 +406,7 @@ top_srcdir = @top_srcdir@
 
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the
@@ -477,39 +476,19 @@ myinclude_HEADERS = \
 
 #
 nobase_myinclude_HEADERS = \
-	cppad/CheckNumericType.h \
-	cppad/CheckSimpleVector.h \
-	cppad/CppAD.h \
-	cppad/CppAD_vector.h \
-	cppad/ErrorHandler.h \
-	cppad/LuFactor.h \
-	cppad/LuInvert.h \
-	cppad/LuSolve.h \
-	cppad/NearEqual.h \
-	cppad/OdeErrControl.h \
-	cppad/OdeGearControl.h \
-	cppad/OdeGear.h \
-	cppad/Poly.h \
-	cppad/PowInt.h \
-	cppad/RombergMul.h \
-	cppad/RombergOne.h \
-	cppad/Rosen34.h \
-	cppad/Runge45.h \
-	cppad/SpeedTest.h \
-	cppad/TrackNewDel.h \
-	\
+	cppad/utility.hpp \
 	cppad/base_require.hpp \
-	cppad/check_numeric_type.hpp \
-	cppad/check_simple_vector.hpp \
+	cppad/utility/check_numeric_type.hpp \
+	cppad/utility/check_simple_vector.hpp \
 	cppad/configure.hpp \
 	cppad/cppad.hpp \
-	cppad/elapsed_seconds.hpp \
+	cppad/utility/elapsed_seconds.hpp \
 	cppad/example/base_adolc.hpp \
 	cppad/example/cppad_eigen.hpp \
 	cppad/example/eigen_plugin.hpp \
 	cppad/example/matrix_mul.hpp \
-	cppad/error_handler.hpp \
-	cppad/index_sort.hpp \
+	cppad/utility/error_handler.hpp \
+	cppad/utility/index_sort.hpp \
 	cppad/ipopt/solve.hpp \
 	cppad/ipopt/solve_callback.hpp \
 	cppad/ipopt/solve_result.hpp \
@@ -529,6 +508,7 @@ nobase_myinclude_HEADERS = \
 	cppad/local/ad_fun.hpp \
 	cppad/local/ad.hpp \
 	cppad/local/ad_tape.hpp \
+	cppad/local/ad_to_string.hpp \
 	cppad/local/ad_valued.hpp \
 	cppad/local/arithmetic.hpp \
 	cppad/local/asin_op.hpp \
@@ -544,8 +524,10 @@ nobase_myinclude_HEADERS = \
 	cppad/local/base_cond_exp.hpp \
 	cppad/local/base_double.hpp \
 	cppad/local/base_float.hpp \
+	cppad/local/base_hash.hpp \
 	cppad/local/base_limits.hpp \
 	cppad/local/base_std_math.hpp \
+	cppad/local/base_to_string.hpp \
 	cppad/local/bender_quad.hpp \
 	cppad/local/bool_fun.hpp \
 	cppad/local/bool_valued.hpp \
@@ -582,8 +564,10 @@ nobase_myinclude_HEADERS = \
 	cppad/local/exp_op.hpp \
 	cppad/local/expm1.hpp \
 	cppad/local/expm1_op.hpp \
+	cppad/local/for_hes_sweep.hpp \
 	cppad/local/for_jac_sweep.hpp \
 	cppad/local/for_one.hpp \
+	cppad/local/for_sparse_hes.hpp \
 	cppad/local/for_sparse_jac.hpp \
 	cppad/local/for_two.hpp \
 	cppad/local/forward0sweep.hpp \
@@ -610,6 +594,7 @@ nobase_myinclude_HEADERS = \
 	cppad/local/near_equal_ext.hpp \
 	cppad/local/numeric_limits.hpp \
 	cppad/local/num_skip.hpp \
+	cppad/local/old_atomic.hpp \
 	cppad/local/omp_max_thread.hpp \
 	cppad/local/op_code.hpp \
 	cppad/local/op.hpp \
@@ -635,6 +620,7 @@ nobase_myinclude_HEADERS = \
 	cppad/local/rev_sparse_hes.hpp \
 	cppad/local/rev_sparse_jac.hpp \
 	cppad/local/rev_two.hpp \
+	cppad/local/set_get_in_parallel.hpp \
 	cppad/local/sign.hpp \
 	cppad/local/sign_op.hpp \
 	cppad/local/sin_op.hpp \
@@ -646,7 +632,6 @@ nobase_myinclude_HEADERS = \
 	cppad/local/sparse_list.hpp \
 	cppad/local/sparse_pack.hpp \
 	cppad/local/sparse_pattern.hpp \
-	cppad/local/sparse_set.hpp \
 	cppad/local/sparse_unary_op.hpp \
 	cppad/local/sqrt_op.hpp \
 	cppad/local/standard_math.hpp \
@@ -665,28 +650,28 @@ nobase_myinclude_HEADERS = \
 	cppad/local/unary_plus.hpp \
 	cppad/local/undef.hpp \
 	cppad/local/user_ad.hpp \
-	cppad/local/old_atomic.hpp \
 	cppad/local/value.hpp \
 	cppad/local/var2par.hpp \
 	cppad/local/vec_ad.hpp \
 	cppad/local/zdouble.hpp \
 	cppad/local/zmul_op.hpp \
-	cppad/lu_factor.hpp \
-	cppad/lu_invert.hpp \
-	cppad/lu_solve.hpp \
-	cppad/memory_leak.hpp \
-	cppad/nan.hpp \
-	cppad/near_equal.hpp \
-	cppad/ode_err_control.hpp \
-	cppad/ode_gear_control.hpp \
-	cppad/ode_gear.hpp \
-	cppad/omp_alloc.hpp \
-	cppad/poly.hpp \
-	cppad/pow_int.hpp \
-	cppad/romberg_mul.hpp \
-	cppad/romberg_one.hpp \
-	cppad/rosen_34.hpp \
-	cppad/runge_45.hpp \
+	cppad/utility/lu_factor.hpp \
+	cppad/utility/lu_invert.hpp \
+	cppad/utility/lu_solve.hpp \
+	cppad/utility/memory_leak.hpp \
+	cppad/utility/nan.hpp \
+	cppad/utility/near_equal.hpp \
+	cppad/utility/ode_err_control.hpp \
+	cppad/utility/ode_gear_control.hpp \
+	cppad/utility/ode_gear.hpp \
+	cppad/utility/omp_alloc.hpp \
+	cppad/utility/poly.hpp \
+	cppad/utility/pow_int.hpp \
+	cppad/utility/romberg_mul.hpp \
+	cppad/utility/romberg_one.hpp \
+	cppad/utility/rosen_34.hpp \
+	cppad/utility/runge_45.hpp \
+	cppad/utility/to_string.hpp \
 	cppad/speed/det_33.hpp \
 	cppad/speed/det_by_lu.hpp \
 	cppad/speed/det_by_minor.hpp \
@@ -696,12 +681,12 @@ nobase_myinclude_HEADERS = \
 	cppad/speed/ode_evaluate.hpp \
 	cppad/speed/sparse_hes_fun.hpp \
 	cppad/speed/sparse_jac_fun.hpp \
-	cppad/speed_test.hpp \
+	cppad/utility/speed_test.hpp \
 	cppad/speed/uniform_01.hpp \
-	cppad/thread_alloc.hpp \
-	cppad/time_test.hpp \
-	cppad/track_new_del.hpp \
-	cppad/vector.hpp
+	cppad/utility/thread_alloc.hpp \
+	cppad/utility/time_test.hpp \
+	cppad/utility/track_new_del.hpp \
+	cppad/utility/vector.hpp
 
 # End nobase_myinclude_HEADERS (check_makefile.sh uses this comment)
 # ---------------------------------------------------------------
@@ -776,8 +761,9 @@ test_directory_list = \
 	test_more
 
 #
-@CppAD_DOCUMENTATION_TRUE@doc_postfix = $(DESTDIR)$(datadir)/doc/$(postfix_dir)
-@CppAD_DOCUMENTATION_TRUE@doc_package = $(DESTDIR)$(datadir)/doc/$(postfix_dir)/$(PACKAGE)-$(VERSION)
+doc_postfix = $(DESTDIR)$(datadir)/doc/$(postfix_dir)
+doc_package = $(DESTDIR)$(datadir)/doc/$(postfix_dir)/$(PACKAGE)-$(VERSION)
+inc_postfix = $(DESTDIR)/$(myincludedir)
 #
 pkgconfigdir = $(datadir)/pkgconfig
 pkgconfig_DATA = pkgconfig/cppad.pc
@@ -1229,7 +1215,6 @@ maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
 	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
-@CppAD_DOCUMENTATION_FALSE@install-data-hook:
 clean: clean-recursive
 
 clean-am: clean-generic mostlyclean-am
@@ -1328,6 +1313,7 @@ uninstall-am: uninstall-myincludeHEADERS \
 
 $(top_srcdir)/cppad/configure.hpp: cppad/configure.hpp
 	cp cppad/configure.hpp $(top_srcdir)/cppad/configure.hpp
+@CppAD_HAVE_AR_FALSE@	SPEED_TESTS =
 @CppAD_HAVE_AR_FALSE@	SPEED_DIRS =
 
 test: all
@@ -1349,13 +1335,17 @@ dist-hook:
 	rm -rf `find . -name .svn`
 	rm $(distdir)/doc/error.wrd
 	rm $(distdir)/bin/gpl_license.sh
-@CppAD_DOCUMENTATION_TRUE@install-data-hook:
+install-data-hook:
 @CppAD_DOCUMENTATION_TRUE@	if [ ! -e $(doc_postfix) ] ; then mkdir -p $(doc_postfix) ; fi
 @CppAD_DOCUMENTATION_TRUE@	if [ -e $(doc_package) ] ; then rm -rf $(doc_package) ; fi
 @CppAD_DOCUMENTATION_TRUE@	cp -a $(top_srcdir)/doc $(doc_package)
 @CppAD_DOCUMENTATION_TRUE@	chmod -R a-w $(doc_package)
 @CppAD_DOCUMENTATION_TRUE@	chmod -R u+w $(doc_package)
 @CppAD_DOCUMENTATION_TRUE@	chmod -R a+r $(doc_package)
+@CppAD_DEPRECATED_TRUE@	cp -a $(top_srcdir)/cppad/deprecated/* $(inc_postfix)/cppad
+@CppAD_DEPRECATED_TRUE@	chmod -R a-w $(inc_postfix)/cppad
+@CppAD_DEPRECATED_TRUE@	chmod -R u+w $(inc_postfix)/cppad
+@CppAD_DEPRECATED_TRUE@	chmod -R a+r $(inc_postfix)/cppad
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

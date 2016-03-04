@@ -1,9 +1,9 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
-the terms of the 
+the terms of the
                     Eclipse Public License Version 1.0.
 
 A copy of this license is included in the COPYING file of this distribution.
@@ -27,11 +27,10 @@ $spell
 $$
 
 $section exp_eps: Verify Second Order Reverse Sweep$$
+$mindex exp_eps$$
 
-$index reverse, exp_eps$$
-$index exp_eps, reverse$$
 
-$codep */
+$srccode%cpp% */
 # include <cstddef>                     // define size_t
 # include <cmath>                       // for fabs function
 extern bool exp_eps_for0(double *v0);   // computes zero order forward sweep
@@ -72,7 +71,7 @@ bool exp_eps_rev2(void)
 	ok &= std::fabs( f_v0[5] - 0.  ) <= 1e-10; // partial f_5 w.r.t. v_5^0
 	ok &= std::fabs( f_v1[5] - 0.5 ) <= 1e-10; // partial f_5 w.r.t. v_5^1
 
-	// f_4 = f_5( v_1^0 , ... , v_4^1 , v_3^0 * v_1^0 , 
+	// f_4 = f_5( v_1^0 , ... , v_4^1 , v_3^0 * v_1^0 ,
 	//            v_3^1 * v_1^0 + v_3^0 * v_1^1 )
 	f_v0[1] += f_v0[5] * v0[3] + f_v1[5] * v1[3];
 	f_v0[3] += f_v0[5] * v0[1] + f_v1[5] * v1[1];
@@ -103,6 +102,6 @@ bool exp_eps_rev2(void)
 
 	return ok;
 }
-/* $$
+/* %$$
 $end
 */

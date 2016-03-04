@@ -1,6 +1,6 @@
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the
@@ -28,12 +28,10 @@ SET(sources mul_level_adolc.cpp mul_level_adolc_ode.cpp)
 sources_libs_define(adolc "${sources}" adolc ADOLC_EXAMPLES)
 
 # colpack_prefix
-SET(sources
+SET(colpack_sources
 	colpack_hes.cpp
 	colpack_jac.cpp
-	../cppad/local/cppad_colpack.cpp
 )
-sources_libs_define(colpack "${sources}" ColPack COLPACK_EXAMPLES)
 
 # eigen_prefix
 IF ( eigen_prefix )
@@ -122,6 +120,7 @@ ADD_EXECUTABLE(example EXCLUDE_FROM_ALL example.cpp
 	forward.cpp
 	forward_dir.cpp
 	forward_order.cpp
+	for_sparse_hes.cpp
 	for_sparse_jac.cpp
 	fun_assign.cpp
 	fun_check.cpp
@@ -203,6 +202,7 @@ ADD_EXECUTABLE(example EXCLUDE_FROM_ALL example.cpp
 	tanh.cpp
 	tape_index.cpp
 	thread_alloc.cpp
+	to_string.cpp
 	unary_minus.cpp
 	unary_plus.cpp
 	value.cpp
@@ -216,6 +216,7 @@ add_cppad_cxx_flags(example)
 
 # List of libraries to be linked into the specified target
 TARGET_LINK_LIBRARIES(example
+	${cppad_lib}
 	${adolc_libs}
 	${colpack_libs}
 	${eigen_libs}

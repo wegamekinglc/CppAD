@@ -196,8 +196,7 @@ This has been fixed.
 
 $head 11-02$$
 The instructions for downloading the current version using
-$cref/subversion/download/Subversion/$$
-have changed.
+$code subversion$$ have changed.
 The user should now directly edit the file
 $codep
 	trunk/configure
@@ -248,7 +247,7 @@ The makefiles in the distribution have been changed so that
 one can run configure from a directory other than the distribution directory.
 
 $head 10-27$$
-A $cref/subversion/download/Subversion/$$ method
+A $code subversion$$ method
 for downloading CppAD has been added.
 $pre
 
@@ -262,7 +261,7 @@ $pre
 
 $$
 Extend the
-$cref/subversion/download/Subversion/$$
+$code subversion$$
 methods to include a full installation and old versions.
 
 $head 10-23$$
@@ -409,7 +408,7 @@ $head 07-30$$
 $code CppADCreateBinaryBool$$ and $code CppADCreateUnaryBool$$
 have been replaced by $code CPPAD_BOOL_BINARY$$ and
 $code CPPAD_BOOL_UNARY$$ respectively.
-In addition, the $cref WishList$$ item for conversion
+In addition, the $cref wish_list$$ item for conversion
 of all preprocessor macros to upper case been completed and removed.
 
 $head 07-29$$
@@ -424,7 +423,7 @@ was wrong for the unknown case.
 $pre
 
 $$
-The $cref WishList$$ item
+The $cref wish_list$$ item
 for conversion of all preprocessor macros to upper case
 has been changes (to an item that was previous missing).
 
@@ -466,13 +465,13 @@ $code CPPAD_TRACK_NEW_VEC$$,
 $code CPPAD_TRACK_DEL_VEC$$, and
 $code CPPAD_TRACK_EXTEND$$ respectively.
 This item has been removed from the
-$cref/software guidelines/WishList/Software Guidelines/$$
+$cref/software guidelines/wish_list/Software Guidelines/$$
 section of the wish list.
 $pre
 
 $$
 The member variable
-$cref/software guideline/WishList/Software Guidelines/$$
+$cref/software guideline/wish_list/Software Guidelines/$$
 wish list item has be brought up to date.
 
 $head 07-22$$
@@ -793,7 +792,7 @@ $pre
 
 $$
 Added an Introduction and
-$cref/Tracing/WishList/Tracing/$$ entry to the wish list.
+$cref/Tracing/wish_list/Tracing/$$ entry to the wish list.
 (The Introduction item was completed on $cref/03-31/whats_new_07/03-31/$$.)
 
 $head 03-20$$
@@ -843,8 +842,8 @@ $subhead 03-28$$
 The conditional include commands were missing on some include files;
 for example
 $codep
-	# ifndef CPPAD_BENDER_QUAD_INCLUDED
-	# define CPPAD_BENDER_QUAD_INCLUDED
+	# ifndef CPPAD_BENDER_QUAD_HPP
+	# define CPPAD_BENDER_QUAD_HPP
 $$
 was missing at the beginning of the $cref BenderQuad$$ include file.
 This has been fixed.
@@ -901,7 +900,7 @@ This has been fixed.
 $subhead 02-17$$
 An entry about optimizing the operation
 sequence in an $cref/ADFun/FunConstruct/$$ object was added to the
-$cref WishList$$.
+$cref wish_list$$.
 $pre
 
 $$

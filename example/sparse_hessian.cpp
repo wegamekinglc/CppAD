@@ -1,6 +1,6 @@
-/* $Id$ */
+// $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the
@@ -18,14 +18,11 @@ $spell
 $$
 
 $section Sparse Hessian: Example and Test$$
+$mindex Hessian spare$$
 
-$index Hessian, sparse$$
-$index example, sparse Hessian$$
-$index test, sparse Hessian$$
-$index spare, Hessian example$$
 
 $code
-$verbatim%example/sparse_hessian.cpp%0%// BEGIN C++%// END C++%1%$$
+$srcfile%example/sparse_hessian.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end

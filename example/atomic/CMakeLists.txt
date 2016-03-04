@@ -1,6 +1,6 @@
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the
@@ -19,11 +19,14 @@ SET(CMAKE_BUILD_TYPE DEBUG)
 ADD_EXECUTABLE(example_atomic EXCLUDE_FROM_ALL
 	atomic.cpp
 	checkpoint.cpp
+	for_sparse_hes.cpp
+	for_sparse_jac.cpp
 	get_started.cpp
-	hes_sparse.cpp
 	mat_mul.cpp
 	norm_sq.cpp
 	reciprocal.cpp
+	rev_sparse_hes.cpp
+	rev_sparse_jac.cpp
 	sparsity.cpp
 	tangent.cpp
 )

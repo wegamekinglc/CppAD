@@ -1,7 +1,7 @@
 #! /bin/bash -e
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-16 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the
@@ -52,15 +52,22 @@ else
 	exit 1
 fi
 # ----------------------------------------------------------------------------
-# Automated updates to source directory
+# Make sure version is set correctly
 #
-# Get version number and make sure all copies of it are up to date.
+# if this is the master, set version to today
+branch=`git branch | grep '^\*' | sed -e 's|^\* *||'`
+if [ "$branch" == 'master' ]
+then
+	bin/version.sh set
+fi
+# make sure that version number is the same in all files
+echo_log_eval bin/version.sh check
+#
+# Get version number and make sure all copies agree
 version=`bin/version.sh get`
 echo_log_eval bin/version.sh get
-echo_log_eval bin/version.sh copy
 # ----------------------------------------------------------------------------
 # Run automated checks for the form bin/check_*.sh with a few exceptions.
-# Note that check_include_omh.sh uses files built by cmake.
 list=`ls bin/check_* | sed \
 	-e '/check_all.sh/d' \
 	-e '/check_jenkins.sh/d' \
@@ -89,7 +96,7 @@ done
 echo_log_eval mkdir -p $package_dir
 # -----------------------------------------------------------------------------
 # Source file that are coppied to the package directory
-file_list=`bin/list_files.sh`
+file_list=`bin/ls_files.sh`
 #
 # Copy the files, creating sub-directories when necessary
 echo_log_eval echo "copy files to $package_dir"
@@ -156,3 +163,6 @@ then
 	fi
 	echo_log_eval bin/gpl_license.sh cppad-$version build build
 fi
+# ----------------------------------------------------------------------------
+echo "$0: OK"
+exit 0

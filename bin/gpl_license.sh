@@ -1,7 +1,7 @@
 #! /bin/bash -e
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-14 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-15 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the
@@ -90,9 +90,9 @@ list=`find . \
 	\( -name '*.c'   \) -or \
 	\( -name '*.cpp' \) -or \
 	\( -name '*.hpp' \) -or \
+	\( -name '*.h' \)   -or \
 	\( -name '*.in'  \) -or \
 	\( -name '*.omh' \) -or \
-	\( -name '*.pc' \)  -or \
 	\( -name '*.py' \)  -or \
 	\( -name '*.sh' \)  -or \
 	\( -name '*.txt'  \)`
@@ -110,14 +110,18 @@ do
 	if [ "$name" == 'gpl-3.0.txt' ]
 	then
 		echo "gpl-3.0.txt is in $archive_dir/$archive_name.epl.tgz"
+		exit 1
 	fi
 	if [ "$name" == 'gpl_license.sh' ]
 	then
 		echo "gpl_license.sh is in $archive_dir/$archive_name.epl.tgz"
+		exit 1
 	fi
 	if grep "GNU General Public License" $archive_name/$file > /dev/null
 	then
-		if [ "$name" != "doc.omh" ] && [ "$name" != 'download.omh' ]
+		if [ "$name" != "doc.omh" ]      && \
+		   [ "$name" != 'download.omh' ] && \
+		   [ "$name" != 'proj_desc.py' ]
 		then
 			echo "gpl_license.sh: name=$name"
 			echo "GPL license in initial $archive_name/$file"
@@ -131,11 +135,9 @@ do
 	if ! grep "GNU General Public License Version 3" $archive_name/$file \
 		> /dev/null
 	then
-		if \
-		[ "$name" != 'config.h.in' ]   && \
-		[ "$name" != 'colpack.sh' ]    && \
-		[ "$name" != 'svn_commit.sh' ] && \
-		[ "$name" != 'git_commit.sh' ]
+		# one line (deprecaed) files do not have copyright.
+		lines=`cat $archive_name/$file | wc -l`
+		if [ "$lines" != '1' ] && [ "$name" != 'colpack.sh' ]
 		then
 			echo "Cannot change EPL to GPL for $archive_name/$file"
 			exit 1
